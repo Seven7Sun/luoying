@@ -1,0 +1,64 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path" : "pages/shouye/shouye",
+			"style" : 
+			{
+				"navigationBarTitleText" : ""
+			}
+		},
+		{
+			"path" : "pages/faxian/faxian",
+			"style" : 
+			{
+				"navigationBarTitleText" : ""
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"uniIdRouter": {},
+	 "tabBar": {
+	    "color": "#7A7E83",
+	    "selectedColor": "#3cc51f",
+	    "backgroundColor": "#ffffff",
+	    "borderStyle": "black",
+	    "list": [
+	      {
+	        "pagePath": "pages/shouye/shouye",
+	        "text": "首页",
+	        "iconPath": "static/icon_home.png",
+	        "selectedIconPath": "static/icon_home_selected.png"
+	      },
+	      {
+	        "pagePath": "pages/faxian/faxian",
+	        "text": "发现",
+	        "iconPath": "static/icon_contact.png",
+	        "selectedIconPath": "static/icon_contact_selected.png"
+	      },
+	      {
+	        "pagePath": "pages/about/about",
+	        "text": "消息",
+	        "iconPath": "static/icon_about.png",
+	        "selectedIconPath": "static/icon_about_selected.png"
+	      },
+		  {
+		    "pagePath": "pages/about/about",
+		    "text": "我的",
+		    "iconPath": "static/icon_about.png",
+		    "selectedIconPath": "static/icon_about_selected.png"
+		  }
+	    ]
+	  }
+}
