@@ -34,7 +34,9 @@
 		},
 		methods: {
 			tiaozhuan(){
-				
+				uni.navigateTo({
+					url:'/pages/denglu/denglu'
+				})
 			}
 		}
 	}
