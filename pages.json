@@ -28,6 +28,13 @@
 				"navigationBarTitleText" : "",
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path" : "pages/webview/webview",
+			"style" : 
+			{
+				"navigationBarTitleText" : "智慧珞珈验证"
+			}
 		}
 	],
 	"globalStyle": {

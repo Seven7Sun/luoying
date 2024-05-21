@@ -1,0 +1,53 @@
+
+.content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+}
+.title {
+		font-size: 1.875rem;
+		font-family: 'siyuanheiti';
+		margin-top: 6.25rem;
+}
+.verifyBox {
+		margin-top: 6.25rem;
+		background-color: rgb(245, 245, 245);
+		width: 15.625rem;
+		height: 3.125rem;
+		border-radius: 2.5rem;
+		display: flex;
+		/* flex-direction: column; */
+		align-items: center;
+		/* justify-content: center; */
+}
+.icon {
+		height: 1.5625rem;
+		margin-left: 0.625rem;
+}
+.verifyText {
+		margin-left: 1.25rem;
+		color: rgb(128, 128, 128);
+}
+.accountBox {
+		margin-top: 1.25rem;
+		background-color: rgb(245, 245, 245);
+		width: 15.625rem;
+		height: 3.125rem;
+		border-radius: 2.5rem;
+		display: flex;
+		/* flex-direction: column; */
+		align-items: center;
+}
+.inputText {
+		width: 10.9375rem;
+}
+.notice {
+		color: rgb(128, 128, 128);
+		font-size: 0.625rem;
+		margin-top: 0.625rem;
+}
+.login {
+		margin-top: 0.9375rem;
+		width: 15.625rem;
+}
