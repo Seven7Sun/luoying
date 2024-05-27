@@ -9,7 +9,10 @@
 		<view class="verifyBox" @tap="toLuoJia">
 			<image src="../../static/denglu/verify.png" mode="heightFix" class="icon"></image>
 			<!-- <image src="../../static/denglu/line.png" mode="aspectFit"></image> -->
-			<view class="verifyText">
+			<view class="verifyText" v-if="whetherLuoJia">
+				验证成功
+			</view>
+			<view class="verifyText" v-else>
 				点击前往智慧珞珈验证
 			</view>
 		</view>
@@ -31,8 +34,7 @@
 			未注册的手机号验证后自动创建珞樱账号
 		</view>
 		<view class="login">
-			<button style="border-radius: 40rpx;background-color: rgb(40,168,124);color: white;"
-				@tap="login">登录</button>
+			<button style="border-radius: 40rpx;background-color: rgb(40,168,124);color: white;" @tap="toshouye">登录</button>
 		</view>
 	</view>
 </template>
@@ -43,19 +45,28 @@
 			return {
 				account: '',
 				password: '',
-
+				whetherLuoJia: false,
+			}
+		},
+		onLoad: function(options) {
+			// console.log(options.whetherLogin);
+			if (options.whetherLogin === 'true') {
+				this.whetherLuoJia = true;
 			}
 		},
 		methods: {
-			login() {
+			toshouye() {
 				uni.navigateTo({
 					url: '/pages/shouye/shouye'
-				})
+				});
 			},
 			toLuoJia() {
-				uni.navigateTo({
-					url: '/pages/webview/webview'
-				});
+				if(!this.whetherLuoJia){
+					uni.navigateTo({
+						url: '/pages/webview/webview'
+					});
+				}
+				
 			},
 		}
 	}

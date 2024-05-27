@@ -33,29 +33,16 @@
 					}, function(e) {
 						let url = e.url;
 						uni.navigateTo({
-							url: '/pages/denglu/denglu'
+							url: '/pages/denglu/denglu?whetherLogin=true'
 						});
 						console.log(e.url, 'overrideUrlLoading');
 					});
 				});
-			}, 100);
+			}, 1000);
 
 		},
-		beforeDestroy() {
-			this.stopCheckingUrl();
-		},
+
 		methods: {
-			startCheckingUrl() {
-				this.intervalId = setInterval(() => {
-
-				}, 1000); // 每秒检查一次
-			},
-			stopCheckingUrl() {
-				if (this.intervalId) {
-					clearInterval(this.intervalId);
-					this.intervalId = null;
-				}
-			}
 
 		}
 	};

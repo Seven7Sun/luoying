@@ -66,7 +66,7 @@ if (uni.restoreGlobal) {
     },
     methods: {
       tiaozhuan() {
-        uni.navigateTo({
+        uni.redirectTo({
           url: "/pages/denglu/denglu"
         });
       }
@@ -100,7 +100,9 @@ if (uni.restoreGlobal) {
     methods: {}
   };
   function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock("view");
+    return vue.openBlock(), vue.createElementBlock("view", null, [
+      vue.createElementVNode("view", { class: "" }, " 你好 ")
+    ]);
   }
   const PagesShouyeShouye = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__file", "D:/Uniapp/luoying/pages/shouye/shouye.vue"]]);
   const _sfc_main$3 = {
@@ -117,19 +119,27 @@ if (uni.restoreGlobal) {
     data() {
       return {
         account: "",
-        password: ""
+        password: "",
+        whetherLuoJia: false
       };
     },
+    onLoad: function(options) {
+      if (options.whetherLogin === "true") {
+        this.whetherLuoJia = true;
+      }
+    },
     methods: {
-      login() {
+      toshouye() {
         uni.navigateTo({
           url: "/pages/shouye/shouye"
         });
       },
       toLuoJia() {
-        uni.navigateTo({
-          url: "/pages/webview/webview"
-        });
+        if (!this.whetherLuoJia) {
+          uni.navigateTo({
+            url: "/pages/webview/webview"
+          });
+        }
       }
     }
   };
@@ -146,7 +156,13 @@ if (uni.restoreGlobal) {
           class: "icon"
         }),
         vue.createCommentVNode(' <image src="../../static/denglu/line.png" mode="aspectFit"></image> '),
-        vue.createElementVNode("view", { class: "verifyText" }, " 点击前往智慧珞珈验证 ")
+        $data.whetherLuoJia ? (vue.openBlock(), vue.createElementBlock("view", {
+          key: 0,
+          class: "verifyText"
+        }, " 验证成功 ")) : (vue.openBlock(), vue.createElementBlock("view", {
+          key: 1,
+          class: "verifyText"
+        }, " 点击前往智慧珞珈验证 "))
       ]),
       vue.createElementVNode("view", { class: "accountBox" }, [
         vue.createElementVNode("image", {
@@ -202,7 +218,7 @@ if (uni.restoreGlobal) {
       vue.createElementVNode("view", { class: "login" }, [
         vue.createElementVNode("button", {
           style: { "border-radius": "40rpx", "background-color": "rgb(40,168,124)", "color": "white" },
-          onClick: _cache[3] || (_cache[3] = (...args) => $options.login && $options.login(...args))
+          onClick: _cache[3] || (_cache[3] = (...args) => $options.toshouye && $options.toshouye(...args))
         }, "登录")
       ])
     ]);
@@ -237,28 +253,14 @@ if (uni.restoreGlobal) {
           }, function(e) {
             e.url;
             uni.navigateTo({
-              url: "/pages/denglu/denglu"
+              url: "/pages/denglu/denglu?whetherLogin=true"
             });
             formatAppLog("log", "at pages/webview/webview.vue:38", e.url, "overrideUrlLoading");
           });
         });
-      }, 100);
+      }, 1e3);
     },
-    beforeDestroy() {
-      this.stopCheckingUrl();
-    },
-    methods: {
-      startCheckingUrl() {
-        this.intervalId = setInterval(() => {
-        }, 1e3);
-      },
-      stopCheckingUrl() {
-        if (this.intervalId) {
-          clearInterval(this.intervalId);
-          this.intervalId = null;
-        }
-      }
-    }
+    methods: {}
   };
   function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [

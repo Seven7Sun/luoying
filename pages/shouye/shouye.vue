@@ -1,6 +1,8 @@
 <template>
 	<view>
-		
+		<view class="">
+			你好
+		</view>
 	</view>
 </template>
 
