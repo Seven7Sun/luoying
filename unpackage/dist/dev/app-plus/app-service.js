@@ -219,38 +219,50 @@ if (uni.restoreGlobal) {
     data() {
       return {
         url: "https://cas.whu.edu.cn/authserver/login?service=http%3A%2F%2Fehall.whu.edu.cn%2Flogin%3Fservice%3Dhttp%3A%2F%2Fehall.whu.edu.cn%2Fnew%2Findex.html",
-        oldurl: "",
-        count: 0
+        currentSrc: "",
+        intervalId: null
       };
     },
     onLoad() {
       var pages = getCurrentPages();
-      formatAppLog("log", "at pages/webview/webview.vue:20", pages);
       var page = pages[pages.length - 1];
       var currentWebview = page.$getAppWebview();
-      formatAppLog("log", "at pages/webview/webview.vue:23", currentWebview);
-      var curRoute = currentWebview.src;
-      formatAppLog("log", "at pages/webview/webview.vue:25", curRoute);
-      this.count = this.count + 1;
-      if (this.count == 2) {
-        uni.showToast({
-          title: "登录成功",
-          icon: "success"
+      currentWebview.children()[0];
+      setTimeout(function() {
+        let wv = currentWebview.children()[0];
+        wv.addEventListener("loaded", function() {
+          wv.overrideUrlLoading({
+            mode: "reject",
+            match: "https:\\/\\/ehall\\.whu\\.edu\\.cn\\/new\\/mobile\\/.*"
+          }, function(e) {
+            e.url;
+            uni.navigateTo({
+              url: "/pages/denglu/denglu"
+            });
+            formatAppLog("log", "at pages/webview/webview.vue:38", e.url, "overrideUrlLoading");
+          });
         });
-        uni.navigateBack();
-      }
+      }, 100);
+    },
+    beforeDestroy() {
+      this.stopCheckingUrl();
     },
     methods: {
-      onMessage(event) {
+      startCheckingUrl() {
+        this.intervalId = setInterval(() => {
+        }, 1e3);
+      },
+      stopCheckingUrl() {
+        if (this.intervalId) {
+          clearInterval(this.intervalId);
+          this.intervalId = null;
+        }
       }
     }
   };
   function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
-      vue.createElementVNode("web-view", {
-        src: $data.url,
-        onMessage: _cache[0] || (_cache[0] = (...args) => $options.onMessage && $options.onMessage(...args))
-      }, null, 40, ["src"])
+      vue.createElementVNode("web-view", { src: $data.url }, null, 8, ["src"])
     ]);
   }
   const PagesWebviewWebview = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "D:/Uniapp/luoying/pages/webview/webview.vue"]]);

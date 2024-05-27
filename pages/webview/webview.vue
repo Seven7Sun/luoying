@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<web-view :src="url" @message="onMessage"></web-view>
+		<web-view :src="url"></web-view>
 	</view>
 </template>
 
@@ -10,35 +10,52 @@
 		data() {
 			return {
 				url: 'https://cas.whu.edu.cn/authserver/login?service=http%3A%2F%2Fehall.whu.edu.cn%2Flogin%3Fservice%3Dhttp%3A%2F%2Fehall.whu.edu.cn%2Fnew%2Findex.html',
-				oldurl:'',
-				count:0,
+				currentSrc: '',
+				intervalId: null,
 			};
 		},
 		onLoad() {
-			// 判断登录成功的逻辑，可以根据 URL 或者页面内容来判断
 			var pages = getCurrentPages();
-			console.log(pages);
+			// console.log(pages);
 			var page = pages[pages.length - 1];
 			var currentWebview = page.$getAppWebview();
-			console.log(currentWebview);
-			var curRoute=currentWebview.src;
-			console.log(curRoute);
-			this.count=this.count+1;
-			// uni.navigateBack(); // 返回上一个页面
-			if (this.count == 2) { // 假设成功登录后的 URL 包含 'success'
-				uni.showToast({
-					title: '登录成功',
-					icon: 'success',
+			// console.log(currentWebview);
+			let wv = currentWebview.children()[0];
+			setTimeout(function() {
+				let wv = currentWebview.children()[0];
+
+				// 监听页面加载事件
+				wv.addEventListener('loaded', function() {
+					// 拦截所有页面跳转
+					wv.overrideUrlLoading({
+						mode: 'reject',
+						match: 'https:\\/\\/ehall\\.whu\\.edu\\.cn\\/new\\/mobile\\/.*'
+					}, function(e) {
+						let url = e.url;
+						uni.navigateTo({
+							url: '/pages/denglu/denglu'
+						});
+						console.log(e.url, 'overrideUrlLoading');
+					});
 				});
-				uni.navigateBack(); // 返回上一个页面
-			}
-			
+			}, 100);
+
+		},
+		beforeDestroy() {
+			this.stopCheckingUrl();
 		},
 		methods: {
-			onMessage(event) {
-				// 处理从 Webview 发送的消息
-				// console.log('Message from Webview:', event.detail.data);
+			startCheckingUrl() {
+				this.intervalId = setInterval(() => {
+
+				}, 1000); // 每秒检查一次
 			},
+			stopCheckingUrl() {
+				if (this.intervalId) {
+					clearInterval(this.intervalId);
+					this.intervalId = null;
+				}
+			}
 
 		}
 	};
