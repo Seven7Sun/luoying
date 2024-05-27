@@ -311,12 +311,72 @@ if (uni.restoreGlobal) {
   const PagesWodeWode = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__file", "D:/Uniapp/luoying/pages/wode/wode.vue"]]);
   const _sfc_main$1 = {
     data() {
-      return {};
+      return {
+        selectedTab: "post",
+        content: "",
+        isMarkdown: false,
+        tags: []
+      };
     },
     methods: {}
   };
   function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock("view");
+    return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
+      vue.createElementVNode("view", { class: "top-nav" }, [
+        vue.createElementVNode("view", {
+          class: "nav-item",
+          onClick: _cache[0] || (_cache[0] = ($event) => _ctx.selectTab("post"))
+        }, "发帖"),
+        vue.createElementVNode("view", {
+          class: "nav-item",
+          onClick: _cache[1] || (_cache[1] = ($event) => _ctx.selectTab("comment"))
+        }, "跟帖")
+      ]),
+      vue.createElementVNode("view", { class: "content" }, [
+        vue.createElementVNode("view", { class: "txtouter" }, [
+          vue.withDirectives(vue.createElementVNode(
+            "textarea",
+            {
+              class: "textarea",
+              "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $data.content = $event),
+              placeholder: "说些什么吧..."
+            },
+            null,
+            512
+            /* NEED_PATCH */
+          ), [
+            [vue.vModelText, $data.content]
+          ])
+        ]),
+        vue.createElementVNode("view", {
+          class: "add-section",
+          onClick: _cache[3] || (_cache[3] = (...args) => _ctx.addTag && _ctx.addTag(...args))
+        }, [
+          vue.createElementVNode("image", {
+            src: "/static/add.png",
+            class: "add-icon"
+          }),
+          vue.createElementVNode("text", null, "# 添加标签：")
+        ]),
+        vue.createElementVNode("view", { class: "markdown-toggle" }, [
+          vue.createElementVNode("text", null, "markdown模式"),
+          vue.createElementVNode("switch", {
+            checked: $data.isMarkdown,
+            onChange: _cache[4] || (_cache[4] = (...args) => _ctx.toggleMarkdown && _ctx.toggleMarkdown(...args))
+          }, null, 40, ["checked"])
+        ]),
+        vue.createElementVNode("view", { class: "button-section" }, [
+          vue.createElementVNode("button", {
+            class: "save-draft-button",
+            onClick: _cache[5] || (_cache[5] = (...args) => _ctx.saveDraft && _ctx.saveDraft(...args))
+          }, "保存草稿"),
+          vue.createElementVNode("button", {
+            class: "publish-button",
+            onClick: _cache[6] || (_cache[6] = (...args) => _ctx.publish && _ctx.publish(...args))
+          }, "发布")
+        ])
+      ])
+    ]);
   }
   const PagesFabuFabu = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "D:/Uniapp/luoying/pages/fabu/fabu.vue"]]);
   __definePage("pages/index/index", PagesIndexIndex);
