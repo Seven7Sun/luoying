@@ -38,7 +38,7 @@ if (uni.restoreGlobal) {
     }
     return target;
   };
-  const _sfc_main$5 = {
+  const _sfc_main$7 = {
     data() {
       return {
         title: "Hello",
@@ -72,7 +72,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "content" }, [
       vue.createElementVNode("image", {
         src: "/static/index/sakuraPicture.png",
@@ -92,30 +92,30 @@ if (uni.restoreGlobal) {
       })
     ]);
   }
-  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__file", "D:/Uniapp/luoying/pages/index/index.vue"]]);
-  const _sfc_main$4 = {
+  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__file", "D:/Uniapp/luoying/pages/index/index.vue"]]);
+  const _sfc_main$6 = {
     data() {
       return {};
     },
     methods: {}
   };
-  function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", null, [
-      vue.createElementVNode("view", { class: "" }, " 你好 ")
+      vue.createElementVNode("view", { class: "title" }, " 首页 ")
     ]);
   }
-  const PagesShouyeShouye = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__file", "D:/Uniapp/luoying/pages/shouye/shouye.vue"]]);
-  const _sfc_main$3 = {
+  const PagesShouyeShouye = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__file", "D:/Uniapp/luoying/pages/shouye/shouye.vue"]]);
+  const _sfc_main$5 = {
     data() {
       return {};
     },
     methods: {}
   };
-  function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view");
   }
-  const PagesFaxianFaxian = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__file", "D:/Uniapp/luoying/pages/faxian/faxian.vue"]]);
-  const _sfc_main$2 = {
+  const PagesFaxianFaxian = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__file", "D:/Uniapp/luoying/pages/faxian/faxian.vue"]]);
+  const _sfc_main$4 = {
     data() {
       return {
         account: "",
@@ -130,7 +130,7 @@ if (uni.restoreGlobal) {
     },
     methods: {
       toshouye() {
-        uni.navigateTo({
+        uni.switchTab({
           url: "/pages/shouye/shouye"
         });
       },
@@ -143,7 +143,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "content" }, [
       vue.createElementVNode("view", { class: "title" }, " 欢迎来到 珞樱 "),
       vue.createElementVNode("view", {
@@ -223,7 +223,7 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesDengluDenglu = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__file", "D:/Uniapp/luoying/pages/denglu/denglu.vue"]]);
+  const PagesDengluDenglu = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__file", "D:/Uniapp/luoying/pages/denglu/denglu.vue"]]);
   function formatAppLog(type, filename, ...args) {
     if (uni.__log__) {
       uni.__log__(type, filename, ...args);
@@ -231,7 +231,7 @@ if (uni.restoreGlobal) {
       console[type].apply(console, [...args, filename]);
     }
   }
-  const _sfc_main$1 = {
+  const _sfc_main$3 = {
     data() {
       return {
         url: "https://cas.whu.edu.cn/authserver/login?service=http%3A%2F%2Fehall.whu.edu.cn%2Flogin%3Fservice%3Dhttp%3A%2F%2Fehall.whu.edu.cn%2Fnew%2Findex.html",
@@ -262,17 +262,39 @@ if (uni.restoreGlobal) {
     },
     methods: {}
   };
-  function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createElementVNode("web-view", { src: $data.url }, null, 8, ["src"])
     ]);
   }
-  const PagesWebviewWebview = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "D:/Uniapp/luoying/pages/webview/webview.vue"]]);
+  const PagesWebviewWebview = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__file", "D:/Uniapp/luoying/pages/webview/webview.vue"]]);
+  const _sfc_main$2 = {
+    data() {
+      return {};
+    },
+    methods: {}
+  };
+  function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("view");
+  }
+  const PagesXiaoxiXiaoxi = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__file", "D:/Uniapp/luoying/pages/xiaoxi/xiaoxi.vue"]]);
+  const _sfc_main$1 = {
+    data() {
+      return {};
+    },
+    methods: {}
+  };
+  function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("view");
+  }
+  const PagesWodeWode = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "D:/Uniapp/luoying/pages/wode/wode.vue"]]);
   __definePage("pages/index/index", PagesIndexIndex);
   __definePage("pages/shouye/shouye", PagesShouyeShouye);
   __definePage("pages/faxian/faxian", PagesFaxianFaxian);
   __definePage("pages/denglu/denglu", PagesDengluDenglu);
   __definePage("pages/webview/webview", PagesWebviewWebview);
+  __definePage("pages/xiaoxi/xiaoxi", PagesXiaoxiXiaoxi);
+  __definePage("pages/wode/wode", PagesWodeWode);
   const _sfc_main = {
     onLaunch: function() {
       formatAppLog("log", "at App.vue:4", "App Launch");

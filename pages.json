@@ -11,7 +11,8 @@
 			"path" : "pages/shouye/shouye",
 			"style" : 
 			{
-				"navigationBarTitleText" : ""
+				"navigationBarTitleText" : "",
+				"navigationStyle": "custom"
 			}
 		},
 		{
@@ -35,44 +36,58 @@
 			{
 				"navigationBarTitleText" : "智慧珞珈验证"
 			}
+		},
+		{
+			"path" : "pages/xiaoxi/xiaoxi",
+			"style" : 
+			{
+				"navigationBarTitleText" : ""
+			}
+		},
+		{
+			"path" : "pages/wode/wode",
+			"style" : 
+			{
+				"navigationBarTitleText" : ""
+			}
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"backgroundColor": "#ffffff"
 	},
 	"uniIdRouter": {},
 	 "tabBar": {
 	    "color": "#7A7E83",
-	    "selectedColor": "#3cc51f",
+	    "selectedColor": "#7A7E83",
 	    "backgroundColor": "#ffffff",
-	    "borderStyle": "black",
+	    "borderStyle": "white",
 	    "list": [
 	      {
 	        "pagePath": "pages/shouye/shouye",
 	        "text": "首页",
-	        "iconPath": "static/icon_home.png",
-	        "selectedIconPath": "static/icon_home_selected.png"
+	        "iconPath": "static/tabbar/shouye.png",
+	        "selectedIconPath": "static/tabbar/shouyeSelected.png"
 	      },
 	      {
 	        "pagePath": "pages/faxian/faxian",
 	        "text": "发现",
-	        "iconPath": "static/icon_contact.png",
-	        "selectedIconPath": "static/icon_contact_selected.png"
+	        "iconPath": "static/tabbar/faxian.png",
+	        "selectedIconPath": "static/tabbar/faxianSelected.png"
 	      },
 	      {
-	        "pagePath": "pages/about/about",
+	        "pagePath": "pages/xiaoxi/xiaoxi",
 	        "text": "消息",
-	        "iconPath": "static/icon_about.png",
-	        "selectedIconPath": "static/icon_about_selected.png"
+	        "iconPath": "static/tabbar/xiaoxi.png",
+	        "selectedIconPath": "static/tabbar/xiaoxiSelected.png"
 	      },
 		  {
-		    "pagePath": "pages/about/about",
+		    "pagePath": "pages/wode/wode",
 		    "text": "我的",
-		    "iconPath": "static/icon_about.png",
-		    "selectedIconPath": "static/icon_about_selected.png"
+		    "iconPath": "static/tabbar/wode.png",
+		    "selectedIconPath": "static/tabbar/wodeSelected.png"
 		  }
 	    ]
 	  }

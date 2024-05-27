@@ -1,8 +1,6 @@
 <template>
 	<view>
-		<view class="title">
-			首页
-		</view>
+		
 	</view>
 </template>
 
@@ -20,9 +18,5 @@
 </script>
 
 <style>
-.title{
-	font-size: 100rpx;
-	font-family: 'siyuanheiti';
-	margin-top: 200rpx;
-}
+
 </style>
