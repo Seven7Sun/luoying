@@ -11,8 +11,8 @@
 			"path" : "pages/shouye/shouye",
 			"style" : 
 			{
-				"navigationBarTitleText" : "",
-				"navigationStyle": "custom"
+				"navigationBarTitleText" : "首页"
+				// "navigationStyle": "custom"
 			}
 		},
 		{

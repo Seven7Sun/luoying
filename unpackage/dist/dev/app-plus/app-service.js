@@ -100,8 +100,29 @@ if (uni.restoreGlobal) {
     methods: {}
   };
   function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock("view", null, [
-      vue.createElementVNode("view", { class: "title" }, " 首页 ")
+    return vue.openBlock(), vue.createElementBlock("view", { class: "content" }, [
+      vue.createElementVNode("view", { class: "module" }, [
+        vue.createElementVNode("image", {
+          src: "/static/shouye/schdule.png",
+          mode: "widthFix",
+          class: "ima"
+        }),
+        vue.createElementVNode("view", { class: "briefInstruction" }, [
+          vue.createElementVNode("view", { class: "title" }, " 今日课程： "),
+          vue.createElementVNode("view", { class: "Instruct" }, " 9.-11. 操作系统 2.-4. 乒乓球 ")
+        ])
+      ]),
+      vue.createElementVNode("view", { class: "module" }, [
+        vue.createElementVNode("image", {
+          src: "/static/shouye/money.png",
+          mode: "widthFix",
+          class: "ima"
+        }),
+        vue.createElementVNode("view", { class: "briefInstruction" }, [
+          vue.createElementVNode("view", { class: "title" }, " 校园卡余额： blabla钱 "),
+          vue.createElementVNode("view", { class: "Instruct" }, " 消费记录：blabla ")
+        ])
+      ])
     ]);
   }
   const PagesShouyeShouye = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__file", "D:/Uniapp/luoying/pages/shouye/shouye.vue"]]);
