@@ -7,7 +7,7 @@
 					今日课程：
 				</view>
 				<view class="Instruct">
-					9.-11. 操作系统 2.-4. 乒乓球
+					9点-11点 操作系统 2点-4点 乒乓球
 				</view>
 			</view>
 		</view>
@@ -26,6 +26,7 @@
 </template>
 
 <script>
+	
 	export default {
 		data() {
 			return {
@@ -46,25 +47,27 @@
 		justify-content: center;
 	}
 
-	.module{
+	.module {
 		margin-top: 30rpx;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
-		background-color:rgb(239,239,239) ;
+		background-color: rgb(239, 239, 239);
 		width: 100%;
-		padding:10rpx;
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影 */
-		border-radius: 8px; /* 圆角 */
+		padding: 10rpx;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+		/* 添加阴影 */
+		border-radius: 8px;
+		/* 圆角 */
 	}
-	
-	.ima{
-		width:50rpx;
+
+	.ima {
+		width: 50rpx;
 		margin-right: 30rpx;
 		margin-left: 40rpx;
 	}
-	
-	.title{
+
+	.title {
 		font-size: 50rpx;
 		font-weight: bold;
 	}

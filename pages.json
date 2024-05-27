@@ -50,6 +50,13 @@
 			{
 				"navigationBarTitleText" : ""
 			}
+		},
+		{
+			"path" : "pages/fabu/fabu",
+			"style" : 
+			{
+				"navigationBarTitleText" : "发布你的内容吧！"
+			}
 		}
 	],
 	"globalStyle": {
@@ -73,10 +80,16 @@
 	      },
 	      {
 	        "pagePath": "pages/faxian/faxian",
-	        "text": "发现",
+	        "text": "论坛",
 	        "iconPath": "static/tabbar/faxian.png",
 	        "selectedIconPath": "static/tabbar/faxianSelected.png"
 	      },
+		  {
+			  "pagePath": "pages/fabu/fabu",
+			  "text": "发布",
+			  "iconPath": "static/tabbar/plus.png"
+			  
+		  },
 	      {
 	        "pagePath": "pages/xiaoxi/xiaoxi",
 	        "text": "消息",
