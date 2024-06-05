@@ -315,22 +315,76 @@ if (uni.restoreGlobal) {
         selectedTab: "post",
         content: "",
         isMarkdown: false,
-        tags: []
+        tags: [],
+        imageSrc: ""
       };
     },
-    methods: {}
+    methods: {
+      selectTab(tab) {
+        this.selectedTab = tab;
+      },
+      addTag() {
+      },
+      toggleMarkdown(event) {
+        this.isMarkdown = event.detail.value;
+      },
+      saveDraft() {
+      },
+      publish() {
+      },
+      chooseImage() {
+        uni.chooseImage({
+          count: 1,
+          sizeType: ["original", "compressed"],
+          sourceType: ["album"],
+          success: (res) => {
+            this.imageSrc = res.tempFilePaths[0];
+            this.uploadImage(res.tempFilePaths[0]);
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/fabu/fabu.vue:74", "选择图片失败：", err);
+          }
+        });
+      },
+      uploadImage(filePath) {
+        uni.uploadFile({
+          url: "https://your-upload-server.com/upload",
+          // 替换为实际的上传服务器地址
+          filePath,
+          name: "file",
+          success: (uploadFileRes) => {
+            formatAppLog("log", "at pages/fabu/fabu.vue:84", "上传成功：", uploadFileRes);
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/fabu/fabu.vue:88", "上传失败：", err);
+          }
+        });
+      }
+    }
   };
   function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createElementVNode("view", { class: "top-nav" }, [
-        vue.createElementVNode("view", {
-          class: "nav-item",
-          onClick: _cache[0] || (_cache[0] = ($event) => _ctx.selectTab("post"))
-        }, "发帖"),
-        vue.createElementVNode("view", {
-          class: "nav-item",
-          onClick: _cache[1] || (_cache[1] = ($event) => _ctx.selectTab("comment"))
-        }, "跟帖")
+        vue.createElementVNode(
+          "view",
+          {
+            class: vue.normalizeClass(["nav-item", { "selected": $data.selectedTab === "post" }]),
+            onClick: _cache[0] || (_cache[0] = ($event) => $options.selectTab("post"))
+          },
+          "发帖",
+          2
+          /* CLASS */
+        ),
+        vue.createElementVNode(
+          "view",
+          {
+            class: vue.normalizeClass(["nav-item", { "selected": $data.selectedTab === "comment" }]),
+            onClick: _cache[1] || (_cache[1] = ($event) => $options.selectTab("comment"))
+          },
+          "跟帖 ",
+          2
+          /* CLASS */
+        )
       ]),
       vue.createElementVNode("view", { class: "content" }, [
         vue.createElementVNode("view", { class: "txtouter" }, [
@@ -348,31 +402,54 @@ if (uni.restoreGlobal) {
             [vue.vModelText, $data.content]
           ])
         ]),
-        vue.createElementVNode("view", {
-          class: "add-section",
-          onClick: _cache[3] || (_cache[3] = (...args) => _ctx.addTag && _ctx.addTag(...args))
-        }, [
-          vue.createElementVNode("image", {
-            src: "/static/add.png",
-            class: "add-icon"
-          }),
-          vue.createElementVNode("text", null, "# 添加标签：")
+        vue.createElementVNode("view", { class: "uploadImage" }, [
+          vue.createElementVNode("button", {
+            onClick: _cache[3] || (_cache[3] = (...args) => $options.chooseImage && $options.chooseImage(...args))
+          }, "选择图片"),
+          $data.imageSrc ? (vue.openBlock(), vue.createElementBlock("image", {
+            key: 0,
+            src: $data.imageSrc,
+            class: "uploaded-image"
+          }, null, 8, ["src"])) : vue.createCommentVNode("v-if", true)
         ]),
+        $data.selectedTab === "post" ? (vue.openBlock(), vue.createElementBlock("view", {
+          key: 0,
+          class: "add-section",
+          onClick: _cache[4] || (_cache[4] = (...args) => $options.addTag && $options.addTag(...args))
+        }, [
+          vue.createElementVNode("text", null, "# 添加标签："),
+          vue.createElementVNode("image", {
+            src: "/static/fabu/add.png",
+            mode: "heightFix",
+            class: "add-icon"
+          })
+        ])) : vue.createCommentVNode("v-if", true),
+        $data.selectedTab === "comment" ? (vue.openBlock(), vue.createElementBlock("view", {
+          key: 1,
+          class: "tiezinumber"
+        }, [
+          vue.createElementVNode("text", null, "@："),
+          vue.createElementVNode("image", {
+            src: "/static/fabu/add.png",
+            mode: "heightFix",
+            class: "add-icon"
+          })
+        ])) : vue.createCommentVNode("v-if", true),
         vue.createElementVNode("view", { class: "markdown-toggle" }, [
           vue.createElementVNode("text", null, "markdown模式"),
           vue.createElementVNode("switch", {
             checked: $data.isMarkdown,
-            onChange: _cache[4] || (_cache[4] = (...args) => _ctx.toggleMarkdown && _ctx.toggleMarkdown(...args))
+            onChange: _cache[5] || (_cache[5] = (...args) => $options.toggleMarkdown && $options.toggleMarkdown(...args))
           }, null, 40, ["checked"])
         ]),
         vue.createElementVNode("view", { class: "button-section" }, [
           vue.createElementVNode("button", {
             class: "save-draft-button",
-            onClick: _cache[5] || (_cache[5] = (...args) => _ctx.saveDraft && _ctx.saveDraft(...args))
+            onClick: _cache[6] || (_cache[6] = (...args) => $options.saveDraft && $options.saveDraft(...args))
           }, "保存草稿"),
           vue.createElementVNode("button", {
             class: "publish-button",
-            onClick: _cache[6] || (_cache[6] = (...args) => _ctx.publish && _ctx.publish(...args))
+            onClick: _cache[7] || (_cache[7] = (...args) => $options.publish && $options.publish(...args))
           }, "发布")
         ])
       ])

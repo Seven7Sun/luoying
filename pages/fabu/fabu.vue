@@ -1,17 +1,27 @@
 <template>
 	<view class="container">
 		<view class="top-nav">
-			<view class="nav-item" @click="selectTab('post')">发帖</view>
-			<view class="nav-item" @click="selectTab('comment')">跟帖</view>
+			<view class="nav-item" :class="{ 'selected': selectedTab === 'post' }" @tap="selectTab('post')">发帖</view>
+			<view class="nav-item" :class="{ 'selected': selectedTab === 'comment' }" @tap="selectTab('comment')">跟帖
+			</view>
 		</view>
 		<view class="content">
 			<view class="txtouter">
 				<textarea class="textarea" v-model="content" placeholder="说些什么吧..."></textarea>
 			</view>
-			<view class="add-section" @click="addTag">
-				<image src="../../static/add.png" class="add-icon"></image>
-				<text># 添加标签：</text>
+			<view class="uploadImage">
+				<button @tap="chooseImage">选择图片</button>
+				<image v-if="imageSrc" :src="imageSrc" class="uploaded-image"></image>
 			</view>
+			<view class="add-section" v-if="selectedTab==='post'" @click="addTag">
+				<text># 添加标签：</text>
+				<image src="../../static/fabu/add.png" mode="heightFix" class="add-icon"></image>
+			</view>
+			<view class="tiezinumber" v-if="selectedTab==='comment'">
+				<text>@：</text>
+				<image src="../../static/fabu/add.png" mode="heightFix" class="add-icon"></image>
+			</view>
+
 			<view class="markdown-toggle">
 				<text>markdown模式</text>
 				<switch :checked="isMarkdown" @change="toggleMarkdown"></switch>
@@ -31,11 +41,54 @@
 				selectedTab: 'post',
 				content: '',
 				isMarkdown: false,
-				tags: []
+				tags: [],
+				imageSrc: ''
 			}
 		},
 		methods: {
-
+			selectTab(tab) {
+				this.selectedTab = tab;
+			},
+			addTag() {
+				// 添加标签的逻辑
+			},
+			toggleMarkdown(event) {
+				this.isMarkdown = event.detail.value;
+			},
+			saveDraft() {
+				// 保存草稿的逻辑
+			},
+			publish() {
+				// 发布的逻辑
+			},
+			chooseImage() {
+				uni.chooseImage({
+					count: 1,
+					sizeType: ['original', 'compressed'],
+					sourceType: ['album'],
+					success: (res) => {
+						this.imageSrc = res.tempFilePaths[0];
+						this.uploadImage(res.tempFilePaths[0]);
+					},
+					fail: (err) => {
+						console.error("选择图片失败：", err);
+					}
+				});
+			},
+			uploadImage(filePath) {
+				uni.uploadFile({
+					url: 'https://your-upload-server.com/upload', // 替换为实际的上传服务器地址
+					filePath: filePath,
+					name: 'file',
+					success: (uploadFileRes) => {
+						console.log("上传成功：", uploadFileRes);
+						// 可以在这里处理上传成功后的逻辑
+					},
+					fail: (err) => {
+						console.error("上传失败：", err);
+					}
+				});
+			}
 		}
 	}
 </script>
@@ -49,10 +102,13 @@
 	}
 
 	.top-nav {
+		font-size: 40rpx;
 		display: flex;
 		justify-content: space-around;
+		align-items: center;
 		background-color: #fff;
-		padding: 10px 0;
+		/* padding: 10px 0; */
+		height: 80rpx;
 		border-bottom: 1px solid #e5e5e5;
 	}
 
@@ -63,17 +119,23 @@
 		color: #333;
 	}
 
+	.nav-item.selected {
+		background-color: #dcdcdc;
+		/* height: 80rpx; */
+
+	}
+
 	.content {
 		flex: 1;
 		padding: 20px;
 	}
 
-	.txtouter{
+	.txtouter {
 		display: flex;
 		justify-content: center;
 		align-items: center;
 	}
-	
+
 	.textarea {
 		width: 100%;
 		height: 400rpx;
@@ -84,15 +146,23 @@
 	}
 
 	.add-section {
+		margin-top: 20rpx;
 		display: flex;
 		align-items: center;
-		margin-bottom: 20px;
+		margin-bottom: 20rpx;
 	}
 
 	.add-icon {
-		width: 40px;
-		height: 40px;
+		width: 40rpx;
+		height: 40rpx;
 		margin-right: 10px;
+	}
+
+	.tiezinumber {
+		margin-top: 20rpx;
+		display: flex;
+		align-items: center;
+		margin-bottom: 20rpx;
 	}
 
 	.markdown-toggle {
@@ -123,5 +193,17 @@
 	.publish-button {
 		background-color: #5bc0de;
 		color: #fff;
+	}
+
+	.uploadImage {
+		margin-bottom: 20px;
+	}
+
+	.uploaded-image {
+		width: 100px;
+		height: 100px;
+		margin-top: 10px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
 	}
 </style>

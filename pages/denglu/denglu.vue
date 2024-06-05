@@ -56,6 +56,7 @@
 		},
 		methods: {
 			toshouye() {
+				//
 				uni.switchTab({
 					url: '/pages/shouye/shouye'
 				});
