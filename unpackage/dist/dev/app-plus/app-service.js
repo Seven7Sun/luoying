@@ -686,7 +686,7 @@ if (uni.restoreGlobal) {
   function I(e2) {
     return e2 && "string" == typeof e2 ? JSON.parse(e2) : e2;
   }
-  const S = true, b = "app", A = I(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = b, T = I('{\n    "address": [\n        "127.0.0.1",\n        "192.168.255.1",\n        "192.168.133.1",\n        "10.135.19.183"\n    ],\n    "debugPort": 9001,\n    "initialLaunchType": "local",\n    "servePort": 7001,\n    "skipFiles": [\n        "<node_internals>/**",\n        "D:/HBuilderX/plugins/unicloud/**/*.js"\n    ]\n}\n'), C = I('[{"provider":"aliyun","spaceName":"trial-wdarlbo7lkpoy8ebe86","spaceId":"mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d","clientSecret":"4dS89HqPS4Vi8zObyOOS3w==","endpoint":"https://api.next.bspapp.com"}]') || [];
+  const S = true, b = "app", A = I(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = b, T = I('{\n    "address": [\n        "127.0.0.1",\n        "192.168.255.1",\n        "192.168.133.1",\n        "10.135.19.183"\n    ],\n    "debugPort": 9000,\n    "initialLaunchType": "local",\n    "servePort": 7000,\n    "skipFiles": [\n        "<node_internals>/**",\n        "D:/HBuilderX/plugins/unicloud/**/*.js"\n    ]\n}\n'), C = I('[{"provider":"aliyun","spaceName":"trial-wdarlbo7lkpoy8ebe86","spaceId":"mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d","clientSecret":"4dS89HqPS4Vi8zObyOOS3w==","endpoint":"https://api.next.bspapp.com"}]') || [];
   let O = "";
   try {
     O = "__UNI__40F4800";
@@ -3197,14 +3197,33 @@ ${i3}
   const _sfc_main$3 = {
     data() {
       return {
-        userInfo: {
-          username: "John Doe",
-          avatar: "https://example.com/avatar.jpg",
-          email: "johndoe@example.com"
-        }
+        userSelf: []
       };
     },
+    onLoad() {
+      this.getSelf();
+    },
     methods: {
+      async getSelf() {
+        try {
+          const res = await Ws.callFunction({
+            name: "getUserSelf"
+          });
+          if (res.result.code === 0) {
+            this.userSelf = res.result.data;
+          } else {
+            uni.showToast({
+              title: "Failed to load user information",
+              icon: "none"
+            });
+          }
+        } catch (err) {
+          uni.showToast({
+            title: `Error: ${err.message}`,
+            icon: "none"
+          });
+        }
+      },
       editProfile() {
       },
       changePassword() {
@@ -3228,24 +3247,18 @@ ${i3}
       vue.createElementVNode("div", { class: "user-info" }, [
         vue.createElementVNode("img", {
           class: "avatar",
-          src: $data.userInfo.avatar,
+          src: $data.userSelf.avatar,
           alt: "Avatar"
         }, null, 8, ["src"]),
         vue.createElementVNode("div", { class: "user-details" }, [
           vue.createElementVNode(
             "h2",
             null,
-            vue.toDisplayString($data.userInfo.username),
+            vue.toDisplayString($data.userSelf.name),
             1
             /* TEXT */
           ),
-          vue.createElementVNode(
-            "p",
-            null,
-            vue.toDisplayString($data.userInfo.email),
-            1
-            /* TEXT */
-          ),
+          vue.createCommentVNode(" <p>{{ userSelf.email }}</p> "),
           vue.createElementVNode("button", {
             onClick: _cache[0] || (_cache[0] = (...args) => $options.editProfile && $options.editProfile(...args))
           }, "编辑个人资料")
@@ -3312,7 +3325,7 @@ ${i3}
         content: "",
         isMarkdown: false,
         tags: [],
-        imageSrc: "",
+        imageSrcList: [],
         isTagModalVisible: false,
         searchQuery: "",
         recommendedTags: [
@@ -3321,7 +3334,8 @@ ${i3}
           { id: 3, name: "乘风破浪！", icon: "path/to/icon3.png" },
           { id: 4, name: "数学", icon: "path/to/icon4.png" }
         ],
-        newTag: ""
+        newTag: "",
+        id: ""
       };
     },
     methods: {
@@ -3335,15 +3349,23 @@ ${i3}
         this.isTagModalVisible = false;
       },
       addTag(tag) {
-        this.tags.push(tag);
+        if (!this.tags.some((t2) => t2.id === tag.id)) {
+          this.tags.push(tag);
+        } else {
+          formatAppLog("log", "at pages/fabu/fabu.vue:121", "标签已存在");
+        }
       },
       removeTag(tag) {
         this.tags = this.tags.filter((t2) => t2.id !== tag.id);
       },
       createTag() {
         if (this.newTag.trim()) {
-          this.tags.push({ id: Date.now(), name: this.newTag });
-          this.newTag = "";
+          if (!this.tags.some((t2) => t2.name === this.newTag.trim())) {
+            this.tags.push({ id: Date.now(), name: this.newTag.trim() });
+            this.newTag = "";
+          } else {
+            formatAppLog("log", "at pages/fabu/fabu.vue:133", "标签已存在");
+          }
         }
       },
       toggleMarkdown(event) {
@@ -3355,30 +3377,33 @@ ${i3}
       },
       chooseImage() {
         uni.chooseImage({
-          count: 1,
+          count: 9,
+          // 可选最多9张图片
           sizeType: ["original", "compressed"],
           sourceType: ["album"],
           success: (res) => {
-            this.imageSrc = res.tempFilePaths[0];
-            this.uploadImage(res.tempFilePaths[0]);
+            this.imageSrcList.push(...res.tempFilePaths);
+            this.uploadImages(res.tempFilePaths);
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/fabu/fabu.vue:140", "选择图片失败：", err);
+            formatAppLog("error", "at pages/fabu/fabu.vue:156", "选择图片失败：", err);
           }
         });
       },
-      uploadImage(filePath) {
-        uni.uploadFile({
-          url: "https://your-upload-server.com/upload",
-          // 替换为实际的上传服务器地址
-          filePath,
-          name: "file",
-          success: (uploadFileRes) => {
-            formatAppLog("log", "at pages/fabu/fabu.vue:150", "上传成功：", uploadFileRes);
-          },
-          fail: (err) => {
-            formatAppLog("error", "at pages/fabu/fabu.vue:154", "上传失败：", err);
-          }
+      uploadImages(filePaths) {
+        filePaths.forEach((filePath) => {
+          uni.uploadFile({
+            url: "https://your-upload-server.com/upload",
+            // 替换为实际的上传服务器地址
+            filePath,
+            name: "file",
+            success: (uploadFileRes) => {
+              formatAppLog("log", "at pages/fabu/fabu.vue:167", "上传成功：", uploadFileRes);
+            },
+            fail: (err) => {
+              formatAppLog("error", "at pages/fabu/fabu.vue:171", "上传失败：", err);
+            }
+          });
         });
       }
     }
@@ -3402,7 +3427,7 @@ ${i3}
             class: vue.normalizeClass(["nav-item", { "selected": $data.selectedTab === "comment" }]),
             onClick: _cache[1] || (_cache[1] = ($event) => $options.selectTab("comment"))
           },
-          "跟帖 ",
+          "跟帖",
           2
           /* CLASS */
         )
@@ -3427,11 +3452,21 @@ ${i3}
           vue.createElementVNode("button", {
             onClick: _cache[3] || (_cache[3] = (...args) => $options.chooseImage && $options.chooseImage(...args))
           }, "选择图片"),
-          $data.imageSrc ? (vue.openBlock(), vue.createElementBlock("image", {
-            key: 0,
-            src: $data.imageSrc,
-            class: "uploaded-image"
-          }, null, 8, ["src"])) : vue.createCommentVNode("v-if", true)
+          vue.createElementVNode("view", { class: "uploaded-images" }, [
+            (vue.openBlock(true), vue.createElementBlock(
+              vue.Fragment,
+              null,
+              vue.renderList($data.imageSrcList, (image, index) => {
+                return vue.openBlock(), vue.createElementBlock("image", {
+                  key: index,
+                  src: image,
+                  class: "uploaded-image"
+                }, null, 8, ["src"]);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])
         ]),
         $data.selectedTab === "post" ? (vue.openBlock(), vue.createElementBlock("view", {
           key: 0,
@@ -3443,7 +3478,7 @@ ${i3}
             null,
             vue.renderList($data.tags, (tag) => {
               return vue.openBlock(), vue.createElementBlock("view", {
-                class: "tag",
+                class: "tag tagname",
                 key: tag.id
               }, [
                 vue.createElementVNode(
@@ -3453,9 +3488,10 @@ ${i3}
                   1
                   /* TEXT */
                 ),
-                vue.createElementVNode("button", {
+                vue.createElementVNode("view", {
+                  class: "deletett",
                   onClick: ($event) => $options.removeTag(tag)
-                }, "删除", 8, ["onClick"])
+                }, " × ", 8, ["onClick"])
               ]);
             }),
             128
@@ -3473,27 +3509,36 @@ ${i3}
           class: "tiezinumber"
         }, [
           vue.createElementVNode("text", null, "@："),
-          vue.createElementVNode("image", {
-            src: "/static/fabu/add.png",
-            mode: "heightFix",
-            class: "add-icon"
-          })
+          vue.withDirectives(vue.createElementVNode(
+            "input",
+            {
+              style: { "border": "1px solid #ccc", "border-radius": "20rpx", "margin-top": "20rpx" },
+              type: "text",
+              "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $data.id = $event),
+              placeholder: "填入帖子id"
+            },
+            null,
+            512
+            /* NEED_PATCH */
+          ), [
+            [vue.vModelText, $data.id]
+          ])
         ])) : vue.createCommentVNode("v-if", true),
         vue.createElementVNode("view", { class: "markdown-toggle" }, [
           vue.createElementVNode("text", null, "markdown模式"),
           vue.createElementVNode("switch", {
             checked: $data.isMarkdown,
-            onChange: _cache[5] || (_cache[5] = (...args) => $options.toggleMarkdown && $options.toggleMarkdown(...args))
+            onChange: _cache[6] || (_cache[6] = (...args) => $options.toggleMarkdown && $options.toggleMarkdown(...args))
           }, null, 40, ["checked"])
         ]),
         vue.createElementVNode("view", { class: "button-section" }, [
           vue.createElementVNode("button", {
             class: "save-draft-button",
-            onClick: _cache[6] || (_cache[6] = (...args) => $options.saveDraft && $options.saveDraft(...args))
+            onClick: _cache[7] || (_cache[7] = (...args) => $options.saveDraft && $options.saveDraft(...args))
           }, "保存草稿"),
           vue.createElementVNode("button", {
             class: "publish-button",
-            onClick: _cache[7] || (_cache[7] = (...args) => $options.publish && $options.publish(...args))
+            onClick: _cache[8] || (_cache[8] = (...args) => $options.publish && $options.publish(...args))
           }, "发布")
         ])
       ]),
@@ -3505,7 +3550,7 @@ ${i3}
           vue.createElementVNode("view", { class: "modal-header" }, [
             vue.createElementVNode("text", { style: { "margin-left": "20rpx" } }, "#添加标签"),
             vue.createElementVNode("button", {
-              onClick: _cache[8] || (_cache[8] = (...args) => $options.hideTagModal && $options.hideTagModal(...args)),
+              onClick: _cache[9] || (_cache[9] = (...args) => $options.hideTagModal && $options.hideTagModal(...args)),
               style: { "margin-right": "10rpx" }
             }, "完成")
           ]),
@@ -3515,7 +3560,7 @@ ${i3}
                 "input",
                 {
                   type: "text",
-                  "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => $data.searchQuery = $event),
+                  "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => $data.searchQuery = $event),
                   placeholder: "搜索话题"
                 },
                 null,
@@ -3538,12 +3583,12 @@ ${i3}
                   }, [
                     vue.createElementVNode(
                       "text",
-                      null,
+                      { class: "tagname" },
                       "#" + vue.toDisplayString(tag.name),
                       1
                       /* TEXT */
                     ),
-                    vue.createElementVNode("view", { class: "" }, " +添加标签 ")
+                    vue.createElementVNode("view", { class: "addtt" }, " +添加标签 ")
                   ], 8, ["onClick"]);
                 }),
                 128
@@ -3558,7 +3603,7 @@ ${i3}
                   {
                     style: { "border": "1px solid #ccc", "border-radius": "4px", "margin-top": "20rpx" },
                     type: "text",
-                    "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => $data.newTag = $event),
+                    "onUpdate:modelValue": _cache[11] || (_cache[11] = ($event) => $data.newTag = $event),
                     placeholder: "一个新的标签在此诞生..."
                   },
                   null,
@@ -3568,7 +3613,7 @@ ${i3}
                   [vue.vModelText, $data.newTag]
                 ]),
                 vue.createElementVNode("view", {
-                  onClick: _cache[11] || (_cache[11] = (...args) => $options.createTag && $options.createTag(...args)),
+                  onClick: _cache[12] || (_cache[12] = (...args) => $options.createTag && $options.createTag(...args)),
                   style: { "white-space": "nowrap", "height": "50rpx", "margin-top": "20rpx", "border": "1px solid #ccc", "border-radius": "4px", "background-color": "#ccc", "margin-left": "15rpx", "padding-left": "10rpx", "padding-right": "10rpx" }
                 }, "创建")
               ])
@@ -3580,7 +3625,7 @@ ${i3}
                 null,
                 vue.renderList($data.tags, (tag) => {
                   return vue.openBlock(), vue.createElementBlock("view", {
-                    class: "tag",
+                    class: "tag tagname",
                     key: tag.id
                   }, [
                     vue.createElementVNode(
@@ -3590,9 +3635,10 @@ ${i3}
                       1
                       /* TEXT */
                     ),
-                    vue.createElementVNode("button", {
+                    vue.createElementVNode("view", {
+                      class: "deletett",
                       onClick: ($event) => $options.removeTag(tag)
-                    }, "删除", 8, ["onClick"])
+                    }, " × ", 8, ["onClick"])
                   ]);
                 }),
                 128
