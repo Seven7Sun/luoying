@@ -1,11 +1,11 @@
 <template>
   <div class="my-page">
-
+  
     <div class="user-info">
-      <img class="avatar" :src="userInfo.avatar" alt="Avatar">
+      <img class="avatar" :src="userSelf.avatar" alt="Avatar">
       <div class="user-details">
-        <h2>{{ userInfo.username }}</h2>
-        <p>{{ userInfo.email }}</p>
+        <h2>{{ userSelf.name }}</h2>
+        <!-- <p>{{ userSelf.email }}</p> -->
         <button @click="editProfile">编辑个人资料</button>
       </div>
     </div>
@@ -47,14 +47,33 @@
 export default {
   data() {
     return {
-      userInfo: {
-        username: "John Doe",
-        avatar: "https://example.com/avatar.jpg",
-        email: "johndoe@example.com"
-      }
+      userSelf:[]
     };
   },
+  onLoad() {
+	this.getSelf(); 
+  },
   methods: {
+	async getSelf() {
+	  try {
+	    const res = await uniCloud.callFunction({
+	      name: 'getUserSelf'
+	    });
+	    if (res.result.code === 0) {
+	      this.userSelf = res.result.data;
+	    } else {
+	      uni.showToast({
+	        title: 'Failed to load user information',
+	        icon: 'none'
+	      });
+	    }
+	  } catch (err) {
+	    uni.showToast({
+	      title: `Error: ${err.message}`,
+	      icon: 'none'
+	    });
+	  }
+	},
     editProfile() {
       // 导航到编辑个人资料页面
     },
