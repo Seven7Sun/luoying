@@ -686,7 +686,7 @@ if (uni.restoreGlobal) {
   function I(e2) {
     return e2 && "string" == typeof e2 ? JSON.parse(e2) : e2;
   }
-  const S = true, b = "app", A = I(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = b, T = I('{\n    "address": [\n        "127.0.0.1",\n        "192.168.255.1",\n        "192.168.133.1",\n        "10.135.19.183"\n    ],\n    "debugPort": 9002,\n    "initialLaunchType": "local",\n    "servePort": 7002,\n    "skipFiles": [\n        "<node_internals>/**",\n        "D:/HBuilderX/plugins/unicloud/**/*.js"\n    ]\n}\n'), C = I('[{"provider":"aliyun","spaceName":"trial-wdarlbo7lkpoy8ebe86","spaceId":"mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d","clientSecret":"4dS89HqPS4Vi8zObyOOS3w==","endpoint":"https://api.next.bspapp.com"}]') || [];
+  const S = true, b = "app", A = I(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = b, T = I('{\n    "address": [\n        "127.0.0.1",\n        "192.168.255.1",\n        "192.168.133.1",\n        "10.135.19.183"\n    ],\n    "debugPort": 9001,\n    "initialLaunchType": "local",\n    "servePort": 7001,\n    "skipFiles": [\n        "<node_internals>/**",\n        "D:/HBuilderX/plugins/unicloud/**/*.js"\n    ]\n}\n'), C = I('[{"provider":"aliyun","spaceName":"trial-wdarlbo7lkpoy8ebe86","spaceId":"mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d","clientSecret":"4dS89HqPS4Vi8zObyOOS3w==","endpoint":"https://api.next.bspapp.com"}]') || [];
   let O = "";
   try {
     O = "__UNI__40F4800";
@@ -3363,7 +3363,7 @@ ${i3}
             this.uploadImage(res.tempFilePaths[0]);
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/fabu/fabu.vue:135", "选择图片失败：", err);
+            formatAppLog("error", "at pages/fabu/fabu.vue:140", "选择图片失败：", err);
           }
         });
       },
@@ -3374,10 +3374,10 @@ ${i3}
           filePath,
           name: "file",
           success: (uploadFileRes) => {
-            formatAppLog("log", "at pages/fabu/fabu.vue:145", "上传成功：", uploadFileRes);
+            formatAppLog("log", "at pages/fabu/fabu.vue:150", "上传成功：", uploadFileRes);
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/fabu/fabu.vue:149", "上传失败：", err);
+            formatAppLog("error", "at pages/fabu/fabu.vue:154", "上传失败：", err);
           }
         });
       }
@@ -3503,9 +3503,10 @@ ${i3}
       }, [
         vue.createElementVNode("view", { class: "modal-content" }, [
           vue.createElementVNode("view", { class: "modal-header" }, [
-            vue.createElementVNode("text", null, "添加标签"),
+            vue.createElementVNode("text", { style: { "margin-left": "20rpx" } }, "#添加标签"),
             vue.createElementVNode("button", {
-              onClick: _cache[8] || (_cache[8] = (...args) => $options.hideTagModal && $options.hideTagModal(...args))
+              onClick: _cache[8] || (_cache[8] = (...args) => $options.hideTagModal && $options.hideTagModal(...args)),
+              style: { "margin-right": "10rpx" }
             }, "完成")
           ]),
           vue.createElementVNode("view", { class: "modal-body" }, [
@@ -3525,7 +3526,7 @@ ${i3}
               ])
             ]),
             vue.createElementVNode("view", { class: "recommended-tags" }, [
-              vue.createElementVNode("text", null, "推荐标签"),
+              vue.createElementVNode("text", { style: { "font-weight": "bold" } }, "推荐标签"),
               (vue.openBlock(true), vue.createElementBlock(
                 vue.Fragment,
                 null,
@@ -3535,17 +3536,14 @@ ${i3}
                     key: tag.id,
                     onClick: ($event) => $options.addTag(tag)
                   }, [
-                    vue.createElementVNode("image", {
-                      src: tag.icon,
-                      class: "tag-icon"
-                    }, null, 8, ["src"]),
                     vue.createElementVNode(
                       "text",
                       null,
                       "#" + vue.toDisplayString(tag.name),
                       1
                       /* TEXT */
-                    )
+                    ),
+                    vue.createElementVNode("view", { class: "" }, " +添加标签 ")
                   ], 8, ["onClick"]);
                 }),
                 128
@@ -3553,23 +3551,27 @@ ${i3}
               ))
             ]),
             vue.createElementVNode("view", { class: "create-tag" }, [
-              vue.createElementVNode("text", null, "创建标签"),
-              vue.withDirectives(vue.createElementVNode(
-                "input",
-                {
-                  type: "text",
-                  "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => $data.newTag = $event),
-                  placeholder: "一个新的标签在此诞生..."
-                },
-                null,
-                512
-                /* NEED_PATCH */
-              ), [
-                [vue.vModelText, $data.newTag]
-              ]),
-              vue.createElementVNode("button", {
-                onClick: _cache[11] || (_cache[11] = (...args) => $options.createTag && $options.createTag(...args))
-              }, "创建")
+              vue.createElementVNode("text", { style: { "font-weight": "bold" } }, "创建标签"),
+              vue.createElementVNode("view", { class: "maketags" }, [
+                vue.withDirectives(vue.createElementVNode(
+                  "input",
+                  {
+                    style: { "border": "1px solid #ccc", "border-radius": "4px", "margin-top": "20rpx" },
+                    type: "text",
+                    "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => $data.newTag = $event),
+                    placeholder: "一个新的标签在此诞生..."
+                  },
+                  null,
+                  512
+                  /* NEED_PATCH */
+                ), [
+                  [vue.vModelText, $data.newTag]
+                ]),
+                vue.createElementVNode("view", {
+                  onClick: _cache[11] || (_cache[11] = (...args) => $options.createTag && $options.createTag(...args)),
+                  style: { "white-space": "nowrap", "height": "50rpx", "margin-top": "20rpx", "border": "1px solid #ccc", "border-radius": "4px", "background-color": "#ccc", "margin-left": "15rpx", "padding-left": "10rpx", "padding-right": "10rpx" }
+                }, "创建")
+              ])
             ]),
             vue.createElementVNode("view", { class: "added-tags" }, [
               vue.createElementVNode("text", null, "已添加标签"),

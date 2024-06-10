@@ -39,24 +39,29 @@
 		<view v-if="isTagModalVisible" class="modal">
 			<view class="modal-content">
 				<view class="modal-header">
-					<text>添加标签</text>
-					<button @tap="hideTagModal">完成</button>
+					<text style="margin-left: 20rpx;">#添加标签</text>
+					<button @tap="hideTagModal" style="margin-right: 10rpx;">完成</button>
 				</view>
 				<view class="modal-body">
 					<view class="search-bar">
 						<input type="text" v-model="searchQuery" placeholder="搜索话题" />
 					</view>
 					<view class="recommended-tags">
-						<text>推荐标签</text>
+						<text style="font-weight: bold;">推荐标签</text>
 						<view class="tag" v-for="tag in recommendedTags" :key="tag.id" @tap="addTag(tag)">
-							<image :src="tag.icon" class="tag-icon" />
 							<text>#{{ tag.name }}</text>
+							<view class="">
+								+添加标签
+							</view>
 						</view>
 					</view>
 					<view class="create-tag">
-						<text>创建标签</text>
-						<input type="text" v-model="newTag" placeholder="一个新的标签在此诞生..." />
-						<button @tap="createTag">创建</button>
+						<text style="font-weight: bold;">创建标签</text>
+						<view class="maketags">
+							<input style="border: 1px solid #ccc;border-radius: 4px;margin-top:20rpx;" type="text" v-model="newTag" placeholder="一个新的标签在此诞生..." />
+							<view @tap="createTag" style="white-space: nowrap;height: 50rpx;margin-top:20rpx;border: 1px solid #ccc;border-radius: 4px;background-color: #ccc;margin-left: 15rpx;padding-left: 10rpx;padding-right: 10rpx">创建</view>
+						</view>
+						
 					</view>
 					<view class="added-tags">
 						<text>已添加标签</text>
@@ -258,6 +263,10 @@
 
 	.uploadImage {
 		margin-bottom: 20px;
+		/* width:350rpx; */
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.uploaded-image {
@@ -269,11 +278,11 @@
 	}
 
 	.modal {
-		position: fixed;
+		position: absolute;
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: 100%;
+		/* height: 100%; */
 		background: rgba(0, 0, 0, 0.5);
 		display: flex;
 		justify-content: center;
@@ -287,6 +296,7 @@
 		border-radius: 8px;
 		/* flex-grow: 1; */
 		overflow: hidden;
+		margin-bottom: 200rpx;
 	}
 
 	.modal-header {
@@ -304,6 +314,8 @@
 
 	.search-bar {
 		margin-bottom: 10px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
 	}
 
 	.recommended-tags,
@@ -322,5 +334,10 @@
 		width: 30px;
 		height: 30px;
 		margin-right: 5px;
+	}
+	
+	.maketags{
+		display: flex;
+		width: 100%;
 	}
 </style>
