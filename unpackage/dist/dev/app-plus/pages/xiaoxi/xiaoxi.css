@@ -1,0 +1,44 @@
+
+.container {
+  padding-top: 0px;
+}
+.header {
+  padding: 10px;
+  text-align: center;
+}
+.title {
+  font-size: 20px;
+  font-weight: bold;
+}
+.message-list {
+  margin-top: 10px;
+}
+.message-item {
+  display: flex;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.content {
+  flex: 1;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+.name {
+  font-size: 16px;
+  font-weight: bold;
+}
+.time {
+  color: #999;
+}
+.text {
+  color: #666;
+}
