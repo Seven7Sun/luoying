@@ -11,7 +11,7 @@
           <text class="text">{{ message.content }}</text>
         </view>
       </view>
-    </view>
+    </view>//111
   </view>
 </template>
 

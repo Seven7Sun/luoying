@@ -3184,7 +3184,8 @@ ${i3}
           128
           /* KEYED_FRAGMENT */
         ))
-      ])
+      ]),
+      vue.createTextVNode("//111 ")
     ]);
   }
   const PagesXiaoxiXiaoxi = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__file", "D:/Uniapp/luoying/pages/xiaoxi/xiaoxi.vue"]]);
