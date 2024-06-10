@@ -37,6 +37,7 @@ export default {
       });
       if (res.result.code === 0) {
         this.messages = res.result.data;
+	
       } else {
         uni.showToast({
           title: 'Failed to load messages',
