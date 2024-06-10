@@ -103,12 +103,14 @@
 		background: rgba(0, 0, 0, 0.5);
 		display: flex;
 		justify-content: center;
-		align-items: center;
+		/* align-items: center; */
 }
 .modal-content {
+		margin-top: 3.125rem;
 		background: #fff;
 		width: 80%;
 		border-radius: 8px;
+		/* flex-grow: 1; */
 		overflow: hidden;
 }
 .modal-header {

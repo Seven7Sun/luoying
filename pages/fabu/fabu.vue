@@ -50,7 +50,7 @@
 						<text>推荐标签</text>
 						<view class="tag" v-for="tag in recommendedTags" :key="tag.id" @tap="addTag(tag)">
 							<image :src="tag.icon" class="tag-icon" />
-							<text>{{ tag.name }}</text>
+							<text>#{{ tag.name }}</text>
 						</view>
 					</view>
 					<view class="create-tag">
@@ -84,7 +84,7 @@
 				searchQuery: '',
 				recommendedTags: [
 					{ id: 1, name: '维护地球日！', icon: 'path/to/icon1.png' },
-					{ id: 2, name: '#1024程序员节！', icon: 'path/to/icon2.png' },
+					{ id: 2, name: '1024程序员节！', icon: 'path/to/icon2.png' },
 					{ id: 3, name: '乘风破浪！', icon: 'path/to/icon3.png' },
 					{ id: 4, name: '数学', icon: 'path/to/icon4.png' }
 				],
@@ -277,13 +277,15 @@
 		background: rgba(0, 0, 0, 0.5);
 		display: flex;
 		justify-content: center;
-		align-items: center;
+		/* align-items: center; */
 	}
 
 	.modal-content {
+		margin-top: 100rpx;
 		background: #fff;
 		width: 80%;
 		border-radius: 8px;
+		/* flex-grow: 1; */
 		overflow: hidden;
 	}
 

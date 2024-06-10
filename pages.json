@@ -41,14 +41,14 @@
 			"path" : "pages/xiaoxi/xiaoxi",
 			"style" : 
 			{
-				"navigationBarTitleText" : ""
+				"navigationBarTitleText" : "消息"
 			}
 		},
 		{
 			"path" : "pages/wode/wode",
 			"style" : 
 			{
-				"navigationBarTitleText" : ""
+				"navigationBarTitleText" : "个人中心"
 			}
 		},
 		{
@@ -56,6 +56,13 @@
 			"style" : 
 			{
 				"navigationBarTitleText" : "发布你的内容吧！"
+			}
+		},
+		{
+			"path" : "pages/chat/chat",
+			"style" : 
+			{
+				"navigationBarTitleText" : "聊天页面"
 			}
 		}
 	],

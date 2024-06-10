@@ -5,14 +5,14 @@
         <image :src="message.avatar" class="avatar"></image>
         <view class="content">
           <view class="header">
-			  //nihao
+			  
             <text class="name">{{ message.name }}</text>
             <text class="time">{{ formatTimeDifference(message.timestamp) }}</text>
           </view>
           <text class="text">{{ message.content }}</text>
         </view>
       </view>
-    </view>//111
+    </view>
   </view>
 </template>
 
