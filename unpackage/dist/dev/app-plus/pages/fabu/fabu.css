@@ -94,3 +94,49 @@
 		border: 1px solid #ccc;
 		border-radius: 4px;
 }
+.modal {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.5);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+}
+.modal-content {
+		background: #fff;
+		width: 80%;
+		border-radius: 8px;
+		overflow: hidden;
+}
+.modal-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 10px;
+		background: #f1f1f1;
+		border-bottom: 1px solid #ddd;
+}
+.modal-body {
+		padding: 10px;
+}
+.search-bar {
+		margin-bottom: 10px;
+}
+.recommended-tags,
+	.create-tag,
+	.added-tags {
+		margin-bottom: 10px;
+}
+.tag {
+		display: flex;
+		align-items: center;
+		margin-bottom: 5px;
+}
+.tag-icon {
+		width: 30px;
+		height: 30px;
+		margin-right: 5px;
+}

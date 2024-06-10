@@ -13,9 +13,13 @@
 				<button @tap="chooseImage">选择图片</button>
 				<image v-if="imageSrc" :src="imageSrc" class="uploaded-image"></image>
 			</view>
-			<view class="add-section" v-if="selectedTab==='post'" @click="addTag">
+			<view class="add-section" v-if="selectedTab==='post'">
 				<text># 添加标签：</text>
-				<image src="../../static/fabu/add.png" mode="heightFix" class="add-icon"></image>
+				<view class="tag" v-for="tag in tags" :key="tag.id">
+					<text>{{ tag.name }}</text>
+					<button @tap="removeTag(tag)">删除</button>
+				</view>
+				<image src="../../static/fabu/add.png" mode="heightFix" class="add-icon"  @tap="showTagModal"></image>
 			</view>
 			<view class="tiezinumber" v-if="selectedTab==='comment'">
 				<text>@：</text>
@@ -31,6 +35,39 @@
 				<button class="publish-button" @click="publish">发布</button>
 			</view>
 		</view>
+
+		<view v-if="isTagModalVisible" class="modal">
+			<view class="modal-content">
+				<view class="modal-header">
+					<text>添加标签</text>
+					<button @tap="hideTagModal">完成</button>
+				</view>
+				<view class="modal-body">
+					<view class="search-bar">
+						<input type="text" v-model="searchQuery" placeholder="搜索话题" />
+					</view>
+					<view class="recommended-tags">
+						<text>推荐标签</text>
+						<view class="tag" v-for="tag in recommendedTags" :key="tag.id" @tap="addTag(tag)">
+							<image :src="tag.icon" class="tag-icon" />
+							<text>{{ tag.name }}</text>
+						</view>
+					</view>
+					<view class="create-tag">
+						<text>创建标签</text>
+						<input type="text" v-model="newTag" placeholder="一个新的标签在此诞生..." />
+						<button @tap="createTag">创建</button>
+					</view>
+					<view class="added-tags">
+						<text>已添加标签</text>
+						<view class="tag" v-for="tag in tags" :key="tag.id">
+							<text>{{ tag.name }}</text>
+							<button @tap="removeTag(tag)">删除</button>
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -42,15 +79,39 @@
 				content: '',
 				isMarkdown: false,
 				tags: [],
-				imageSrc: ''
+				imageSrc: '',
+				isTagModalVisible: false,
+				searchQuery: '',
+				recommendedTags: [
+					{ id: 1, name: '维护地球日！', icon: 'path/to/icon1.png' },
+					{ id: 2, name: '#1024程序员节！', icon: 'path/to/icon2.png' },
+					{ id: 3, name: '乘风破浪！', icon: 'path/to/icon3.png' },
+					{ id: 4, name: '数学', icon: 'path/to/icon4.png' }
+				],
+				newTag: ''
 			}
 		},
 		methods: {
 			selectTab(tab) {
 				this.selectedTab = tab;
 			},
-			addTag() {
-				// 添加标签的逻辑
+			showTagModal() {
+				this.isTagModalVisible = true;
+			},
+			hideTagModal() {
+				this.isTagModalVisible = false;
+			},
+			addTag(tag) {
+				this.tags.push(tag);
+			},
+			removeTag(tag) {
+				this.tags = this.tags.filter(t => t.id !== tag.id);
+			},
+			createTag() {
+				if (this.newTag.trim()) {
+					this.tags.push({ id: Date.now(), name: this.newTag });
+					this.newTag = '';
+				}
 			},
 			toggleMarkdown(event) {
 				this.isMarkdown = event.detail.value;
@@ -205,5 +266,59 @@
 		margin-top: 10px;
 		border: 1px solid #ccc;
 		border-radius: 4px;
+	}
+
+	.modal {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.5);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.modal-content {
+		background: #fff;
+		width: 80%;
+		border-radius: 8px;
+		overflow: hidden;
+	}
+
+	.modal-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 10px;
+		background: #f1f1f1;
+		border-bottom: 1px solid #ddd;
+	}
+
+	.modal-body {
+		padding: 10px;
+	}
+
+	.search-bar {
+		margin-bottom: 10px;
+	}
+
+	.recommended-tags,
+	.create-tag,
+	.added-tags {
+		margin-bottom: 10px;
+	}
+
+	.tag {
+		display: flex;
+		align-items: center;
+		margin-bottom: 5px;
+	}
+
+	.tag-icon {
+		width: 30px;
+		height: 30px;
+		margin-right: 5px;
 	}
 </style>

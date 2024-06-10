@@ -316,14 +316,39 @@ if (uni.restoreGlobal) {
         content: "",
         isMarkdown: false,
         tags: [],
-        imageSrc: ""
+        imageSrc: "",
+        isTagModalVisible: false,
+        searchQuery: "",
+        recommendedTags: [
+          { id: 1, name: "维护地球日！", icon: "path/to/icon1.png" },
+          { id: 2, name: "#1024程序员节！", icon: "path/to/icon2.png" },
+          { id: 3, name: "乘风破浪！", icon: "path/to/icon3.png" },
+          { id: 4, name: "数学", icon: "path/to/icon4.png" }
+        ],
+        newTag: ""
       };
     },
     methods: {
       selectTab(tab) {
         this.selectedTab = tab;
       },
-      addTag() {
+      showTagModal() {
+        this.isTagModalVisible = true;
+      },
+      hideTagModal() {
+        this.isTagModalVisible = false;
+      },
+      addTag(tag) {
+        this.tags.push(tag);
+      },
+      removeTag(tag) {
+        this.tags = this.tags.filter((t) => t.id !== tag.id);
+      },
+      createTag() {
+        if (this.newTag.trim()) {
+          this.tags.push({ id: Date.now(), name: this.newTag });
+          this.newTag = "";
+        }
       },
       toggleMarkdown(event) {
         this.isMarkdown = event.detail.value;
@@ -342,7 +367,7 @@ if (uni.restoreGlobal) {
             this.uploadImage(res.tempFilePaths[0]);
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/fabu/fabu.vue:74", "选择图片失败：", err);
+            formatAppLog("error", "at pages/fabu/fabu.vue:135", "选择图片失败：", err);
           }
         });
       },
@@ -353,10 +378,10 @@ if (uni.restoreGlobal) {
           filePath,
           name: "file",
           success: (uploadFileRes) => {
-            formatAppLog("log", "at pages/fabu/fabu.vue:84", "上传成功：", uploadFileRes);
+            formatAppLog("log", "at pages/fabu/fabu.vue:145", "上传成功：", uploadFileRes);
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/fabu/fabu.vue:88", "上传失败：", err);
+            formatAppLog("error", "at pages/fabu/fabu.vue:149", "上传失败：", err);
           }
         });
       }
@@ -414,14 +439,37 @@ if (uni.restoreGlobal) {
         ]),
         $data.selectedTab === "post" ? (vue.openBlock(), vue.createElementBlock("view", {
           key: 0,
-          class: "add-section",
-          onClick: _cache[4] || (_cache[4] = (...args) => $options.addTag && $options.addTag(...args))
+          class: "add-section"
         }, [
           vue.createElementVNode("text", null, "# 添加标签："),
+          (vue.openBlock(true), vue.createElementBlock(
+            vue.Fragment,
+            null,
+            vue.renderList($data.tags, (tag) => {
+              return vue.openBlock(), vue.createElementBlock("view", {
+                class: "tag",
+                key: tag.id
+              }, [
+                vue.createElementVNode(
+                  "text",
+                  null,
+                  vue.toDisplayString(tag.name),
+                  1
+                  /* TEXT */
+                ),
+                vue.createElementVNode("button", {
+                  onClick: ($event) => $options.removeTag(tag)
+                }, "删除", 8, ["onClick"])
+              ]);
+            }),
+            128
+            /* KEYED_FRAGMENT */
+          )),
           vue.createElementVNode("image", {
             src: "/static/fabu/add.png",
             mode: "heightFix",
-            class: "add-icon"
+            class: "add-icon",
+            onClick: _cache[4] || (_cache[4] = (...args) => $options.showTagModal && $options.showTagModal(...args))
           })
         ])) : vue.createCommentVNode("v-if", true),
         $data.selectedTab === "comment" ? (vue.openBlock(), vue.createElementBlock("view", {
@@ -452,7 +500,110 @@ if (uni.restoreGlobal) {
             onClick: _cache[7] || (_cache[7] = (...args) => $options.publish && $options.publish(...args))
           }, "发布")
         ])
-      ])
+      ]),
+      $data.isTagModalVisible ? (vue.openBlock(), vue.createElementBlock("view", {
+        key: 0,
+        class: "modal"
+      }, [
+        vue.createElementVNode("view", { class: "modal-content" }, [
+          vue.createElementVNode("view", { class: "modal-header" }, [
+            vue.createElementVNode("text", null, "添加标签"),
+            vue.createElementVNode("button", {
+              onClick: _cache[8] || (_cache[8] = (...args) => $options.hideTagModal && $options.hideTagModal(...args))
+            }, "完成")
+          ]),
+          vue.createElementVNode("view", { class: "modal-body" }, [
+            vue.createElementVNode("view", { class: "search-bar" }, [
+              vue.withDirectives(vue.createElementVNode(
+                "input",
+                {
+                  type: "text",
+                  "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => $data.searchQuery = $event),
+                  placeholder: "搜索话题"
+                },
+                null,
+                512
+                /* NEED_PATCH */
+              ), [
+                [vue.vModelText, $data.searchQuery]
+              ])
+            ]),
+            vue.createElementVNode("view", { class: "recommended-tags" }, [
+              vue.createElementVNode("text", null, "推荐标签"),
+              (vue.openBlock(true), vue.createElementBlock(
+                vue.Fragment,
+                null,
+                vue.renderList($data.recommendedTags, (tag) => {
+                  return vue.openBlock(), vue.createElementBlock("view", {
+                    class: "tag",
+                    key: tag.id,
+                    onClick: ($event) => $options.addTag(tag)
+                  }, [
+                    vue.createElementVNode("image", {
+                      src: tag.icon,
+                      class: "tag-icon"
+                    }, null, 8, ["src"]),
+                    vue.createElementVNode(
+                      "text",
+                      null,
+                      vue.toDisplayString(tag.name),
+                      1
+                      /* TEXT */
+                    )
+                  ], 8, ["onClick"]);
+                }),
+                128
+                /* KEYED_FRAGMENT */
+              ))
+            ]),
+            vue.createElementVNode("view", { class: "create-tag" }, [
+              vue.createElementVNode("text", null, "创建标签"),
+              vue.withDirectives(vue.createElementVNode(
+                "input",
+                {
+                  type: "text",
+                  "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => $data.newTag = $event),
+                  placeholder: "一个新的标签在此诞生..."
+                },
+                null,
+                512
+                /* NEED_PATCH */
+              ), [
+                [vue.vModelText, $data.newTag]
+              ]),
+              vue.createElementVNode("button", {
+                onClick: _cache[11] || (_cache[11] = (...args) => $options.createTag && $options.createTag(...args))
+              }, "创建")
+            ]),
+            vue.createElementVNode("view", { class: "added-tags" }, [
+              vue.createElementVNode("text", null, "已添加标签"),
+              (vue.openBlock(true), vue.createElementBlock(
+                vue.Fragment,
+                null,
+                vue.renderList($data.tags, (tag) => {
+                  return vue.openBlock(), vue.createElementBlock("view", {
+                    class: "tag",
+                    key: tag.id
+                  }, [
+                    vue.createElementVNode(
+                      "text",
+                      null,
+                      vue.toDisplayString(tag.name),
+                      1
+                      /* TEXT */
+                    ),
+                    vue.createElementVNode("button", {
+                      onClick: ($event) => $options.removeTag(tag)
+                    }, "删除", 8, ["onClick"])
+                  ]);
+                }),
+                128
+                /* KEYED_FRAGMENT */
+              ))
+            ])
+          ])
+        ])
+      ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
   const PagesFabuFabu = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "D:/Uniapp/luoying/pages/fabu/fabu.vue"]]);
