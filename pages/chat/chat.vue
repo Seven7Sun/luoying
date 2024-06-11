@@ -1,10 +1,5 @@
 <template>
   <view class="chat-container">
-    <!-- 导航栏 -->
-    <view class="nav-bar">
-      <button @tap="goBack" class="back-button">返回</button>
-      <text class="nav-title">{{ currentUserName }}</text>
-    </view>
 
     <!-- 消息显示区域 -->
     <scroll-view class="messages" scroll-y>
@@ -37,7 +32,7 @@ export default {
       selfAvatar: uni.getStorageSync('avatar') || '',
       otherAvatar: 'https://example.com/other-avatar.jpg',
       receiverId: null,
-      receiverName: '' // 你可以从 options 中传递接收者信息777
+      receiverName: '' // 你可以从 options 中传递接收者信息
     };
   },
   onLoad(options) {
@@ -50,7 +45,7 @@ export default {
     async getChatMessages() {
       const res = await uniCloud.callFunction({
         name: 'getChatMessages',
-        data: { chatId: this.chatId }
+        data: { chatId: this.chatId, userId: this.currentUserId }
       });
       if (res.result.code === 0) {
         this.chatMessages = res.result.data;

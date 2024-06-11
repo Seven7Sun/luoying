@@ -2,7 +2,7 @@
 .container {
 		display: flex;
 		flex-direction: column;
-		height: 200%;
+		height: 100%;
 		background-color: #f5f5f5;
 }
 .top-nav {
@@ -47,7 +47,6 @@
 		display: flex;
 		align-items: center;
 		margin-bottom: 0.625rem;
-		flex-wrap: wrap;
 }
 .add-icon {
 		width: 1.25rem;
@@ -73,12 +72,9 @@
 .save-draft-button,
 	.publish-button {
 		width: 48%;
-		padding: 0.15625rem;
+		padding: 10px;
 		border-radius: 4px;
 		text-align: center;
-		height: 3.125rem;
-		justify-content: center;
-		align-items: center;
 }
 .save-draft-button {
 		background-color: #f0ad4e;
@@ -94,17 +90,11 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		flex-direction: column;
-}
-.uploaded-images {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
 }
 .uploaded-image {
 		width: 100px;
 		height: 100px;
-		margin: 10px;
+		margin-top: 10px;
 		border: 1px solid #ccc;
 		border-radius: 4px;
 }
@@ -113,7 +103,7 @@
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: 200%;
+		/* height: 100%; */
 		background: rgba(0, 0, 0, 0.5);
 		display: flex;
 		justify-content: center;
@@ -145,25 +135,14 @@
 		border-radius: 4px;
 }
 .recommended-tags,
-	.create-tag {
+	.create-tag,
+	.added-tags {
 		margin-bottom: 10px;
-}
-.added-tags{
-		margin-bottom: 10px;
-		display: flex;
-		flex-wrap: wrap;
 }
 .tag {
-		margin-left: 0.3125rem;
 		display: flex;
 		align-items: center;
-		padding-left: 0.15625rem;
-		padding-right: 0.15625rem;
-}
-.tagname{
 		margin-bottom: 5px;
-		border: 1px solid #ccc;
-		border-radius: 4px;
 }
 .tag-icon {
 		width: 30px;
@@ -173,21 +152,4 @@
 .maketags{
 		display: flex;
 		width: 100%;
-}
-.addtt{
-		border: 1px solid #ccc;
-		border-radius: 0.625rem;
-		color: rgb(64, 149, 229);
-		margin-left: 0.625rem;
-		padding-left: 0.3125rem;
-		padding-right: 0.3125rem;
-		background-color: rgb(239, 239, 239);
-}
-.deletett{
-		border: 1px solid #ccc;
-		border-radius: 3.125rem;
-		color: rgb(0, 0, 0);
-		padding-left: 0.28125rem;
-		padding-right: 0.28125rem;
-		background-color: rgb(239, 239, 239);
 }
