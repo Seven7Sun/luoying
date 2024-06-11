@@ -73,9 +73,12 @@
 .save-draft-button,
 	.publish-button {
 		width: 48%;
-		padding: 10px;
+		padding: 0.15625rem;
 		border-radius: 4px;
 		text-align: center;
+		height: 3.125rem;
+		justify-content: center;
+		align-items: center;
 }
 .save-draft-button {
 		background-color: #f0ad4e;

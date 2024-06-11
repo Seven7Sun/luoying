@@ -265,9 +265,12 @@
 	.save-draft-button,
 	.publish-button {
 		width: 48%;
-		padding: 10px;
+		padding: 5rpx;
 		border-radius: 4px;
 		text-align: center;
+		height: 100rpx;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.save-draft-button {
