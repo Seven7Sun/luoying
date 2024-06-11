@@ -133,7 +133,34 @@ if (uni.restoreGlobal) {
     methods: {}
   };
   function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock("view");
+    return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
+      vue.createCommentVNode(" 轮播图 "),
+      vue.createElementVNode("swiper", {
+        class: "swiper",
+        "indicator-dots": true,
+        autoplay: true,
+        interval: 3e3
+      }, [
+        vue.createElementVNode("swiper-item", null, [
+          vue.createElementVNode("image", {
+            src: "/static/img1.jpg",
+            class: "slide-image"
+          })
+        ]),
+        vue.createElementVNode("swiper-item", null, [
+          vue.createElementVNode("image", {
+            src: "/static/img2.png",
+            class: "slide-image"
+          })
+        ]),
+        vue.createElementVNode("swiper-item", null, [
+          vue.createElementVNode("image", {
+            src: "/static/img3.jpg",
+            class: "slide-image"
+          })
+        ])
+      ])
+    ]);
   }
   const PagesFaxianFaxian = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__file", "D:/Uniapp/luoying/pages/faxian/faxian.vue"]]);
   const _sfc_main$6 = {
@@ -306,7 +333,7 @@ if (uni.restoreGlobal) {
     {
       path: "pages/faxian/faxian",
       style: {
-        navigationBarTitleText: ""
+        navigationBarTitleText: "珞樱论坛"
       }
     },
     {
@@ -3197,23 +3224,57 @@ ${i3}
   const _sfc_main$3 = {
     data() {
       return {
-        userSelf: []
+        userSelf: {}
       };
     },
     onLoad() {
-      this.getSelf();
+      this.getUserSelf();
     },
     methods: {
-      async getSelf() {
+      async getUserSelf() {
         try {
           const res = await Ws.callFunction({
             name: "getUserSelf"
           });
           if (res.result.code === 0) {
-            this.userSelf = res.result.data;
+            this.userSelf = res.result.data[0];
+            formatAppLog("log", "at pages/wode/wode.vue:83", "User name:", this.userSelf.name);
           } else {
             uni.showToast({
               title: "Failed to load user information",
+              icon: "none"
+            });
+          }
+        } catch (err) {
+          uni.showToast({
+            title: `Error: ${err.message}`,
+            icon: "none"
+          });
+        }
+      },
+      showEditProfileModal() {
+        this.editUser = { ...this.userSelf };
+        this.showModal = true;
+      },
+      hideEditProfileModal() {
+        this.showModal = false;
+      },
+      async updateUser() {
+        try {
+          const res = await Ws.callFunction({
+            name: "updateUserProfile",
+            data: { ...this.editUser }
+          });
+          if (res.result.code === 0) {
+            uni.showToast({
+              title: "Profile updated successfully",
+              icon: "success"
+            });
+            await this.getUserSelf();
+            this.hideEditProfileModal();
+          } else {
+            uni.showToast({
+              title: "Failed to update profile",
               icon: "none"
             });
           }
@@ -3228,94 +3289,146 @@ ${i3}
       },
       changePassword() {
       },
-      privacySettings() {
-      },
-      notificationSettings() {
-      },
       manageCollections() {
-      },
-      toggleEyeComfortMode() {
-      },
-      languageSettings() {
       },
       logout() {
       }
     }
   };
   function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock("div", { class: "my-page" }, [
-      vue.createElementVNode("div", { class: "user-info" }, [
-        vue.createElementVNode("img", {
-          class: "avatar",
-          src: $data.userSelf.avatar,
-          alt: "Avatar"
-        }, null, 8, ["src"]),
-        vue.createElementVNode("div", { class: "user-details" }, [
-          vue.createElementVNode(
-            "h2",
-            null,
-            vue.toDisplayString($data.userSelf.name),
-            1
-            /* TEXT */
-          ),
-          vue.createCommentVNode(" <p>{{ userSelf.email }}</p> "),
-          vue.createElementVNode("button", {
-            onClick: _cache[0] || (_cache[0] = (...args) => $options.editProfile && $options.editProfile(...args))
-          }, "编辑个人资料")
-        ])
-      ]),
-      vue.createElementVNode("div", { class: "menu" }, [
-        vue.createElementVNode("div", {
-          class: "menu-item",
-          onClick: _cache[1] || (_cache[1] = (...args) => $options.changePassword && $options.changePassword(...args))
-        }, [
-          vue.createElementVNode("i", { class: "fas fa-key" }),
-          vue.createTextVNode(" 修改密码 ")
+    return vue.openBlock(), vue.createElementBlock(
+      vue.Fragment,
+      null,
+      [
+        vue.createElementVNode("div", { class: "my-page" }, [
+          vue.createElementVNode("div", { class: "user-info" }, [
+            vue.createElementVNode("img", {
+              class: "avatar",
+              src: $data.userSelf.avatar,
+              alt: "Avatar"
+            }, null, 8, ["src"]),
+            vue.createElementVNode("div", { class: "user-details" }, [
+              vue.createElementVNode(
+                "h2",
+                null,
+                vue.toDisplayString($data.userSelf.name),
+                1
+                /* TEXT */
+              ),
+              vue.createElementVNode(
+                "p",
+                null,
+                "用户id： " + vue.toDisplayString($data.userSelf.userId),
+                1
+                /* TEXT */
+              )
+            ])
+          ]),
+          vue.createElementVNode("div", { class: "menu" }, [
+            vue.createElementVNode("div", {
+              class: "menu-item",
+              onClick: _cache[0] || (_cache[0] = (...args) => $options.showEditProfileModal && $options.showEditProfileModal(...args))
+            }, " 编辑资料 "),
+            vue.createElementVNode("div", {
+              class: "menu-item",
+              onClick: _cache[1] || (_cache[1] = (...args) => $options.changePassword && $options.changePassword(...args))
+            }, [
+              vue.createElementVNode("i", { class: "fas fa-key" }),
+              vue.createTextVNode(" 修改密码 ")
+            ]),
+            vue.createElementVNode("div", {
+              class: "menu-item",
+              onClick: _cache[2] || (_cache[2] = (...args) => $options.manageCollections && $options.manageCollections(...args))
+            }, [
+              vue.createElementVNode("i", { class: "fas fa-bookmark" }),
+              vue.createTextVNode(" 我的收藏 ")
+            ]),
+            vue.createElementVNode("div", {
+              class: "menu-item",
+              onClick: _cache[3] || (_cache[3] = (...args) => _ctx.languageSettings && _ctx.languageSettings(...args))
+            }, [
+              vue.createElementVNode("i", { class: "fas fa-language" }),
+              vue.createTextVNode(" 显示语言 ")
+            ]),
+            vue.createElementVNode("div", {
+              class: "menu-item",
+              onClick: _cache[4] || (_cache[4] = (...args) => $options.logout && $options.logout(...args))
+            }, [
+              vue.createElementVNode("i", { class: "fas fa-sign-out-alt" }),
+              vue.createTextVNode(" 退出登录 ")
+            ])
+          ])
         ]),
-        vue.createElementVNode("div", {
-          class: "menu-item",
-          onClick: _cache[2] || (_cache[2] = (...args) => $options.privacySettings && $options.privacySettings(...args))
+        vue.createCommentVNode(" 悬浮编辑个人资料页 "),
+        _ctx.showModal ? (vue.openBlock(), vue.createElementBlock("div", {
+          key: 0,
+          class: "modal-overlay"
         }, [
-          vue.createElementVNode("i", { class: "fas fa-user-lock" }),
-          vue.createTextVNode(" 隐私设置 ")
-        ]),
-        vue.createElementVNode("div", {
-          class: "menu-item",
-          onClick: _cache[3] || (_cache[3] = (...args) => $options.notificationSettings && $options.notificationSettings(...args))
-        }, [
-          vue.createElementVNode("i", { class: "fas fa-bell" }),
-          vue.createTextVNode(" 通知设置 ")
-        ]),
-        vue.createElementVNode("div", {
-          class: "menu-item",
-          onClick: _cache[4] || (_cache[4] = (...args) => $options.manageCollections && $options.manageCollections(...args))
-        }, [
-          vue.createElementVNode("i", { class: "fas fa-bookmark" }),
-          vue.createTextVNode(" 我的收藏 ")
-        ]),
-        vue.createElementVNode("div", {
-          class: "menu-item",
-          onClick: _cache[5] || (_cache[5] = (...args) => $options.toggleEyeComfortMode && $options.toggleEyeComfortMode(...args))
-        }, [
-          vue.createElementVNode("i", { class: "fas fa-eye" }),
-          vue.createTextVNode(" 护眼模式 ")
-        ]),
-        vue.createElementVNode("div", {
-          class: "menu-item",
-          onClick: _cache[6] || (_cache[6] = (...args) => $options.languageSettings && $options.languageSettings(...args))
-        }, [
-          vue.createElementVNode("i", { class: "fas fa-language" }),
-          vue.createTextVNode(" 显示语言 ")
-        ]),
-        vue.createElementVNode("div", {
-          class: "menu-item",
-          onClick: _cache[7] || (_cache[7] = (...args) => $options.logout && $options.logout(...args))
-        }, [
-          vue.createElementVNode("i", { class: "fas fa-sign-out-alt" }),
-          vue.createTextVNode(" 退出登录 ")
-        ])
-      ])
-    ]);
+          vue.createElementVNode("div", { class: "modal" }, [
+            vue.createElementVNode("h3", null, "修改个人资料"),
+            vue.createElementVNode("div", { class: "form-group" }, [
+              vue.createElementVNode("label", { for: "userId" }, "用户ID:"),
+              vue.withDirectives(vue.createElementVNode(
+                "input",
+                {
+                  type: "text",
+                  id: "userId",
+                  "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => _ctx.editUser.userId = $event),
+                  disabled: ""
+                },
+                null,
+                512
+                /* NEED_PATCH */
+              ), [
+                [vue.vModelText, _ctx.editUser.userId]
+              ])
+            ]),
+            vue.createElementVNode("div", { class: "form-group" }, [
+              vue.createElementVNode("label", { for: "name" }, "姓名:"),
+              vue.withDirectives(vue.createElementVNode(
+                "input",
+                {
+                  type: "text",
+                  id: "name",
+                  "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => _ctx.editUser.name = $event)
+                },
+                null,
+                512
+                /* NEED_PATCH */
+              ), [
+                [vue.vModelText, _ctx.editUser.name]
+              ])
+            ]),
+            vue.createElementVNode("div", { class: "form-group" }, [
+              vue.createElementVNode("label", { for: "avatar" }, "头像URL:"),
+              vue.withDirectives(vue.createElementVNode(
+                "input",
+                {
+                  type: "text",
+                  id: "avatar",
+                  "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => _ctx.editUser.avatar = $event)
+                },
+                null,
+                512
+                /* NEED_PATCH */
+              ), [
+                [vue.vModelText, _ctx.editUser.avatar]
+              ])
+            ]),
+            vue.createElementVNode("div", { class: "actions" }, [
+              vue.createElementVNode("button", {
+                onClick: _cache[8] || (_cache[8] = (...args) => $options.updateUser && $options.updateUser(...args))
+              }, "保存"),
+              vue.createElementVNode("button", {
+                onClick: _cache[9] || (_cache[9] = (...args) => $options.hideEditProfileModal && $options.hideEditProfileModal(...args))
+              }, "取消")
+            ])
+          ])
+        ])) : vue.createCommentVNode("v-if", true)
+      ],
+      64
+      /* STABLE_FRAGMENT */
+    );
   }
   const PagesWodeWode = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__scopeId", "data-v-e6578db8"], ["__file", "D:/Uniapp/luoying/pages/wode/wode.vue"]]);
   const _sfc_main$2 = {
