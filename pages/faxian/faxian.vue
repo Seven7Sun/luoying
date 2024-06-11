@@ -20,7 +20,7 @@
 
 		<!-- 帖子列表 -->
 		<view class="post-list">
-			<view class="post-item" v-for="post in posts" :key="post.id">
+			<view class="post-item" v-for="post in posts" :key="post.id" @tap="toDetail">
 				<view class="post-header">
 					<text class="post-id">@{{ post.id }}</text>
 					<view class="post-tags">
@@ -66,8 +66,16 @@
 					}
 				]
 			}
+		},
+		methods:{
+			toDetail(){
+				uni.navigateTo({
+					url:'/pages/tieziDetail/tieziDetail'
+				})
+			}
 		}
 	}
+	
 </script>
 
 <style scoped>
@@ -146,6 +154,7 @@
 		padding: 2px 8px;
 		margin-right: 4px;
 		font-size: 12px;
+		margin-top: 2rpx;
 	}
 
 	.post-stats {

@@ -69,7 +69,8 @@
 			"path" : "pages/tieziDetail/tieziDetail",
 			"style" : 
 			{
-				"navigationBarTitleText" : ""
+				"navigationBarTitleText" : "",
+				"navigationStyle": "custom"
 			}
 		}
 	],

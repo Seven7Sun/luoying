@@ -148,6 +148,13 @@ if (uni.restoreGlobal) {
           }
         ]
       };
+    },
+    methods: {
+      toDetail() {
+        uni.navigateTo({
+          url: "/pages/tieziDetail/tieziDetail"
+        });
+      }
     }
   };
   function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
@@ -191,7 +198,8 @@ if (uni.restoreGlobal) {
           vue.renderList($data.posts, (post) => {
             return vue.openBlock(), vue.createElementBlock("view", {
               class: "post-item",
-              key: post.id
+              key: post.id,
+              onClick: _cache[0] || (_cache[0] = (...args) => $options.toDetail && $options.toDetail(...args))
             }, [
               vue.createElementVNode("view", { class: "post-header" }, [
                 vue.createElementVNode(
@@ -486,7 +494,8 @@ if (uni.restoreGlobal) {
     {
       path: "pages/tieziDetail/tieziDetail",
       style: {
-        navigationBarTitleText: ""
+        navigationBarTitleText: "",
+        navigationStyle: "custom"
       }
     }
   ];
@@ -4064,14 +4073,289 @@ ${i3}
   const PagesChatChat = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__file", "D:/Uniapp/luoying/pages/chat/chat.vue"]]);
   const _sfc_main$1 = {
     data() {
-      return {};
+      return {
+        post: {
+          author: "Darian",
+          avatar: "/static/faxian/img1.png",
+          // 用户头像路径
+          title: "港大校长爆雷🔥🔥🔥",
+          date: "昨天 23:38",
+          location: "日本",
+          content: "原来香港学校已经这么颓了嘛...",
+          image: "/static/faxian/img2.png",
+          likes: 350,
+          stars: 103,
+          comments: [
+            {
+              id: 1,
+              author: "用户A",
+              avatar: "/static/faxian/img1.png",
+              date: "2天前",
+              text: "笑死了🐒...",
+              likes: 23,
+              replies: [{
+                id: 101,
+                author: "用户B",
+                avatar: "/static/faxian/img1.png",
+                date: "2天前",
+                text: "刷分是有记录的..."
+              }],
+              showReplies: false
+            },
+            {
+              id: 2,
+              author: "用户C",
+              avatar: "/static/faxian/img1.png",
+              date: "2天前",
+              text: "陆本没办法造假啊...",
+              likes: 113,
+              replies: [],
+              showReplies: false
+            }
+          ]
+        }
+      };
     },
-    methods: {}
+    methods: {
+      goBack() {
+        uni.navigateBack();
+      },
+      showReplies(commentId) {
+        const comment = this.post.comments.find((c2) => c2.id === commentId);
+        if (comment) {
+          comment.showReplies = !comment.showReplies;
+        }
+      }
+    }
   };
   function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock("view");
+    return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
+      vue.createCommentVNode(" 顶部导航栏 "),
+      vue.createElementVNode("view", { class: "navbar" }, [
+        vue.createElementVNode("view", {
+          class: "nav-left",
+          onClick: _cache[0] || (_cache[0] = (...args) => $options.goBack && $options.goBack(...args))
+        }, [
+          vue.createElementVNode("image", {
+            src: "/static/icons/back.png",
+            class: "icon"
+          })
+        ]),
+        vue.createElementVNode("view", { class: "nav-avatar" }, [
+          vue.createElementVNode("image", {
+            src: $data.post.avatar,
+            class: "avatar"
+          }, null, 8, ["src"])
+        ]),
+        vue.createElementVNode(
+          "view",
+          { class: "nav-title" },
+          vue.toDisplayString($data.post.author),
+          1
+          /* TEXT */
+        ),
+        vue.createElementVNode("view", { class: "nav-right" }, [
+          vue.createElementVNode("button", { class: "follow-button" }, "关注")
+        ])
+      ]),
+      vue.createCommentVNode(" 帖子内容 "),
+      vue.createElementVNode("view", { class: "post-container" }, [
+        vue.createElementVNode("view", { class: "post-header" }, [
+          vue.createElementVNode(
+            "text",
+            { class: "post-title" },
+            vue.toDisplayString($data.post.title),
+            1
+            /* TEXT */
+          ),
+          vue.createElementVNode("view", { class: "post-meta" }, [
+            vue.createElementVNode(
+              "text",
+              { class: "post-date" },
+              vue.toDisplayString($data.post.date),
+              1
+              /* TEXT */
+            ),
+            vue.createElementVNode(
+              "text",
+              { class: "post-location" },
+              vue.toDisplayString($data.post.location),
+              1
+              /* TEXT */
+            )
+          ])
+        ]),
+        vue.createElementVNode("view", { class: "post-content" }, [
+          vue.createElementVNode(
+            "text",
+            { class: "post-text" },
+            vue.toDisplayString($data.post.content),
+            1
+            /* TEXT */
+          ),
+          $data.post.image ? (vue.openBlock(), vue.createElementBlock("image", {
+            key: 0,
+            src: $data.post.image,
+            class: "post-image"
+          }, null, 8, ["src"])) : vue.createCommentVNode("v-if", true)
+        ]),
+        vue.createCommentVNode(" 评论列表 "),
+        vue.createElementVNode("view", { class: "comments-container" }, [
+          (vue.openBlock(true), vue.createElementBlock(
+            vue.Fragment,
+            null,
+            vue.renderList($data.post.comments, (comment) => {
+              return vue.openBlock(), vue.createElementBlock("view", {
+                class: "comment",
+                key: comment.id
+              }, [
+                vue.createElementVNode("image", {
+                  src: comment.avatar,
+                  class: "comment-avatar"
+                }, null, 8, ["src"]),
+                vue.createElementVNode("view", { class: "comment-content" }, [
+                  vue.createElementVNode("view", { class: "comment-header" }, [
+                    vue.createElementVNode(
+                      "text",
+                      { class: "comment-author" },
+                      vue.toDisplayString(comment.author),
+                      1
+                      /* TEXT */
+                    ),
+                    vue.createElementVNode(
+                      "text",
+                      { class: "comment-date" },
+                      vue.toDisplayString(comment.date),
+                      1
+                      /* TEXT */
+                    )
+                  ]),
+                  vue.createElementVNode(
+                    "text",
+                    { class: "comment-text" },
+                    vue.toDisplayString(comment.text),
+                    1
+                    /* TEXT */
+                  ),
+                  vue.createElementVNode("view", { class: "comment-actions" }, [
+                    vue.createElementVNode(
+                      "text",
+                      { class: "like-button" },
+                      vue.toDisplayString(comment.likes),
+                      1
+                      /* TEXT */
+                    ),
+                    vue.createElementVNode("text", {
+                      class: "reply-button",
+                      onClick: ($event) => $options.showReplies(comment.id)
+                    }, "展开 " + vue.toDisplayString(comment.replies.length) + " 条回复", 9, ["onClick"])
+                  ]),
+                  comment.showReplies ? (vue.openBlock(), vue.createElementBlock("view", {
+                    key: 0,
+                    class: "replies"
+                  }, [
+                    (vue.openBlock(true), vue.createElementBlock(
+                      vue.Fragment,
+                      null,
+                      vue.renderList(comment.replies, (reply) => {
+                        return vue.openBlock(), vue.createElementBlock("view", {
+                          class: "reply",
+                          key: reply.id
+                        }, [
+                          vue.createElementVNode("image", {
+                            src: reply.avatar,
+                            class: "reply-avatar"
+                          }, null, 8, ["src"]),
+                          vue.createElementVNode("view", { class: "reply-content" }, [
+                            vue.createElementVNode("view", { class: "reply-header" }, [
+                              vue.createElementVNode(
+                                "text",
+                                { class: "reply-author" },
+                                vue.toDisplayString(reply.author),
+                                1
+                                /* TEXT */
+                              ),
+                              vue.createElementVNode(
+                                "text",
+                                { class: "reply-date" },
+                                vue.toDisplayString(reply.date),
+                                1
+                                /* TEXT */
+                              )
+                            ]),
+                            vue.createElementVNode(
+                              "text",
+                              { class: "reply-text" },
+                              vue.toDisplayString(reply.text),
+                              1
+                              /* TEXT */
+                            )
+                          ])
+                        ]);
+                      }),
+                      128
+                      /* KEYED_FRAGMENT */
+                    ))
+                  ])) : vue.createCommentVNode("v-if", true)
+                ])
+              ]);
+            }),
+            128
+            /* KEYED_FRAGMENT */
+          ))
+        ])
+      ]),
+      vue.createCommentVNode(" 底部操作栏 "),
+      vue.createElementVNode("view", { class: "bottom-bar" }, [
+        vue.createElementVNode("input", {
+          class: "comment-input",
+          placeholder: "说点什么..."
+        }),
+        vue.createElementVNode("view", { class: "bottom-buttons" }, [
+          vue.createElementVNode("button", { class: "bottom-button" }, [
+            vue.createElementVNode("image", {
+              src: "/static/icons/like.png",
+              class: "icon"
+            }),
+            vue.createElementVNode(
+              "text",
+              null,
+              vue.toDisplayString($data.post.likes),
+              1
+              /* TEXT */
+            )
+          ]),
+          vue.createElementVNode("button", { class: "bottom-button" }, [
+            vue.createElementVNode("image", {
+              src: "/static/icons/star.png",
+              class: "icon"
+            }),
+            vue.createElementVNode(
+              "text",
+              null,
+              vue.toDisplayString($data.post.stars),
+              1
+              /* TEXT */
+            )
+          ]),
+          vue.createElementVNode("button", { class: "bottom-button" }, [
+            vue.createElementVNode("image", {
+              src: "/static/icons/comment.png",
+              class: "icon"
+            }),
+            vue.createElementVNode(
+              "text",
+              null,
+              vue.toDisplayString($data.post.comments.length),
+              1
+              /* TEXT */
+            )
+          ])
+        ])
+      ])
+    ]);
   }
-  const PagesTieziDetailTieziDetail = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "D:/Uniapp/luoying/pages/tieziDetail/tieziDetail.vue"]]);
+  const PagesTieziDetailTieziDetail = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__scopeId", "data-v-c02b434d"], ["__file", "D:/Uniapp/luoying/pages/tieziDetail/tieziDetail.vue"]]);
   __definePage("pages/index/index", PagesIndexIndex);
   __definePage("pages/shouye/shouye", PagesShouyeShouye);
   __definePage("pages/faxian/faxian", PagesFaxianFaxian);
