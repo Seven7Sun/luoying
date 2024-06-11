@@ -838,7 +838,7 @@ if (uni.restoreGlobal) {
   function I(e2) {
     return e2 && "string" == typeof e2 ? JSON.parse(e2) : e2;
   }
-  const S = true, b = "app", A = I(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = b, T = I('{\n    "address": [\n        "127.0.0.1",\n        "192.168.255.1",\n        "192.168.133.1",\n        "10.135.19.183"\n    ],\n    "debugPort": 9000,\n    "initialLaunchType": "local",\n    "servePort": 7000,\n    "skipFiles": [\n        "<node_internals>/**",\n        "D:/HBuilderX/plugins/unicloud/**/*.js"\n    ]\n}\n'), C = I('[{"provider":"aliyun","spaceName":"trial-wdarlbo7lkpoy8ebe86","spaceId":"mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d","clientSecret":"4dS89HqPS4Vi8zObyOOS3w==","endpoint":"https://api.next.bspapp.com"}]') || [];
+  const S = true, b = "app", A = I(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = b, T = I('{\n    "address": [\n        "127.0.0.1",\n        "192.168.255.1",\n        "192.168.133.1",\n        "10.255.3.219"\n    ],\n    "debugPort": 9000,\n    "initialLaunchType": "local",\n    "servePort": 7000,\n    "skipFiles": [\n        "<node_internals>/**",\n        "D:/HBuilderX/plugins/unicloud/**/*.js"\n    ]\n}\n'), C = I('[{"provider":"aliyun","spaceName":"trial-wdarlbo7lkpoy8ebe86","spaceId":"mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d","clientSecret":"4dS89HqPS4Vi8zObyOOS3w==","endpoint":"https://api.next.bspapp.com"}]') || [];
   let O = "";
   try {
     O = "__UNI__40F4800";
@@ -4081,8 +4081,12 @@ ${i3}
           title: "港大校长爆雷🔥🔥🔥",
           date: "昨天 23:38",
           location: "日本",
-          content: "原来香港学校已经这么颓了嘛...",
-          image: "/static/faxian/img2.png",
+          content: "原来香港学校已经这么颓了嘛...个人理解就是，先让内容渲染出来，然后计算 剩余空间有多少。按照 有 flex-grow 属性 的比例，动态设置 当前DOM 的宽度公式就是：原始宽度 + （剩余空间 / 总共分成多少份 * 当前元素所占 分数）",
+          images: [
+            "/static/faxian/img2.jpg",
+            "/static/faxian/img1.png",
+            "/static/faxian/img2.jpg"
+          ],
           likes: 350,
           stars: 103,
           comments: [
@@ -4092,7 +4096,6 @@ ${i3}
               avatar: "/static/faxian/img1.png",
               date: "2天前",
               text: "笑死了🐒...",
-              likes: 23,
               replies: [{
                 id: 101,
                 author: "用户B",
@@ -4108,7 +4111,6 @@ ${i3}
               avatar: "/static/faxian/img1.png",
               date: "2天前",
               text: "陆本没办法造假啊...",
-              likes: 113,
               replies: [],
               showReplies: false
             }
@@ -4125,6 +4127,12 @@ ${i3}
         if (comment) {
           comment.showReplies = !comment.showReplies;
         }
+      },
+      like() {
+      },
+      star() {
+      },
+      comment() {
       }
     }
   };
@@ -4137,29 +4145,53 @@ ${i3}
           onClick: _cache[0] || (_cache[0] = (...args) => $options.goBack && $options.goBack(...args))
         }, [
           vue.createElementVNode("image", {
-            src: "/static/icons/back.png",
-            class: "icon"
+            src: "/static/detial/back .png",
+            class: "back"
           })
         ]),
         vue.createElementVNode("view", { class: "nav-avatar" }, [
           vue.createElementVNode("image", {
             src: $data.post.avatar,
             class: "avatar"
-          }, null, 8, ["src"])
+          }, null, 8, ["src"]),
+          vue.createElementVNode(
+            "view",
+            { class: "nav-title" },
+            vue.toDisplayString($data.post.author),
+            1
+            /* TEXT */
+          )
         ]),
-        vue.createElementVNode(
-          "view",
-          { class: "nav-title" },
-          vue.toDisplayString($data.post.author),
-          1
-          /* TEXT */
-        ),
         vue.createElementVNode("view", { class: "nav-right" }, [
           vue.createElementVNode("button", { class: "follow-button" }, "关注")
         ])
       ]),
+      vue.createCommentVNode(" 图片轮播 "),
+      vue.createElementVNode("swiper", {
+        class: "image-swiper",
+        autoplay: false,
+        "indicator-dots": ""
+      }, [
+        (vue.openBlock(true), vue.createElementBlock(
+          vue.Fragment,
+          null,
+          vue.renderList($data.post.images, (image, index) => {
+            return vue.openBlock(), vue.createElementBlock("swiper-item", { key: index }, [
+              vue.createElementVNode("image", {
+                src: image,
+                class: "swiper-image"
+              }, null, 8, ["src"])
+            ]);
+          }),
+          128
+          /* KEYED_FRAGMENT */
+        ))
+      ]),
       vue.createCommentVNode(" 帖子内容 "),
-      vue.createElementVNode("view", { class: "post-container" }, [
+      vue.createElementVNode("scroll-view", {
+        class: "post-container",
+        "scroll-y": ""
+      }, [
         vue.createElementVNode("view", { class: "post-header" }, [
           vue.createElementVNode(
             "text",
@@ -4192,12 +4224,7 @@ ${i3}
             vue.toDisplayString($data.post.content),
             1
             /* TEXT */
-          ),
-          $data.post.image ? (vue.openBlock(), vue.createElementBlock("image", {
-            key: 0,
-            src: $data.post.image,
-            class: "post-image"
-          }, null, 8, ["src"])) : vue.createCommentVNode("v-if", true)
+          )
         ]),
         vue.createCommentVNode(" 评论列表 "),
         vue.createElementVNode("view", { class: "comments-container" }, [
@@ -4312,9 +4339,12 @@ ${i3}
           placeholder: "说点什么..."
         }),
         vue.createElementVNode("view", { class: "bottom-buttons" }, [
-          vue.createElementVNode("button", { class: "bottom-button" }, [
+          vue.createElementVNode("view", {
+            class: "bottom-button",
+            onClick: _cache[1] || (_cache[1] = (...args) => $options.like && $options.like(...args))
+          }, [
             vue.createElementVNode("image", {
-              src: "/static/icons/like.png",
+              src: "/static/detial/like.png",
               class: "icon"
             }),
             vue.createElementVNode(
@@ -4325,9 +4355,12 @@ ${i3}
               /* TEXT */
             )
           ]),
-          vue.createElementVNode("button", { class: "bottom-button" }, [
+          vue.createElementVNode("view", {
+            class: "bottom-button",
+            onClick: _cache[2] || (_cache[2] = (...args) => $options.star && $options.star(...args))
+          }, [
             vue.createElementVNode("image", {
-              src: "/static/icons/star.png",
+              src: "/static/detial/star.png",
               class: "icon"
             }),
             vue.createElementVNode(
@@ -4338,9 +4371,12 @@ ${i3}
               /* TEXT */
             )
           ]),
-          vue.createElementVNode("button", { class: "bottom-button" }, [
+          vue.createElementVNode("view", {
+            class: "bottom-button",
+            onClick: _cache[3] || (_cache[3] = (...args) => $options.comment && $options.comment(...args))
+          }, [
             vue.createElementVNode("image", {
-              src: "/static/icons/comment.png",
+              src: "/static/detial/comment.png",
               class: "icon"
             }),
             vue.createElementVNode(
