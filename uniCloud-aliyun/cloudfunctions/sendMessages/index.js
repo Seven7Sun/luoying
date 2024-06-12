@@ -1,39 +1,28 @@
-// 云函数入口文件
-const cloud = require('wx-server-sdk');
-cloud.init({
-  env: cloud.DYNAMIC_CURRENT_ENV // 默认当前云环境
-});
-
-const db = cloud.database();
-const chatMessages = db.collection('chatMessages');
-
-// 云函数入口函数
+// 云函数：sendMessage
+const db = uniCloud.database();
 exports.main = async (event, context) => {
-  const { chatId, senderId, receiverId, content, timestamp, read, type, attachments } = event;
-
-  try {
-    const result = await chatMessages.add({
-      data: {
-        chatId,
-        senderId,
-        receiverId,
-        content,
-        timestamp,
-        read,
-        type,
-        attachments
-      }
-    });
+  const { chatId, senderId, receiverId, content, timestamp } = event;
+  const collection = db.collection('chatMessages');
+  const res = await collection.add({
+    chatId,
+    senderId,
+    receiverId,
+    content,
+    timestamp,
+    read: false,
+    type: 'text',
+    attachments: []
+  });
+  
+  if (res.id) {
     return {
       code: 0,
-      id: result._id,
-      message: '消息发送成功'
+      msg: 'Message sent successfully'
     };
-  } catch (err) {
+  } else {
     return {
       code: 1,
-      message: '消息发送失败',
-      error: err
+      msg: 'Failed to send message'
     };
   }
 };

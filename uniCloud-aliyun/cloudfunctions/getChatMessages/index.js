@@ -1,29 +1,26 @@
-// 云函数入口文件
-const cloud = require('wx-server-sdk');
-cloud.init({
-  env: cloud.DYNAMIC_CURRENT_ENV // 默认当前云环境
-});
+const db = uniCloud.database();
 
-const db = cloud.database();
-const chatMessages = db.collection('chatMessages');
-
-// 云函数入口函数
 exports.main = async (event, context) => {
-  const { chatId } = event;
+  const { userId1, userId2 } = event;
+  const collection = db.collection('chatMessages');
 
-  try {
-    const response = await chatMessages.where({
-      chatId: chatId
-    }).orderBy('timestamp', 'asc').get();
+  // 查询两个用户之间的所有聊天记录
+  const res = await collection.where({
+    $or: [
+      { senderId: userId1, receiverId: userId2 },
+      { senderId: userId2, receiverId: userId1 }
+    ]
+  }).orderBy('timestamp', 'asc').get();
+
+  if (res.affectedDocs > 0) {
     return {
       code: 0,
-      data: response.data
+      data: res.data
     };
-  } catch (err) {
+  } else {
     return {
       code: 1,
-      message: '获取聊天记录失败',
-      error: err
+      msg: 'No messages found'
     };
   }
 };

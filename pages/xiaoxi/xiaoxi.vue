@@ -1,11 +1,10 @@
 <template>
   <view class="container">
     <view class="message-list">
-      <view v-for="message in messages" :key="message._id" class="message-item" @click="openChat(message)">
+      <view v-for="message in messages" :key="message.userId" class="message-item" @click="openChat(message)">
         <image :src="message.avatar" class="avatar"></image>
         <view class="content">
           <view class="header">
-			  
             <text class="name">{{ message.name }}</text>
             <text class="time">{{ formatTimeDifference(message.timestamp) }}</text>
           </view>
@@ -37,7 +36,6 @@ export default {
       });
       if (res.result.code === 0) {
         this.messages = res.result.data;
-	
       } else {
         uni.showToast({
           title: 'Failed to load messages',
@@ -63,12 +61,10 @@ export default {
       } else {
         return `${Math.floor(difference / 86400000)}天前`;
       }
-	 
     },
     startTimer() {
       this.timer = setInterval(() => {
         this.getMessages(); // 刷新消息列表
-		this.formatTimeDifference(message.timestamp);
       }, 60000); // 每分钟刷新一次
     },
     stopTimer() {
@@ -80,18 +76,9 @@ export default {
 };
 </script>
 
-<style>
-
+<style scoped>
 .container {
   padding-top: 0px;
-}
-.header {
-  padding: 10px;
-  text-align: center;
-}
-.title {
-  font-size: 20px;
-  font-weight: bold;
 }
 .message-list {
   margin-top: 10px;
@@ -102,11 +89,13 @@ export default {
   border-bottom: 1px solid #eee;
   cursor: pointer;
 }
+
 .avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   margin-right: 10px;
+  margin-top: 5px; /* 向下移动图片 */
 }
 .content {
   flex: 1;
@@ -126,5 +115,3 @@ export default {
   color: #666;
 }
 </style>
-
-

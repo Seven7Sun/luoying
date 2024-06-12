@@ -6,30 +6,34 @@ exports.main = async (event, context) => {
   const collection = db.collection('users');
   const users = [
     {
-      _id: "1",
-      userId: "12345",
+      
+      userId: "1",
       name: "张漫",
+	  password:"123456",
       avatar: "https://mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d.cdn.bspapp.com/photo/头像1.jpg",
       createdAt: Date.now()
     },
     {
-      _id: "2",
-      userId: "67890",
+      
+      userId: "2",
       name: "张皓源",
+	  password:"123456",
       avatar: "https://mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d.cdn.bspapp.com/photo/zhy.jpg",
       createdAt: Date.now()
     },
     {
-      _id: "3",
-      userId: "54321",
+
+      userId: "3",
       name: "周沫",
+	  password:"123456",
       avatar: "https://mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d.cdn.bspapp.com/photo/头像3.jpg",
       createdAt: Date.now()
     },
     {
-      _id: "4",
-      userId: "23464",
+
+      userId: "4",
       name: "孙东方",
+	  password:"123456",
       avatar: "https://mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d.cdn.bspapp.com/photo/sdf.jpg",
       createdAt: Date.now()
     }

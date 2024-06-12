@@ -2,7 +2,8 @@
 	<view class="container">
 		<view class="top-nav">
 			<view class="nav-item" :class="{ 'selected': selectedTab === 'post' }" @tap="selectTab('post')">发帖</view>
-			<view class="nav-item" :class="{ 'selected': selectedTab === 'comment' }" @tap="selectTab('comment')">跟帖</view>
+			<view class="nav-item" :class="{ 'selected': selectedTab === 'comment' }" @tap="selectTab('comment')">跟帖
+			</view>
 		</view>
 		<view class="content">
 			<view class="txtouter">
@@ -10,24 +11,19 @@
 			</view>
 			<view class="uploadImage">
 				<button @tap="chooseImage">选择图片</button>
-				
-				<view class="uploaded-images">
-					<image v-for="(image, index) in imageSrcList" :key="index" :src="image" class="uploaded-image"></image>
-				</view>
+				<image v-if="imageSrc" :src="imageSrc" class="uploaded-image"></image>
 			</view>
 			<view class="add-section" v-if="selectedTab==='post'">
 				<text># 添加标签：</text>
-				<view class="tag tagname" v-for="tag in tags" :key="tag.id">
-					<text >{{ tag.name }}</text>
-					<view class="deletett" @tap="removeTag(tag)">
-						×
-					</view>
+				<view class="tag" v-for="tag in tags" :key="tag.id">
+					<text>{{ tag.name }}</text>
+					<button @tap="removeTag(tag)">删除</button>
 				</view>
 				<image src="../../static/fabu/add.png" mode="heightFix" class="add-icon"  @tap="showTagModal"></image>
 			</view>
 			<view class="tiezinumber" v-if="selectedTab==='comment'">
 				<text>@：</text>
-				<input style="border: 1px solid #ccc;border-radius: 20rpx;margin-top:20rpx;" type="text" v-model="id" placeholder="填入帖子id" />
+				<image src="../../static/fabu/add.png" mode="heightFix" class="add-icon"></image>
 			</view>
 
 			<view class="markdown-toggle">
@@ -53,8 +49,8 @@
 					<view class="recommended-tags">
 						<text style="font-weight: bold;">推荐标签</text>
 						<view class="tag" v-for="tag in recommendedTags" :key="tag.id" @tap="addTag(tag)">
-							<text class="tagname">#{{ tag.name }}</text>
-							<view class="addtt">
+							<text>#{{ tag.name }}</text>
+							<view class="">
 								+添加标签
 							</view>
 						</view>
@@ -69,12 +65,9 @@
 					</view>
 					<view class="added-tags">
 						<text>已添加标签</text>
-						<view class="tag tagname" v-for="tag in tags" :key="tag.id">
+						<view class="tag" v-for="tag in tags" :key="tag.id">
 							<text>{{ tag.name }}</text>
-							
-							<view class="deletett" @tap="removeTag(tag)">
-								×
-							</view>
+							<button @tap="removeTag(tag)">删除</button>
 						</view>
 					</view>
 				</view>
@@ -91,7 +84,7 @@
 				content: '',
 				isMarkdown: false,
 				tags: [],
-				imageSrcList: [],
+				imageSrc: '',
 				isTagModalVisible: false,
 				searchQuery: '',
 				recommendedTags: [
@@ -100,8 +93,7 @@
 					{ id: 3, name: '乘风破浪！', icon: 'path/to/icon3.png' },
 					{ id: 4, name: '数学', icon: 'path/to/icon4.png' }
 				],
-				newTag: '',
-				id:''
+				newTag: ''
 			}
 		},
 		methods: {
@@ -115,24 +107,16 @@
 				this.isTagModalVisible = false;
 			},
 			addTag(tag) {
-				 if (!this.tags.some(t => t.id === tag.id)) {
-				        this.tags.push(tag);
-				    } else {
-				        console.log("标签已存在");
-				    }
+				this.tags.push(tag);
 			},
 			removeTag(tag) {
 				this.tags = this.tags.filter(t => t.id !== tag.id);
 			},
 			createTag() {
-				 if (this.newTag.trim()) {
-				        if (!this.tags.some(t => t.name === this.newTag.trim())) {
-				            this.tags.push({ id: Date.now(), name: this.newTag.trim() });
-				            this.newTag = '';
-				        } else {
-				            console.log("标签已存在");
-				        }
-				    }
+				if (this.newTag.trim()) {
+					this.tags.push({ id: Date.now(), name: this.newTag });
+					this.newTag = '';
+				}
 			},
 			toggleMarkdown(event) {
 				this.isMarkdown = event.detail.value;
@@ -145,32 +129,30 @@
 			},
 			chooseImage() {
 				uni.chooseImage({
-					count: 9, // 可选最多9张图片
+					count: 1,
 					sizeType: ['original', 'compressed'],
 					sourceType: ['album'],
 					success: (res) => {
-						this.imageSrcList.push(...res.tempFilePaths);
-						this.uploadImages(res.tempFilePaths);
+						this.imageSrc = res.tempFilePaths[0];
+						this.uploadImage(res.tempFilePaths[0]);
 					},
 					fail: (err) => {
 						console.error("选择图片失败：", err);
 					}
 				});
 			},
-			uploadImages(filePaths) {
-				filePaths.forEach(filePath => {
-					uni.uploadFile({
-						url: 'https://your-upload-server.com/upload', // 替换为实际的上传服务器地址
-						filePath: filePath,
-						name: 'file',
-						success: (uploadFileRes) => {
-							console.log("上传成功：", uploadFileRes);
-							// 可以在这里处理上传成功后的逻辑
-						},
-						fail: (err) => {
-							console.error("上传失败：", err);
-						}
-					});
+			uploadImage(filePath) {
+				uni.uploadFile({
+					url: 'https://your-upload-server.com/upload', // 替换为实际的上传服务器地址
+					filePath: filePath,
+					name: 'file',
+					success: (uploadFileRes) => {
+						console.log("上传成功：", uploadFileRes);
+						// 可以在这里处理上传成功后的逻辑
+					},
+					fail: (err) => {
+						console.error("上传失败：", err);
+					}
 				});
 			}
 		}
@@ -181,7 +163,7 @@
 	.container {
 		display: flex;
 		flex-direction: column;
-		height: 200%;
+		height: 100%;
 		background-color: #f5f5f5;
 	}
 
@@ -234,7 +216,6 @@
 		display: flex;
 		align-items: center;
 		margin-bottom: 20rpx;
-		flex-wrap: wrap;
 	}
 
 	.add-icon {
@@ -265,12 +246,9 @@
 	.save-draft-button,
 	.publish-button {
 		width: 48%;
-		padding: 5rpx;
+		padding: 10px;
 		border-radius: 4px;
 		text-align: center;
-		height: 100rpx;
-		justify-content: center;
-		align-items: center;
 	}
 
 	.save-draft-button {
@@ -289,19 +267,12 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		flex-direction: column;
-	}
-
-	.uploaded-images {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
 	}
 
 	.uploaded-image {
 		width: 100px;
 		height: 100px;
-		margin: 10px;
+		margin-top: 10px;
 		border: 1px solid #ccc;
 		border-radius: 4px;
 	}
@@ -311,7 +282,7 @@
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: 200%;
+		/* height: 100%; */
 		background: rgba(0, 0, 0, 0.5);
 		display: flex;
 		justify-content: center;
@@ -348,30 +319,17 @@
 	}
 
 	.recommended-tags,
-	.create-tag {
+	.create-tag,
+	.added-tags {
 		margin-bottom: 10px;
 	}
-	
-	.added-tags{
-		margin-bottom: 10px;
-		display: flex;
-		flex-wrap: wrap;
-	}
-	
+
 	.tag {
-		margin-left: 10rpx;
 		display: flex;
 		align-items: center;
-		padding-left: 5rpx;
-		padding-right: 5rpx;
-	}
-	
-	.tagname{
 		margin-bottom: 5px;
-		border: 1px solid #ccc;
-		border-radius: 4px;
 	}
-	
+
 	.tag-icon {
 		width: 30px;
 		height: 30px;
@@ -381,25 +339,5 @@
 	.maketags{
 		display: flex;
 		width: 100%;
-	}
-	
-	
-	.addtt{
-		border: 1px solid #ccc;
-		border-radius: 20rpx;
-		color: rgb(64, 149, 229);
-		margin-left: 20rpx;
-		padding-left: 10rpx;
-		padding-right: 10rpx;
-		background-color: rgb(239, 239, 239);
-	}
-	
-	.deletett{
-		border: 1px solid #ccc;
-		border-radius: 100rpx;
-		color: rgb(0, 0, 0);
-		padding-left: 9rpx;
-		padding-right: 9rpx;
-		background-color: rgb(239, 239, 239);
 	}
 </style>

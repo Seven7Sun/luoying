@@ -19,7 +19,7 @@
 			"path" : "pages/faxian/faxian",
 			"style" : 
 			{
-				"navigationBarTitleText" : "珞樱论坛"
+				"navigationBarTitleText" : ""
 			}
 		},
 		{
@@ -63,14 +63,6 @@
 			"style" : 
 			{
 				"navigationBarTitleText" : "聊天页面"
-			}
-		},
-		{
-			"path" : "pages/tieziDetail/tieziDetail",
-			"style" : 
-			{
-				"navigationBarTitleText" : "",
-				"navigationStyle": "custom"
 			}
 		}
 	],

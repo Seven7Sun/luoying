@@ -1,18 +1,18 @@
 'use strict';
-
 const db = uniCloud.database();
+const dbCmd = db.command;
 
 exports.main = async (event, context) => {
-  const { userId, name, avatar } = event;
+  const { userId, name} = event; // 根据传递的数据格式进行调整
 
-  // 假设userSelf集合中以userId作为条件更新用户信息
   try {
-    const res = await db.collection('userSelf').doc(userId).update({
-      name,
-      avatar
+    const collection = db.collection('userSelf'); // 确认你的数据库集合名称
+    const updateResult = await collection.doc(userId).update({
+      name
+    
     });
 
-    if (res.updated === 1) {
+    if (updateResult.updated === 1) {
       return {
         code: 0,
         message: 'Profile updated successfully'
@@ -25,7 +25,7 @@ exports.main = async (event, context) => {
     }
   } catch (err) {
     return {
-      code: 1,
+      code: 500,
       message: `Error: ${err.message}`
     };
   }
