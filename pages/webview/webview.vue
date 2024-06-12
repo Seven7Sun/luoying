@@ -9,7 +9,7 @@
 	export default {
 		data() {
 			return {
-				url: 'https://cas.whu.edu.cn/authserver/login?service=http%3A%2F%2Fehall.whu.edu.cn%2Flogin%3Fservice%3Dhttp%3A%2F%2Fehall.whu.edu.cn%2Fnew%2Findex.html',
+				url: 'https://cas.whu.edu.cn/authserver/login?service=http%3A%2F%2Fehall.whu.edu.cn%2Flogin%3Fservice%3Dhttp%3A%2F%2Fehall.whu.edu.cn%2Fnew%2Fmobile%2Findex.html',
 				currentSrc: '',
 				intervalId: null,
 			};

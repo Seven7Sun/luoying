@@ -12,11 +12,22 @@
 		margin-bottom: 16px;
 }
 .search-input[data-v-d5906933] {
-		width: 100%;
+		width: calc(100% - 70px);
 		height: 40px;
 		padding: 0 10px;
 		border: 1px solid #ccc;
 		border-radius: 20px;
+}
+.search-button[data-v-d5906933] {
+		width: 70px;
+		height: 40px;
+		margin-left: 10px;
+		border: none;
+		border-radius: 20px;
+		background-color: #007bff;
+		color: white;
+		font-size: 16px;
+		cursor: pointer;
 }
 .swiper-container[data-v-d5906933] {
 		height: 200px;

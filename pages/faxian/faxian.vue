@@ -2,7 +2,8 @@
 	<view class="container">
 		<!-- 搜索栏 -->
 		<view class="search-bar">
-			<input class="search-input" type="text" placeholder="搜索帖子" />
+			<input class="search-input" v-model="searchContent" type="text" placeholder="搜索帖子" />
+			<button class="search-button" @click="searchPosts">搜索</button>
 		</view>
 
 		<!-- 图片轮播图 -->
@@ -20,7 +21,7 @@
 
 		<!-- 帖子列表 -->
 		<view class="post-list">
-			<view class="post-item" v-for="post in posts" :key="post.id" @tap="toDetail">
+			<view class="post-item" v-for="post in filteredPosts" :key="post.id" @tap="toDetail(post.id)">
 				<view class="post-header">
 					<text class="post-id">@{{ post.id }}</text>
 					<view class="post-tags">
@@ -34,7 +35,7 @@
 					</view>
 				</view>
 				<view class="post-content">
-					<text>{{ post.content }}</text>
+					<text>{{ post.title }}</text>
 					<image v-if="post.image && Array.isArray(post.image)" :src="post.image[0]" class="post-image">
 					</image>
 					<image v-else-if="post.image" :src="post.image" class="post-image"></image>
@@ -48,12 +49,13 @@
 	export default {
 		data() {
 			return {
+				searchContent: '',
 				posts: [{
 						id: 12345,
 						tags: ['借阅'],
 						views: 111,
 						comments: 12,
-						content: '有偿求《Operation System》第10版',
+						title: '有偿求《Operation System》第10版',
 						image: ['/static/faxian/img1.png']
 					},
 					{
@@ -61,21 +63,37 @@
 						tags: ['问题', '数学', '逆天', '不行', '都可以'],
 						views: 678,
 						comments: 25,
-						content: '有人知道这道题怎么解决吗？',
+						title: '有人知道这道题怎么解决吗？',
 						image: ['/static/faxian/img1.png', '/static/images/building2.jpg']
 					}
-				]
+				],
+				filteredPosts: []
 			}
 		},
-		methods:{
-			toDetail(){
+		mounted() {
+			// 初始化时显示所有帖子
+			this.filteredPosts = this.posts;
+		},
+		methods: {
+			toDetail(id) {
 				uni.navigateTo({
-					url:'/pages/tieziDetail/tieziDetail'
+					url: `/pages/tieziDetail/tieziDetail?id=${id}`
 				})
+			},
+			searchPosts() {
+				const searchContentLower = this.searchContent.trim().toLowerCase();
+				if (searchContentLower === '') {
+					this.filteredPosts = this.posts;
+				} else {
+					this.filteredPosts = this.posts.filter(post => {
+						const titleMatch = post.title.toLowerCase().includes(searchContentLower);
+						const tagsMatch = post.tags.some(tag => tag.toLowerCase().includes(searchContentLower));
+						return titleMatch || tagsMatch;
+					});
+				}
 			}
 		}
 	}
-	
 </script>
 
 <style scoped>
@@ -94,11 +112,23 @@
 	}
 
 	.search-input {
-		width: 100%;
+		width: calc(100% - 70px);
 		height: 40px;
 		padding: 0 10px;
 		border: 1px solid #ccc;
 		border-radius: 20px;
+	}
+
+	.search-button {
+		width: 70px;
+		height: 40px;
+		margin-left: 10px;
+		border: none;
+		border-radius: 20px;
+		background-color: #007bff;
+		color: white;
+		font-size: 16px;
+		cursor: pointer;
 	}
 
 	.swiper-container {

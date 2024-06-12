@@ -17,9 +17,7 @@
 		height: 3.125rem;
 		border-radius: 2.5rem;
 		display: flex;
-		/* flex-direction: column; */
 		align-items: center;
-		/* justify-content: center; */
 }
 .icon {
 		height: 1.5625rem;
@@ -36,7 +34,6 @@
 		height: 3.125rem;
 		border-radius: 2.5rem;
 		display: flex;
-		/* flex-direction: column; */
 		align-items: center;
 }
 .inputText {
@@ -49,5 +46,9 @@
 }
 .login {
 		margin-top: 0.9375rem;
+		width: 15.625rem;
+}
+.register {
+		margin-top: 0.625rem;
 		width: 15.625rem;
 }

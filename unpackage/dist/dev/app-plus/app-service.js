@@ -38,7 +38,7 @@ if (uni.restoreGlobal) {
     }
     return target;
   };
-  const _sfc_main$9 = {
+  const _sfc_main$a = {
     data() {
       return {
         title: "Hello",
@@ -72,7 +72,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "content" }, [
       vue.createElementVNode("image", {
         src: "/static/index/sakuraPicture.png",
@@ -92,14 +92,14 @@ if (uni.restoreGlobal) {
       })
     ]);
   }
-  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__file", "D:/Uniapp/luoying/pages/index/index.vue"]]);
-  const _sfc_main$8 = {
+  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__file", "D:/Uniapp/luoying/pages/index/index.vue"]]);
+  const _sfc_main$9 = {
     data() {
       return {};
     },
     methods: {}
   };
-  function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "content" }, [
       vue.createElementVNode("view", { class: "module" }, [
         vue.createElementVNode("image", {
@@ -125,17 +125,18 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesShouyeShouye = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__file", "D:/Uniapp/luoying/pages/shouye/shouye.vue"]]);
-  const _sfc_main$7 = {
+  const PagesShouyeShouye = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__file", "D:/Uniapp/luoying/pages/shouye/shouye.vue"]]);
+  const _sfc_main$8 = {
     data() {
       return {
+        searchContent: "",
         posts: [
           {
             id: 12345,
             tags: ["借阅"],
             views: 111,
             comments: 12,
-            content: "有偿求《Operation System》第10版",
+            title: "有偿求《Operation System》第10版",
             image: ["/static/faxian/img1.png"]
           },
           {
@@ -143,29 +144,58 @@ if (uni.restoreGlobal) {
             tags: ["问题", "数学", "逆天", "不行", "都可以"],
             views: 678,
             comments: 25,
-            content: "有人知道这道题怎么解决吗？",
+            title: "有人知道这道题怎么解决吗？",
             image: ["/static/faxian/img1.png", "/static/images/building2.jpg"]
           }
-        ]
+        ],
+        filteredPosts: []
       };
     },
+    mounted() {
+      this.filteredPosts = this.posts;
+    },
     methods: {
-      toDetail() {
-        uni.redirectTo({
-          url: "/pages/tieziDetail/tieziDetail"
+      toDetail(id) {
+        uni.navigateTo({
+          url: `/pages/tieziDetail/tieziDetail?id=${id}`
         });
+      },
+      searchPosts() {
+        const searchContentLower = this.searchContent.trim().toLowerCase();
+        if (searchContentLower === "") {
+          this.filteredPosts = this.posts;
+        } else {
+          this.filteredPosts = this.posts.filter((post) => {
+            const titleMatch = post.title.toLowerCase().includes(searchContentLower);
+            const tagsMatch = post.tags.some((tag) => tag.toLowerCase().includes(searchContentLower));
+            return titleMatch || tagsMatch;
+          });
+        }
       }
     }
   };
-  function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createCommentVNode(" 搜索栏 "),
       vue.createElementVNode("view", { class: "search-bar" }, [
-        vue.createElementVNode("input", {
-          class: "search-input",
-          type: "text",
-          placeholder: "搜索帖子"
-        })
+        vue.withDirectives(vue.createElementVNode(
+          "input",
+          {
+            class: "search-input",
+            "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $data.searchContent = $event),
+            type: "text",
+            placeholder: "搜索帖子"
+          },
+          null,
+          512
+          /* NEED_PATCH */
+        ), [
+          [vue.vModelText, $data.searchContent]
+        ]),
+        vue.createElementVNode("button", {
+          class: "search-button",
+          onClick: _cache[1] || (_cache[1] = (...args) => $options.searchPosts && $options.searchPosts(...args))
+        }, "搜索")
       ]),
       vue.createCommentVNode(" 图片轮播图 "),
       vue.createElementVNode("swiper", {
@@ -195,11 +225,11 @@ if (uni.restoreGlobal) {
         (vue.openBlock(true), vue.createElementBlock(
           vue.Fragment,
           null,
-          vue.renderList($data.posts, (post) => {
+          vue.renderList($data.filteredPosts, (post) => {
             return vue.openBlock(), vue.createElementBlock("view", {
               class: "post-item",
               key: post.id,
-              onClick: _cache[0] || (_cache[0] = (...args) => $options.toDetail && $options.toDetail(...args))
+              onClick: ($event) => $options.toDetail(post.id)
             }, [
               vue.createElementVNode("view", { class: "post-header" }, [
                 vue.createElementVNode(
@@ -258,7 +288,7 @@ if (uni.restoreGlobal) {
                 vue.createElementVNode(
                   "text",
                   null,
-                  vue.toDisplayString(post.content),
+                  vue.toDisplayString(post.title),
                   1
                   /* TEXT */
                 ),
@@ -272,7 +302,7 @@ if (uni.restoreGlobal) {
                   class: "post-image"
                 }, null, 8, ["src"])) : vue.createCommentVNode("v-if", true)
               ])
-            ]);
+            ], 8, ["onClick"]);
           }),
           128
           /* KEYED_FRAGMENT */
@@ -280,7 +310,7 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesFaxianFaxian = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__scopeId", "data-v-d5906933"], ["__file", "D:/Uniapp/luoying/pages/faxian/faxian.vue"]]);
+  const PagesFaxianFaxian = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-d5906933"], ["__file", "D:/Uniapp/luoying/pages/faxian/faxian.vue"]]);
   function formatAppLog(type, filename, ...args) {
     if (uni.__log__) {
       uni.__log__(type, filename, ...args);
@@ -288,12 +318,12 @@ if (uni.restoreGlobal) {
       console[type].apply(console, [...args, filename]);
     }
   }
-  const _sfc_main$6 = {
+  const _sfc_main$7 = {
     data() {
       return {
         account: "",
         password: "",
-        whetherLuoJia: false
+        whetherLuoJia: true
       };
     },
     onLoad: function(options) {
@@ -303,6 +333,13 @@ if (uni.restoreGlobal) {
     },
     methods: {
       toshouye() {
+        if (!this.whetherLuoJia) {
+          uni.showToast({
+            title: "请先进行智慧珞珈验证",
+            icon: "none"
+          });
+          return;
+        }
         if (!this.account || !this.password) {
           uni.showToast({
             title: "请填写完整信息",
@@ -335,7 +372,7 @@ if (uni.restoreGlobal) {
               title: "请求失败，请稍后再试",
               icon: "none"
             });
-            formatAppLog("error", "at pages/denglu/denglu.vue:96", error);
+            formatAppLog("error", "at pages/denglu/denglu.vue:98", error);
           }
         });
       },
@@ -345,10 +382,52 @@ if (uni.restoreGlobal) {
             url: "/pages/webview/webview"
           });
         }
+      },
+      register() {
+        if (!this.whetherLuoJia) {
+          uni.showToast({
+            title: "请先进行智慧珞珈验证",
+            icon: "none"
+          });
+          return;
+        }
+        if (!this.account || !this.password) {
+          uni.showToast({
+            title: "请填写完整信息",
+            icon: "none"
+          });
+          return;
+        }
+        const url = `http://localhost:5000/api/user/register?username=${this.account}&password=${this.password}`;
+        uni.request({
+          url,
+          method: "POST",
+          success: (res) => {
+            if (res.statusCode === 200) {
+              uni.showToast({
+                title: "注册成功",
+                icon: "success"
+              });
+              this.toshouye();
+            } else {
+              uni.showToast({
+                title: "注册失败",
+                icon: "none"
+              });
+            }
+          },
+          fail: (error) => {
+            uni.showToast({
+              title: "请求失败，请稍后再试",
+              icon: "none"
+            });
+            formatAppLog("error", "at pages/denglu/denglu.vue:150", error);
+          }
+        });
       }
     }
   };
-  function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "content" }, [
       vue.createElementVNode("view", { class: "title" }, " 欢迎来到 珞樱 "),
       vue.createElementVNode("view", {
@@ -360,7 +439,6 @@ if (uni.restoreGlobal) {
           mode: "heightFix",
           class: "icon"
         }),
-        vue.createCommentVNode(' <image src="../../static/denglu/line.png" mode="aspectFit"></image> '),
         $data.whetherLuoJia ? (vue.openBlock(), vue.createElementBlock("view", {
           key: 0,
           class: "verifyText"
@@ -375,7 +453,6 @@ if (uni.restoreGlobal) {
           mode: "heightFix",
           class: "icon"
         }),
-        vue.createCommentVNode(' <image src="../../static/denglu/line.png" mode="aspectFit"></image> '),
         vue.createElementVNode("view", { class: "verifyText" }, [
           vue.withDirectives(vue.createElementVNode(
             "input",
@@ -383,7 +460,7 @@ if (uni.restoreGlobal) {
               type: "text",
               id: "account",
               "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $data.account = $event),
-              placeholder: "请输入手机号",
+              placeholder: "请输入纯英文用户名",
               class: "inputText"
             },
             null,
@@ -400,7 +477,6 @@ if (uni.restoreGlobal) {
           mode: "heightFix",
           class: "icon"
         }),
-        vue.createCommentVNode(' <image src="../../static/denglu/line.png" mode="aspectFit"></image> '),
         vue.createElementVNode("view", { class: "verifyText" }, [
           vue.withDirectives(vue.createElementVNode(
             "input",
@@ -419,20 +495,25 @@ if (uni.restoreGlobal) {
           ])
         ])
       ]),
-      vue.createElementVNode("view", { class: "notice" }, " 未注册的手机号验证后自动创建珞樱账号 "),
       vue.createElementVNode("view", { class: "login" }, [
         vue.createElementVNode("button", {
           style: { "border-radius": "40rpx", "background-color": "rgb(40,168,124)", "color": "white" },
           onClick: _cache[3] || (_cache[3] = (...args) => $options.toshouye && $options.toshouye(...args))
         }, "登录")
+      ]),
+      vue.createElementVNode("view", { class: "register" }, [
+        vue.createElementVNode("button", {
+          style: { "border-radius": "40rpx", "background-color": "rgb(255, 85, 127)", "color": "white" },
+          onClick: _cache[4] || (_cache[4] = (...args) => $options.register && $options.register(...args))
+        }, "注册")
       ])
     ]);
   }
-  const PagesDengluDenglu = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__file", "D:/Uniapp/luoying/pages/denglu/denglu.vue"]]);
-  const _sfc_main$5 = {
+  const PagesDengluDenglu = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__file", "D:/Uniapp/luoying/pages/denglu/denglu.vue"]]);
+  const _sfc_main$6 = {
     data() {
       return {
-        url: "https://cas.whu.edu.cn/authserver/login?service=http%3A%2F%2Fehall.whu.edu.cn%2Flogin%3Fservice%3Dhttp%3A%2F%2Fehall.whu.edu.cn%2Fnew%2Findex.html",
+        url: "https://cas.whu.edu.cn/authserver/login?service=http%3A%2F%2Fehall.whu.edu.cn%2Flogin%3Fservice%3Dhttp%3A%2F%2Fehall.whu.edu.cn%2Fnew%2Fmobile%2Findex.html",
         currentSrc: "",
         intervalId: null
       };
@@ -460,12 +541,12 @@ if (uni.restoreGlobal) {
     },
     methods: {}
   };
-  function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createElementVNode("web-view", { src: $data.url }, null, 8, ["src"])
     ]);
   }
-  const PagesWebviewWebview = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__file", "D:/Uniapp/luoying/pages/webview/webview.vue"]]);
+  const PagesWebviewWebview = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__file", "D:/Uniapp/luoying/pages/webview/webview.vue"]]);
   const pages = [
     {
       path: "pages/index/index",
@@ -483,7 +564,7 @@ if (uni.restoreGlobal) {
     {
       path: "pages/faxian/faxian",
       style: {
-        navigationBarTitleText: ""
+        navigationBarTitleText: "珞樱论坛"
       }
     },
     {
@@ -521,6 +602,13 @@ if (uni.restoreGlobal) {
       path: "pages/chat/chat",
       style: {
         navigationBarTitleText: "聊天页面"
+      }
+    },
+    {
+      path: "pages/tieziDetail/tieziDetail",
+      style: {
+        navigationBarTitleText: "聊天页面",
+        navigationStyle: "custom"
       }
     }
   ];
@@ -3263,7 +3351,7 @@ ${i3}
     } }), bs(Bs), Bs.addInterceptor = N, Bs.removeInterceptor = D, Bs.interceptObject = F;
   })();
   var Ws = Bs;
-  const _sfc_main$4 = {
+  const _sfc_main$5 = {
     data() {
       return {
         messages: []
@@ -3320,7 +3408,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createElementVNode("view", { class: "message-list" }, [
         (vue.openBlock(true), vue.createElementBlock(
@@ -3369,8 +3457,8 @@ ${i3}
       ])
     ]);
   }
-  const PagesXiaoxiXiaoxi = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__scopeId", "data-v-23f3f038"], ["__file", "D:/Uniapp/luoying/pages/xiaoxi/xiaoxi.vue"]]);
-  const _sfc_main$3 = {
+  const PagesXiaoxiXiaoxi = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__scopeId", "data-v-23f3f038"], ["__file", "D:/Uniapp/luoying/pages/xiaoxi/xiaoxi.vue"]]);
+  const _sfc_main$4 = {
     data() {
       return {
         userSelf: {},
@@ -3519,7 +3607,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("div", { class: "my-page" }, [
       vue.createElementVNode("div", { class: "user-info" }, [
         vue.createElementVNode("img", {
@@ -3717,8 +3805,8 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesWodeWode = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__scopeId", "data-v-e6578db8"], ["__file", "D:/Uniapp/luoying/pages/wode/wode.vue"]]);
-  const _sfc_main$2 = {
+  const PagesWodeWode = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__scopeId", "data-v-e6578db8"], ["__file", "D:/Uniapp/luoying/pages/wode/wode.vue"]]);
+  const _sfc_main$3 = {
     data() {
       return {
         selectedTab: "post",
@@ -3796,7 +3884,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createElementVNode("view", { class: "top-nav" }, [
         vue.createElementVNode(
@@ -4017,8 +4105,8 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesFabuFabu = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__file", "D:/Uniapp/luoying/pages/fabu/fabu.vue"]]);
-  const _sfc_main$1 = {
+  const PagesFabuFabu = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__file", "D:/Uniapp/luoying/pages/fabu/fabu.vue"]]);
+  const _sfc_main$2 = {
     data() {
       return {
         chatId: null,
@@ -4105,7 +4193,7 @@ ${i3}
       });
     }
   };
-  function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "chat-container" }, [
       vue.createCommentVNode(" 消息显示区域 "),
       vue.createElementVNode("scroll-view", {
@@ -4185,7 +4273,372 @@ ${i3}
       ])
     ]);
   }
-  const PagesChatChat = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "D:/Uniapp/luoying/pages/chat/chat.vue"]]);
+  const PagesChatChat = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__file", "D:/Uniapp/luoying/pages/chat/chat.vue"]]);
+  const _sfc_main$1 = {
+    data() {
+      return {
+        post: {
+          id: "12345",
+          userID: "123",
+          author: "Darian",
+          avatar: "/static/faxian/img1.png",
+          // 用户头像路径
+          title: "港大校长爆雷🔥🔥🔥",
+          date: "昨天 23:38",
+          location: "日本",
+          content: "原来香港学校已经这么颓了嘛...个人理解就是，先让内容渲染出来，然后计算 剩余空间有多少。按照 有 flex-grow 属性 的比例，动态设置 当前DOM 的宽度公式就是：原始宽度 + （剩余空间 / 总共分成多少份 * 当前元素所占 分数）",
+          images: [
+            "/static/faxian/img2.jpg",
+            "/static/faxian/img1.png",
+            "/static/faxian/img2.jpg"
+          ],
+          likes: 350,
+          stars: 103,
+          comments: [
+            {
+              id: 1,
+              author: "用户A",
+              avatar: "/static/faxian/img1.png",
+              date: "2天前",
+              text: "笑死了🐒...",
+              replies: [{
+                id: 101,
+                author: "用户B",
+                avatar: "/static/faxian/img1.png",
+                date: "2天前",
+                text: "刷分是有记录的..."
+              }],
+              showReplies: false
+            },
+            {
+              id: 2,
+              author: "用户C",
+              avatar: "/static/faxian/img1.png",
+              date: "2天前",
+              text: "陆本没办法造假啊...",
+              replies: [],
+              showReplies: false
+            }
+          ]
+        },
+        newComment: ""
+        // 新评论内容
+      };
+    },
+    methods: {
+      goBack() {
+        uni.navigateBack();
+      },
+      showReplies(commentId) {
+        const comment = this.post.comments.find((c2) => c2.id === commentId);
+        if (comment) {
+          comment.showReplies = !comment.showReplies;
+        }
+      },
+      like() {
+      },
+      star() {
+      },
+      comment() {
+      },
+      sendComment() {
+        if (this.newComment.trim() === "") {
+          uni.showToast({
+            title: "评论不能为空",
+            icon: "none"
+          });
+          return;
+        }
+        const newComment = {
+          id: this.post.comments.length + 1,
+          // 简单地用数组长度作为id
+          author: "当前用户",
+          // 替换为当前登录用户的信息
+          avatar: "/static/faxian/img1.png",
+          // 替换为当前用户头像
+          date: "刚刚",
+          text: this.newComment,
+          replies: [],
+          showReplies: false
+        };
+        this.post.comments.push(newComment);
+        this.newComment = "";
+        uni.showToast({
+          title: "评论成功",
+          icon: "success"
+        });
+      }
+    }
+  };
+  function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
+      vue.createCommentVNode(" 顶部导航栏 "),
+      vue.createElementVNode("view", { class: "navbar" }, [
+        vue.createElementVNode("view", {
+          class: "nav-left",
+          onClick: _cache[0] || (_cache[0] = (...args) => $options.goBack && $options.goBack(...args))
+        }, [
+          vue.createElementVNode("image", {
+            src: "/static/detial/back .png",
+            class: "back"
+          })
+        ]),
+        vue.createElementVNode("view", { class: "nav-avatar" }, [
+          vue.createElementVNode("image", {
+            src: $data.post.avatar,
+            class: "avatar"
+          }, null, 8, ["src"]),
+          vue.createElementVNode(
+            "view",
+            { class: "nav-title" },
+            vue.toDisplayString($data.post.author),
+            1
+            /* TEXT */
+          )
+        ]),
+        vue.createElementVNode("view", { class: "nav-right" }, [
+          vue.createElementVNode("button", { class: "follow-button" }, "关注")
+        ])
+      ]),
+      vue.createCommentVNode(" 图片轮播 "),
+      vue.createElementVNode("swiper", {
+        class: "image-swiper",
+        autoplay: false,
+        "indicator-dots": ""
+      }, [
+        (vue.openBlock(true), vue.createElementBlock(
+          vue.Fragment,
+          null,
+          vue.renderList($data.post.images, (image, index) => {
+            return vue.openBlock(), vue.createElementBlock("swiper-item", { key: index }, [
+              vue.createElementVNode("image", {
+                src: image,
+                class: "swiper-image"
+              }, null, 8, ["src"])
+            ]);
+          }),
+          128
+          /* KEYED_FRAGMENT */
+        ))
+      ]),
+      vue.createCommentVNode(" 帖子内容 "),
+      vue.createElementVNode("scroll-view", {
+        class: "post-container",
+        "scroll-y": ""
+      }, [
+        vue.createElementVNode("view", { class: "post-header" }, [
+          vue.createElementVNode(
+            "text",
+            { class: "post-title" },
+            vue.toDisplayString($data.post.title),
+            1
+            /* TEXT */
+          ),
+          vue.createElementVNode("view", { class: "post-meta" }, [
+            vue.createElementVNode(
+              "text",
+              { class: "post-date" },
+              vue.toDisplayString($data.post.date),
+              1
+              /* TEXT */
+            ),
+            vue.createElementVNode(
+              "text",
+              { class: "post-location" },
+              vue.toDisplayString($data.post.location),
+              1
+              /* TEXT */
+            )
+          ])
+        ]),
+        vue.createElementVNode("view", { class: "post-content" }, [
+          vue.createElementVNode(
+            "text",
+            { class: "post-text" },
+            vue.toDisplayString($data.post.content),
+            1
+            /* TEXT */
+          )
+        ]),
+        vue.createCommentVNode(" 评论列表 "),
+        vue.createElementVNode("view", { class: "comments-container" }, [
+          (vue.openBlock(true), vue.createElementBlock(
+            vue.Fragment,
+            null,
+            vue.renderList($data.post.comments, (comment) => {
+              return vue.openBlock(), vue.createElementBlock("view", {
+                class: "comment",
+                key: comment.id
+              }, [
+                vue.createElementVNode("image", {
+                  src: comment.avatar,
+                  class: "comment-avatar"
+                }, null, 8, ["src"]),
+                vue.createElementVNode("view", { class: "comment-content" }, [
+                  vue.createElementVNode("view", { class: "comment-header" }, [
+                    vue.createElementVNode(
+                      "text",
+                      { class: "comment-author" },
+                      vue.toDisplayString(comment.author),
+                      1
+                      /* TEXT */
+                    ),
+                    vue.createElementVNode(
+                      "text",
+                      { class: "comment-date" },
+                      vue.toDisplayString(comment.date),
+                      1
+                      /* TEXT */
+                    )
+                  ]),
+                  vue.createElementVNode(
+                    "text",
+                    { class: "comment-text" },
+                    vue.toDisplayString(comment.text),
+                    1
+                    /* TEXT */
+                  ),
+                  vue.createElementVNode("view", { class: "comment-actions" }, [
+                    vue.createElementVNode(
+                      "text",
+                      { class: "like-button" },
+                      vue.toDisplayString(comment.likes),
+                      1
+                      /* TEXT */
+                    ),
+                    vue.createElementVNode("text", {
+                      class: "reply-button",
+                      onClick: ($event) => $options.showReplies(comment.id)
+                    }, "展开 " + vue.toDisplayString(comment.replies.length) + " 条回复", 9, ["onClick"])
+                  ]),
+                  comment.showReplies ? (vue.openBlock(), vue.createElementBlock("view", {
+                    key: 0,
+                    class: "replies"
+                  }, [
+                    (vue.openBlock(true), vue.createElementBlock(
+                      vue.Fragment,
+                      null,
+                      vue.renderList(comment.replies, (reply) => {
+                        return vue.openBlock(), vue.createElementBlock("view", {
+                          class: "reply",
+                          key: reply.id
+                        }, [
+                          vue.createElementVNode("image", {
+                            src: reply.avatar,
+                            class: "reply-avatar"
+                          }, null, 8, ["src"]),
+                          vue.createElementVNode("view", { class: "reply-content" }, [
+                            vue.createElementVNode("view", { class: "reply-header" }, [
+                              vue.createElementVNode(
+                                "text",
+                                { class: "reply-author" },
+                                vue.toDisplayString(reply.author),
+                                1
+                                /* TEXT */
+                              ),
+                              vue.createElementVNode(
+                                "text",
+                                { class: "reply-date" },
+                                vue.toDisplayString(reply.date),
+                                1
+                                /* TEXT */
+                              )
+                            ]),
+                            vue.createElementVNode(
+                              "text",
+                              { class: "reply-text" },
+                              vue.toDisplayString(reply.text),
+                              1
+                              /* TEXT */
+                            )
+                          ])
+                        ]);
+                      }),
+                      128
+                      /* KEYED_FRAGMENT */
+                    ))
+                  ])) : vue.createCommentVNode("v-if", true)
+                ])
+              ]);
+            }),
+            128
+            /* KEYED_FRAGMENT */
+          ))
+        ])
+      ]),
+      vue.createCommentVNode(" 底部操作栏 "),
+      vue.createElementVNode("view", { class: "bottom-bar" }, [
+        vue.withDirectives(vue.createElementVNode(
+          "input",
+          {
+            "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $data.newComment = $event),
+            class: "comment-input",
+            placeholder: "说点什么..."
+          },
+          null,
+          512
+          /* NEED_PATCH */
+        ), [
+          [vue.vModelText, $data.newComment]
+        ]),
+        vue.createElementVNode("view", { class: "bottom-buttons" }, [
+          vue.createElementVNode("view", {
+            class: "pinglun",
+            onClick: _cache[2] || (_cache[2] = (...args) => $options.sendComment && $options.sendComment(...args))
+          }, "发送"),
+          vue.createElementVNode("view", {
+            class: "bottom-button",
+            onClick: _cache[3] || (_cache[3] = (...args) => $options.like && $options.like(...args))
+          }, [
+            vue.createElementVNode("image", {
+              src: "/static/detial/like.png",
+              class: "icon"
+            }),
+            vue.createElementVNode(
+              "text",
+              null,
+              vue.toDisplayString($data.post.likes),
+              1
+              /* TEXT */
+            )
+          ]),
+          vue.createElementVNode("view", {
+            class: "bottom-button",
+            onClick: _cache[4] || (_cache[4] = (...args) => $options.star && $options.star(...args))
+          }, [
+            vue.createElementVNode("image", {
+              src: "/static/detial/star.png",
+              class: "icon"
+            }),
+            vue.createElementVNode(
+              "text",
+              null,
+              vue.toDisplayString($data.post.stars),
+              1
+              /* TEXT */
+            )
+          ]),
+          vue.createElementVNode("view", {
+            class: "bottom-button",
+            onClick: _cache[5] || (_cache[5] = (...args) => $options.comment && $options.comment(...args))
+          }, [
+            vue.createElementVNode("image", {
+              src: "/static/detial/comment.png",
+              class: "icon"
+            }),
+            vue.createElementVNode(
+              "text",
+              null,
+              vue.toDisplayString($data.post.comments.length),
+              1
+              /* TEXT */
+            )
+          ])
+        ])
+      ])
+    ]);
+  }
+  const PagesTieziDetailTieziDetail = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__scopeId", "data-v-c02b434d"], ["__file", "D:/Uniapp/luoying/pages/tieziDetail/tieziDetail.vue"]]);
   __definePage("pages/index/index", PagesIndexIndex);
   __definePage("pages/shouye/shouye", PagesShouyeShouye);
   __definePage("pages/faxian/faxian", PagesFaxianFaxian);
@@ -4195,6 +4648,7 @@ ${i3}
   __definePage("pages/wode/wode", PagesWodeWode);
   __definePage("pages/fabu/fabu", PagesFabuFabu);
   __definePage("pages/chat/chat", PagesChatChat);
+  __definePage("pages/tieziDetail/tieziDetail", PagesTieziDetailTieziDetail);
   const _sfc_main = {
     onLaunch: function() {
       formatAppLog("log", "at App.vue:4", "App Launch");

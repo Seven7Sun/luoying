@@ -13,7 +13,7 @@
 				<button class="follow-button">关注</button>
 			</view>
 		</view>
-		
+
 		<!-- 图片轮播 -->
 		<swiper class="image-swiper" :autoplay="false" indicator-dots>
 			<swiper-item v-for="(image, index) in post.images" :key="index">
@@ -46,7 +46,8 @@
 						<text class="comment-text">{{ comment.text }}</text>
 						<view class="comment-actions">
 							<text class="like-button">{{ comment.likes }}</text>
-							<text class="reply-button" @click="showReplies(comment.id)">展开 {{ comment.replies.length }} 条回复</text>
+							<text class="reply-button" @click="showReplies(comment.id)">展开 {{ comment.replies.length }}
+								条回复</text>
 						</view>
 						<view class="replies" v-if="comment.showReplies">
 							<view class="reply" v-for="reply in comment.replies" :key="reply.id">
@@ -67,8 +68,9 @@
 
 		<!-- 底部操作栏 -->
 		<view class="bottom-bar">
-			<input class="comment-input" placeholder="说点什么..." />
+			<input v-model="newComment" class="comment-input" placeholder="说点什么..." />
 			<view class="bottom-buttons">
+				<view class="pinglun" @tap="sendComment">发送</view>
 				<view class="bottom-button" @tap="like">
 					<image src="/static/detial/like.png" class="icon"></image>
 					<text>{{ post.likes }}</text>
@@ -83,6 +85,7 @@
 				</view>
 			</view>
 		</view>
+
 	</view>
 </template>
 
@@ -91,6 +94,8 @@
 		data() {
 			return {
 				post: {
+					id: '12345',
+					userID: '123',
 					author: 'Darian',
 					avatar: '/static/faxian/img1.png', // 用户头像路径
 					title: '港大校长爆雷🔥🔥🔥',
@@ -110,7 +115,7 @@
 							avatar: '/static/faxian/img1.png',
 							date: '2天前',
 							text: '笑死了🐒...',
-							
+
 							replies: [{
 								id: 101,
 								author: '用户B',
@@ -126,12 +131,13 @@
 							avatar: '/static/faxian/img1.png',
 							date: '2天前',
 							text: '陆本没办法造假啊...',
-							
+
 							replies: [],
 							showReplies: false
 						}
 					]
-				}
+				},
+				newComment: '' // 新评论内容
 			}
 		},
 		methods: {
@@ -145,18 +151,44 @@
 					comment.showReplies = !comment.showReplies
 				}
 			},
-			like(){
-				
+			like() {
+				// 点赞逻辑
 			},
-			star(){
-				
+			star() {
+				// 收藏逻辑
 			},
-			comment(){
-				
+			comment() {
+				// 评论逻辑
+			},
+			sendComment() {
+				// 发送评论逻辑
+				if (this.newComment.trim() === '') {
+					uni.showToast({
+						title: '评论不能为空',
+						icon: 'none'
+					})
+					return
+				}
+				const newComment = {
+					id: this.post.comments.length + 1, // 简单地用数组长度作为id
+					author: '当前用户', // 替换为当前登录用户的信息
+					avatar: '/static/faxian/img1.png', // 替换为当前用户头像
+					date: '刚刚',
+					text: this.newComment,
+					replies: [],
+					showReplies: false
+				}
+				this.post.comments.push(newComment)
+				this.newComment = '' // 清空输入框
+				uni.showToast({
+					title: '评论成功',
+					icon: 'success'
+				})
 			}
 		}
 	}
 </script>
+
 
 <style scoped>
 	.container {
@@ -201,12 +233,12 @@
 		justify-content: flex-end;
 		align-items: center;
 	}
-	
-	.back{
+
+	.back {
 		width: 60rpx;
 		height: 60rpx;
 	}
-	
+
 	.avatar {
 		width: 60rpx;
 		height: 60rpx;
@@ -374,11 +406,19 @@
 		border-color: #ffffff;
 	}
 
+	.pinglun{
+		width: 80rpx;
+		height: 70rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+	}
+	
 	.icon {
 		width: 48rpx;
 		height: 48rpx;
 		margin-right: 8rpx;
 	}
-	
-
 </style>

@@ -2,13 +2,9 @@
 	<view class="content">
 		<view class="title">
 			欢迎来到 珞樱
-
-
-
 		</view>
 		<view class="verifyBox" @tap="toLuoJia">
 			<image src="../../static/denglu/verify.png" mode="heightFix" class="icon"></image>
-			<!-- <image src="../../static/denglu/line.png" mode="aspectFit"></image> -->
 			<view class="verifyText" v-if="whetherLuoJia">
 				验证成功
 			</view>
@@ -18,27 +14,27 @@
 		</view>
 		<view class="accountBox">
 			<image src="../../static/denglu/phone.png" mode="heightFix" class="icon"></image>
-			<!-- <image src="../../static/denglu/line.png" mode="aspectFit"></image> -->
 			<view class="verifyText">
-				<input type="text" id='account' v-model="account" placeholder="请输入手机号" class="inputText" />
+				<input type="text" id='account' v-model="account" placeholder="请输入纯英文用户名" class="inputText" />
 			</view>
 		</view>
 		<view class="accountBox">
 			<image src="../../static/denglu/password.png" mode="heightFix" class="icon"></image>
-			<!-- <image src="../../static/denglu/line.png" mode="aspectFit"></image> -->
 			<view class="verifyText">
 				<input type="password" id='password' v-model="password" placeholder="请输入密码" class="inputText" />
 			</view>
-		</view>
-		<view class="notice">
-			未注册的手机号验证后自动创建珞樱账号
 		</view>
 		<view class="login">
 			<button style="border-radius: 40rpx;background-color: rgb(40,168,124);color: white;"
 				@tap="toshouye">登录</button>
 		</view>
+		<view class="register">
+			<button style="border-radius: 40rpx;background-color: rgb(255, 85, 127);color: white;"
+				@tap="register">注册</button>
+		</view>
 	</view>
 </template>
+
 
 <script>
 	import axios from 'axios';
@@ -48,17 +44,23 @@
 			return {
 				account: '',
 				password: '',
-				whetherLuoJia: false,
+				whetherLuoJia: true,
 			}
 		},
 		onLoad: function(options) {
-			// console.log(options.whetherLogin);
 			if (options.whetherLogin === 'true') {
 				this.whetherLuoJia = true;
 			}
 		},
 		methods: {
 			toshouye() {
+				if (!this.whetherLuoJia) {
+					uni.showToast({
+						title: '请先进行智慧珞珈验证',
+						icon: 'none'
+					});
+					return;
+				}
 				if (!this.account || !this.password) {
 					uni.showToast({
 						title: '请填写完整信息',
@@ -103,11 +105,56 @@
 						url: '/pages/webview/webview'
 					});
 				}
+			},
+			register() {
+				if (!this.whetherLuoJia) {
+					uni.showToast({
+						title: '请先进行智慧珞珈验证',
+						icon: 'none'
+					});
+					return;
+				}
+				if (!this.account || !this.password) {
+					uni.showToast({
+						title: '请填写完整信息',
+						icon: 'none'
+					});
+					return;
+				}
 
+				const url = `http://localhost:5000/api/user/register?username=${this.account}&password=${this.password}`;
+
+				uni.request({
+					url: url,
+					method: 'POST',
+					success: (res) => {
+						if (res.statusCode === 200) {
+							uni.showToast({
+								title: '注册成功',
+								icon: 'success'
+							});
+							// 自动登录并跳转到首页
+							this.toshouye();
+						} else {
+							uni.showToast({
+								title: '注册失败',
+								icon: 'none'
+							});
+						}
+					},
+					fail: (error) => {
+						uni.showToast({
+							title: '请求失败，请稍后再试',
+							icon: 'none'
+						});
+						console.error(error);
+					}
+				});
 			},
 		}
 	}
 </script>
+
 
 <style>
 	.content {
@@ -130,9 +177,7 @@
 		height: 100rpx;
 		border-radius: 80rpx;
 		display: flex;
-		/* flex-direction: column; */
 		align-items: center;
-		/* justify-content: center; */
 	}
 
 	.icon {
@@ -152,7 +197,6 @@
 		height: 100rpx;
 		border-radius: 80rpx;
 		display: flex;
-		/* flex-direction: column; */
 		align-items: center;
 	}
 
@@ -169,6 +213,10 @@
 	.login {
 		margin-top: 30rpx;
 		width: 500rpx;
+	}
 
+	.register {
+		margin-top: 20rpx;
+		width: 500rpx;
 	}
 </style>
