@@ -46,3 +46,42 @@
 .menu-item[data-v-e6578db8]:hover {
   background-color: #e0e0e0;
 }
+.modal-overlay[data-v-e6578db8] {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal[data-v-e6578db8] {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+}
+.form-group[data-v-e6578db8] {
+  margin-bottom: 15px;
+}
+.form-group uni-label[data-v-e6578db8] {
+  display: block;
+  margin-bottom: 5px;
+}
+.form-group uni-input[data-v-e6578db8] {
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+  font-size: 18px;
+  height: 10%;
+  border: 1px solid #ccc;
+  border-radius: 5px; /* 添加边框 */
+}
+.actions[data-v-e6578db8] {
+  display: flex;
+  justify-content: space-between;
+}

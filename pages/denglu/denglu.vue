@@ -41,6 +41,8 @@
 </template>
 
 <script>
+	import axios from 'axios';
+	
 	export default {
 		data() {
 			return {
@@ -65,15 +67,12 @@
 					return;
 				}
 
-				uni.request({
-					url: 'http://localhost:5000/api/user/login',
-					method: 'POST',
-					data: {
+				axios.post('http://localhost:5000/api/user/login', {
 						username: this.account,
 						password: this.password
-					},
-					success: (res) => {
-						if (res.statusCode === 200 && res.data.success) {
+					})
+					.then((response) => {
+						if (response.status === 200 && response.data.success) {
 							uni.showToast({
 								title: '登录成功',
 								icon: 'success'
@@ -87,14 +86,14 @@
 								icon: 'none'
 							});
 						}
-					},
-					fail: () => {
+					})
+					.catch((error) => {
 						uni.showToast({
 							title: '请求失败，请稍后再试',
 							icon: 'none'
 						});
-					}
-				});
+						console.error(error);
+					});
 			},
 			toLuoJia() {
 				if (!this.whetherLuoJia) {
