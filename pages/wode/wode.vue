@@ -17,9 +17,9 @@
         <i class="fas fa-key"></i>
         修改密码
       </div>
-      <div class="menu-item" @click="manageCollections">
+      <div class="menu-item" @click="openMyFavoritesModal">
         <i class="fas fa-bookmark"></i>
-        我的收藏
+        关于我们
       </div>
       <div class="menu-item" @click="showContactUsModal">
         <i class="fas fa-language"></i>
@@ -105,9 +105,22 @@
 	    <div v-if="showLogoutConfirmation" class="modal-overlay">
 	      <div class="modal">
 	        <h3>确定退出登录？</h3>
+			<br>
+			<br>
 	        <div class="actions">
 	          <button @click="logoutConfirmed">确定</button>
 	          <button @click="cancelLogout">取消</button>
+	        </div>
+	      </div>
+	    </div>
+	<!--关于我们悬浮窗 -->
+	    <div v-if="showMyFavoritesModal" class="modal-overlay">
+	      <div class="modal">
+	        <h3>软件基本作用说明</h3>
+	        <p>欢迎使用我们的软件！我们的软件旨在帮助武大学生更好的交流希望我们的软件能为您带来便利和愉快的体验。</p>
+	       
+	        <div class="actions">
+	          <button @click="hideMyFavoritesModal">关闭</button>
 	        </div>
 	      </div>
 	    </div>
@@ -123,6 +136,7 @@ export default {
       showChangePasswordModalFlag: false,
       showContactUsModalFlag: false,
 	  showLogoutConfirmation: false,
+	   showMyFavoritesModal: false, // 控制我的收藏悬浮窗显示与隐藏，
       editUser: {
         userId: '',
         name: '',
@@ -152,32 +166,47 @@ export default {
     this.getUserSelf();
   },
   methods: {
-	  // 打开退出登录确认弹出框
-	      logout() {
-	        this.showLogoutConfirmation = true;
+	  // 打开我的收藏悬浮窗
+	      openMyFavoritesModal() {
+	        this.showMyFavoritesModal = true;
 	      },
-	      // 用户确认退出登录
-	      async logoutConfirmed() {
-	        try {
-	          // 执行退出登录操作（示例中假设有一个名为 logout 的方法）
-	          const result = await this.logout();
-	          // 如果退出成功，你可以在此处理一些额外的逻辑，例如重定向到登录页面
-	          // 成功退出登录后，隐藏弹出框
-	          this.showLogoutConfirmation = false;
-	          // 返回退出成功的信息
-	          return result;
-	        } catch (error) {
-	          console.error('退出登录失败：', error);
-	          // 处理退出登录失败的情况
-	          // 例如显示错误信息，或者重新尝试退出登录
-	          return { success: false, message: '退出登录失败' };
-	        }
+	      // 关闭我的收藏悬浮窗
+	      hideMyFavoritesModal() {
+	        this.showMyFavoritesModal = false;
 	      },
-	      // 取消退出登录
-	      cancelLogout() {
-	        // 用户取消退出登录操作，隐藏弹出框
-	        this.showLogoutConfirmation = false;
-	      },
+	  logout() {
+	    // 设置 showLogoutConfirmation 为 true，显示退出登录确认弹出框
+	    this.showLogoutConfirmation = true;
+		
+	  },
+	  
+	  async logoutConfirmed() {
+		  uni.navigateTo({
+		    url: '/pages/denglu/denglu' // 登录页路径
+		  });
+	    try {
+	      // 执行退出登录操作，例如清除用户登录状态或重定向到登录页面
+	      // 此处是示例代码，具体操作根据你的应用逻辑进行修改
+	      // 操作完成后，隐藏退出登录确认弹出框
+	      this.showLogoutConfirmation = false;
+	      // 返回退出成功的信息
+	      return { success: true, message: '退出成功' };
+		 
+		  
+
+	    } catch (error) {
+	      console.error('退出登录失败：', error);
+	      // 处理退出登录失败的情况
+	      // 例如显示错误信息，或者重新尝试退出登录
+	      return { success: false, message: '退出登录失败' };
+	    }
+	  },
+	  
+	  cancelLogout() {
+	    // 用户取消退出登录操作，隐藏退出登录确认弹出框
+	    this.showLogoutConfirmation = false;
+	  },
+
     async getUserSelf() {
       try {
         const res = await uniCloud.callFunction({
@@ -305,21 +334,14 @@ export default {
         });
       }
     },
-    manageCollections() {
-      // 导航到我的收藏页面
-    },
+
     showContactUsModal() {
       this.showContactUsModalFlag = true;
     },
     hideContactUsModal() {
       this.showContactUsModalFlag = false;
     },
-    languageSettings() {
-      // 导航到语言设置页面
-    },
-    logout() {
-      // 执行退出登录操作
-    }
+  
   }
 };
 </script>
