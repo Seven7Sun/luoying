@@ -69,9 +69,11 @@
 
 				const url = `http://localhost:5000/api/user/login?username=${this.account}&password=${this.password}`;
 
-				axios.post(url)
-					.then((response) => {
-						if (response.status === 200) {
+				uni.request({
+					url: url,
+					method: 'POST',
+					success: (res) => {
+						if (res.statusCode === 200) {
 							uni.showToast({
 								title: '登录成功',
 								icon: 'success'
@@ -85,21 +87,15 @@
 								icon: 'none'
 							});
 						}
-					})
-					.catch((error) => {
-						if (error.response && error.response.status === 401) {
-							uni.showToast({
-								title: '用户名或密码错误',
-								icon: 'none'
-							});
-						} else {
-							uni.showToast({
-								title: '请求失败，请稍后再试',
-								icon: 'none'
-							});
-						}
+					},
+					fail: (error) => {
+						uni.showToast({
+							title: '请求失败，请稍后再试',
+							icon: 'none'
+						});
 						console.error(error);
-					});
+					}
+				});
 			},
 			toLuoJia() {
 				if (!this.whetherLuoJia) {

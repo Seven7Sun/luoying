@@ -64,6 +64,14 @@
 			{
 				"navigationBarTitleText" : "聊天页面"
 			}
+		},
+		{
+			"path" : "pages/tieziDetail/tieziDetail",
+			"style" : 
+			{
+				"navigationBarTitleText" : "聊天页面",
+				"navigationStyle": "custom"
+			}
 		}
 	],
 	"globalStyle": {

@@ -74,6 +74,7 @@
       "style": "dark",
       "background": "#F8F8F8"
     },
+    "arguments": "{\"path\":\"pages/faxian/faxian\"}",
     "uniStatistics": {
       "enable": false
     },
@@ -141,7 +142,11 @@
         }
       ],
       "selectedIndex": 0,
-      "shown": true
+      "shown": true,
+      "child": [
+        "lauchwebview"
+      ],
+      "selected": 1
     }
   },
   "launch_path": "__uniappview.html"
