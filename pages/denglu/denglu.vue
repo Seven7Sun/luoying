@@ -42,7 +42,7 @@
 
 <script>
 	import axios from 'axios';
-	
+
 	export default {
 		data() {
 			return {
@@ -67,12 +67,11 @@
 					return;
 				}
 
-				axios.post('http://localhost:5000/api/user/login', {
-						username: this.account,
-						password: this.password
-					})
+				const url = `http://localhost:5000/api/user/login?username=${this.account}&password=${this.password}`;
+
+				axios.post(url)
 					.then((response) => {
-						if (response.status === 200 && response.data.success) {
+						if (response.status === 200) {
 							uni.showToast({
 								title: '登录成功',
 								icon: 'success'
@@ -88,10 +87,17 @@
 						}
 					})
 					.catch((error) => {
-						uni.showToast({
-							title: '请求失败，请稍后再试',
-							icon: 'none'
-						});
+						if (error.response && error.response.status === 401) {
+							uni.showToast({
+								title: '用户名或密码错误',
+								icon: 'none'
+							});
+						} else {
+							uni.showToast({
+								title: '请求失败，请稍后再试',
+								icon: 'none'
+							});
+						}
 						console.error(error);
 					});
 			},

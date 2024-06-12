@@ -2622,11 +2622,9 @@ if (uni.restoreGlobal) {
           });
           return;
         }
-        axios.post("http://localhost:5000/api/user/login", {
-          username: this.account,
-          password: this.password
-        }).then((response) => {
-          if (response.status === 200 && response.data.success) {
+        const url = `http://localhost:5000/api/user/login?username=${this.account}&password=${this.password}`;
+        axios.post(url).then((response) => {
+          if (response.status === 200) {
             uni.showToast({
               title: "登录成功",
               icon: "success"
@@ -2641,11 +2639,18 @@ if (uni.restoreGlobal) {
             });
           }
         }).catch((error) => {
-          uni.showToast({
-            title: "请求失败，请稍后再试",
-            icon: "none"
-          });
-          formatAppLog("error", "at pages/denglu/denglu.vue:95", error);
+          if (error.response && error.response.status === 401) {
+            uni.showToast({
+              title: "用户名或密码错误",
+              icon: "none"
+            });
+          } else {
+            uni.showToast({
+              title: "请求失败，请稍后再试",
+              icon: "none"
+            });
+          }
+          formatAppLog("error", "at pages/denglu/denglu.vue:101", error);
         });
       },
       toLuoJia() {
