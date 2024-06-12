@@ -34,7 +34,8 @@
 			未注册的手机号验证后自动创建珞樱账号
 		</view>
 		<view class="login">
-			<button style="border-radius: 40rpx;background-color: rgb(40,168,124);color: white;" @tap="toshouye">登录</button>
+			<button style="border-radius: 40rpx;background-color: rgb(40,168,124);color: white;"
+				@tap="toshouye">登录</button>
 		</view>
 	</view>
 </template>
@@ -56,18 +57,52 @@
 		},
 		methods: {
 			toshouye() {
-				//
-				uni.switchTab({
-					url: '/pages/shouye/shouye'
+				if (!this.account || !this.password) {
+					uni.showToast({
+						title: '请填写完整信息',
+						icon: 'none'
+					});
+					return;
+				}
+
+				uni.request({
+					url: 'http://localhost:5000/api/user/login',
+					method: 'POST',
+					data: {
+						username: this.account,
+						password: this.password
+					},
+					success: (res) => {
+						if (res.statusCode === 200 && res.data.success) {
+							uni.showToast({
+								title: '登录成功',
+								icon: 'success'
+							});
+							uni.switchTab({
+								url: '/pages/shouye/shouye'
+							});
+						} else {
+							uni.showToast({
+								title: '登录失败',
+								icon: 'none'
+							});
+						}
+					},
+					fail: () => {
+						uni.showToast({
+							title: '请求失败，请稍后再试',
+							icon: 'none'
+						});
+					}
 				});
 			},
 			toLuoJia() {
-				if(!this.whetherLuoJia){
+				if (!this.whetherLuoJia) {
 					uni.navigateTo({
 						url: '/pages/webview/webview'
 					});
 				}
-				
+
 			},
 		}
 	}

@@ -296,8 +296,42 @@ if (uni.restoreGlobal) {
     },
     methods: {
       toshouye() {
-        uni.switchTab({
-          url: "/pages/shouye/shouye"
+        if (!this.account || !this.password) {
+          uni.showToast({
+            title: "请填写完整信息",
+            icon: "none"
+          });
+          return;
+        }
+        uni.request({
+          url: "http://localhost:5000/api/user/login",
+          method: "POST",
+          data: {
+            username: this.account,
+            password: this.password
+          },
+          success: (res) => {
+            if (res.statusCode === 200 && res.data.success) {
+              uni.showToast({
+                title: "登录成功",
+                icon: "success"
+              });
+              uni.switchTab({
+                url: "/pages/shouye/shouye"
+              });
+            } else {
+              uni.showToast({
+                title: "登录失败",
+                icon: "none"
+              });
+            }
+          },
+          fail: () => {
+            uni.showToast({
+              title: "请求失败，请稍后再试",
+              icon: "none"
+            });
+          }
         });
       },
       toLuoJia() {
@@ -838,7 +872,7 @@ if (uni.restoreGlobal) {
   function I(e2) {
     return e2 && "string" == typeof e2 ? JSON.parse(e2) : e2;
   }
-  const S = true, b = "app", A = I(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = b, T = I('{\n    "address": [\n        "127.0.0.1",\n        "192.168.255.1",\n        "192.168.133.1",\n        "10.255.3.219"\n    ],\n    "debugPort": 9000,\n    "initialLaunchType": "local",\n    "servePort": 7000,\n    "skipFiles": [\n        "<node_internals>/**",\n        "D:/HBuilderX/plugins/unicloud/**/*.js"\n    ]\n}\n'), C = I('[{"provider":"aliyun","spaceName":"trial-wdarlbo7lkpoy8ebe86","spaceId":"mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d","clientSecret":"4dS89HqPS4Vi8zObyOOS3w==","endpoint":"https://api.next.bspapp.com"}]') || [];
+  const S = true, b = "app", A = I(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = b, T = I('{\n    "address": [\n        "127.0.0.1",\n        "192.168.255.1",\n        "192.168.133.1",\n        "10.135.19.183"\n    ],\n    "debugPort": 9000,\n    "initialLaunchType": "local",\n    "servePort": 7000,\n    "skipFiles": [\n        "<node_internals>/**",\n        "D:/HBuilderX/plugins/unicloud/**/*.js"\n    ]\n}\n'), C = I('[{"provider":"aliyun","spaceName":"trial-wdarlbo7lkpoy8ebe86","spaceId":"mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d","clientSecret":"4dS89HqPS4Vi8zObyOOS3w==","endpoint":"https://api.next.bspapp.com"}]') || [];
   let O = "";
   try {
     O = "__UNI__40F4800";
