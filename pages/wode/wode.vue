@@ -23,7 +23,7 @@
       </div>
       <div class="menu-item" @click="languageSettings">
         <i class="fas fa-language"></i>
-        显示语言
+        联系我们
       </div>
       <div class="menu-item" @click="logout">
         <i class="fas fa-sign-out-alt"></i>
