@@ -3813,16 +3813,33 @@ ${i3}
         content: "",
         isMarkdown: false,
         tags: [],
-        imageSrc: "",
+        imageSrcList: [],
         isTagModalVisible: false,
         searchQuery: "",
         recommendedTags: [
-          { id: 1, name: "维护地球日！", icon: "path/to/icon1.png" },
-          { id: 2, name: "1024程序员节！", icon: "path/to/icon2.png" },
-          { id: 3, name: "乘风破浪！", icon: "path/to/icon3.png" },
-          { id: 4, name: "数学", icon: "path/to/icon4.png" }
+          {
+            id: 1,
+            name: "维护地球日！",
+            icon: "path/to/icon1.png"
+          },
+          {
+            id: 2,
+            name: "1024程序员节！",
+            icon: "path/to/icon2.png"
+          },
+          {
+            id: 3,
+            name: "乘风破浪！",
+            icon: "path/to/icon3.png"
+          },
+          {
+            id: 4,
+            name: "数学",
+            icon: "path/to/icon4.png"
+          }
         ],
-        newTag: ""
+        newTag: "",
+        id: ""
       };
     },
     methods: {
@@ -3836,15 +3853,26 @@ ${i3}
         this.isTagModalVisible = false;
       },
       addTag(tag) {
-        this.tags.push(tag);
+        if (!this.tags.some((t2) => t2.id === tag.id)) {
+          this.tags.push(tag);
+        } else {
+          formatAppLog("log", "at pages/fabu/fabu.vue:142", "标签已存在");
+        }
       },
       removeTag(tag) {
         this.tags = this.tags.filter((t2) => t2.id !== tag.id);
       },
       createTag() {
         if (this.newTag.trim()) {
-          this.tags.push({ id: Date.now(), name: this.newTag });
-          this.newTag = "";
+          if (!this.tags.some((t2) => t2.name === this.newTag.trim())) {
+            this.tags.push({
+              id: Date.now(),
+              name: this.newTag.trim()
+            });
+            this.newTag = "";
+          } else {
+            formatAppLog("log", "at pages/fabu/fabu.vue:157", "标签已存在");
+          }
         }
       },
       toggleMarkdown(event) {
@@ -3852,33 +3880,73 @@ ${i3}
       },
       saveDraft() {
       },
-      publish() {
-      },
-      chooseImage() {
-        uni.chooseImage({
-          count: 1,
-          sizeType: ["original", "compressed"],
-          sourceType: ["album"],
+      async publish() {
+        const payload = {
+          content: this.content,
+          isMarkdown: this.isMarkdown,
+          tags: this.tags.map((tag) => tag.name),
+          imageUrls: await this.uploadAllImages(this.imageSrcList)
+          // 上传图片后获取的 URL 列表
+        };
+        uni.request({
+          url: "https://your-api-server.com/publish",
+          // 替换为实际的发布接口
+          method: "POST",
+          data: payload,
           success: (res) => {
-            this.imageSrc = res.tempFilePaths[0];
-            this.uploadImage(res.tempFilePaths[0]);
+            formatAppLog("log", "at pages/fabu/fabu.vue:182", "发布成功：", res);
+            uni.showToast({
+              title: "发布成功",
+              icon: "success"
+            });
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/fabu/fabu.vue:140", "选择图片失败：", err);
+            formatAppLog("error", "at pages/fabu/fabu.vue:189", "发布失败：", err);
+            uni.showToast({
+              title: "发布失败",
+              icon: "none"
+            });
           }
         });
       },
+      async uploadAllImages(filePaths) {
+        const uploadPromises = filePaths.map((filePath) => this.uploadImage(filePath));
+        const imageUrls = await Promise.all(uploadPromises);
+        return imageUrls.filter((url) => url);
+      },
       uploadImage(filePath) {
-        uni.uploadFile({
-          url: "https://your-upload-server.com/upload",
-          // 替换为实际的上传服务器地址
-          filePath,
-          name: "file",
-          success: (uploadFileRes) => {
-            formatAppLog("log", "at pages/fabu/fabu.vue:150", "上传成功：", uploadFileRes);
+        return new Promise((resolve, reject) => {
+          uni.uploadFile({
+            url: "https://your-upload-server.com/upload",
+            // 替换为实际的上传服务器地址
+            filePath,
+            name: "file",
+            success: (uploadFileRes) => {
+              if (uploadFileRes.statusCode === 200) {
+                const data = JSON.parse(uploadFileRes.data);
+                resolve(data.url);
+              } else {
+                resolve(null);
+              }
+            },
+            fail: (err) => {
+              formatAppLog("error", "at pages/fabu/fabu.vue:217", "上传失败：", err);
+              resolve(null);
+            }
+          });
+        });
+      },
+      chooseImage() {
+        uni.chooseImage({
+          count: 9,
+          // 可选最多9张图片
+          sizeType: ["original", "compressed"],
+          sourceType: ["album", "camera"],
+          success: (res) => {
+            this.imageSrcList = this.imageSrcList.concat(res.tempFilePaths);
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/fabu/fabu.vue:154", "上传失败：", err);
+            formatAppLog("error", "at pages/fabu/fabu.vue:233", "选择图片失败：", err);
           }
         });
       }
@@ -3928,11 +3996,21 @@ ${i3}
           vue.createElementVNode("button", {
             onClick: _cache[3] || (_cache[3] = (...args) => $options.chooseImage && $options.chooseImage(...args))
           }, "选择图片"),
-          $data.imageSrc ? (vue.openBlock(), vue.createElementBlock("image", {
-            key: 0,
-            src: $data.imageSrc,
-            class: "uploaded-image"
-          }, null, 8, ["src"])) : vue.createCommentVNode("v-if", true)
+          vue.createElementVNode("view", { class: "uploaded-images" }, [
+            (vue.openBlock(true), vue.createElementBlock(
+              vue.Fragment,
+              null,
+              vue.renderList($data.imageSrcList, (image, index) => {
+                return vue.openBlock(), vue.createElementBlock("image", {
+                  key: index,
+                  src: image,
+                  class: "uploaded-image"
+                }, null, 8, ["src"]);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])
         ]),
         $data.selectedTab === "post" ? (vue.openBlock(), vue.createElementBlock("view", {
           key: 0,
@@ -3944,7 +4022,7 @@ ${i3}
             null,
             vue.renderList($data.tags, (tag) => {
               return vue.openBlock(), vue.createElementBlock("view", {
-                class: "tag",
+                class: "tag tagname",
                 key: tag.id
               }, [
                 vue.createElementVNode(
@@ -3954,9 +4032,10 @@ ${i3}
                   1
                   /* TEXT */
                 ),
-                vue.createElementVNode("button", {
+                vue.createElementVNode("view", {
+                  class: "deletett",
                   onClick: ($event) => $options.removeTag(tag)
-                }, "删除", 8, ["onClick"])
+                }, " × ", 8, ["onClick"])
               ]);
             }),
             128
@@ -3974,24 +4053,30 @@ ${i3}
           class: "tiezinumber"
         }, [
           vue.createElementVNode("text", null, "@："),
-          vue.createElementVNode("image", {
-            src: "/static/fabu/add.png",
-            mode: "heightFix",
-            class: "add-icon"
-          })
+          vue.withDirectives(vue.createElementVNode(
+            "input",
+            {
+              style: { "border": "1px solid #ccc", "border-radius": "20rpx", "margin-top": "20rpx" },
+              type: "text",
+              "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $data.id = $event),
+              placeholder: "填入帖子id"
+            },
+            null,
+            512
+            /* NEED_PATCH */
+          ), [
+            [vue.vModelText, $data.id]
+          ])
         ])) : vue.createCommentVNode("v-if", true),
         vue.createElementVNode("view", { class: "markdown-toggle" }, [
           vue.createElementVNode("text", null, "markdown模式"),
           vue.createElementVNode("switch", {
             checked: $data.isMarkdown,
-            onChange: _cache[5] || (_cache[5] = (...args) => $options.toggleMarkdown && $options.toggleMarkdown(...args))
+            onChange: _cache[6] || (_cache[6] = (...args) => $options.toggleMarkdown && $options.toggleMarkdown(...args))
           }, null, 40, ["checked"])
         ]),
         vue.createElementVNode("view", { class: "button-section" }, [
-          vue.createElementVNode("button", {
-            class: "save-draft-button",
-            onClick: _cache[6] || (_cache[6] = (...args) => $options.saveDraft && $options.saveDraft(...args))
-          }, "保存草稿"),
+          vue.createCommentVNode(' <button class="save-draft-button" @click="saveDraft">保存草稿</button> '),
           vue.createElementVNode("button", {
             class: "publish-button",
             onClick: _cache[7] || (_cache[7] = (...args) => $options.publish && $options.publish(...args))
@@ -4039,12 +4124,12 @@ ${i3}
                   }, [
                     vue.createElementVNode(
                       "text",
-                      null,
+                      { class: "tagname" },
                       "#" + vue.toDisplayString(tag.name),
                       1
                       /* TEXT */
                     ),
-                    vue.createElementVNode("view", { class: "" }, " +添加标签 ")
+                    vue.createElementVNode("view", { class: "addtt" }, " +添加标签 ")
                   ], 8, ["onClick"]);
                 }),
                 128
@@ -4071,7 +4156,7 @@ ${i3}
                 vue.createElementVNode("view", {
                   onClick: _cache[11] || (_cache[11] = (...args) => $options.createTag && $options.createTag(...args)),
                   style: { "white-space": "nowrap", "height": "50rpx", "margin-top": "20rpx", "border": "1px solid #ccc", "border-radius": "4px", "background-color": "#ccc", "margin-left": "15rpx", "padding-left": "10rpx", "padding-right": "10rpx" }
-                }, "创建")
+                }, " 创建")
               ])
             ]),
             vue.createElementVNode("view", { class: "added-tags" }, [
@@ -4081,7 +4166,7 @@ ${i3}
                 null,
                 vue.renderList($data.tags, (tag) => {
                   return vue.openBlock(), vue.createElementBlock("view", {
-                    class: "tag",
+                    class: "tag tagname",
                     key: tag.id
                   }, [
                     vue.createElementVNode(
@@ -4091,9 +4176,10 @@ ${i3}
                       1
                       /* TEXT */
                     ),
-                    vue.createElementVNode("button", {
+                    vue.createElementVNode("view", {
+                      class: "deletett",
                       onClick: ($event) => $options.removeTag(tag)
-                    }, "删除", 8, ["onClick"])
+                    }, " × ", 8, ["onClick"])
                   ]);
                 }),
                 128
@@ -4302,13 +4388,15 @@ ${i3}
               date: "2天前",
               text: "笑死了🐒...",
               replies: [{
-                id: 101,
+                id: 1,
                 author: "用户B",
                 avatar: "/static/faxian/img1.png",
                 date: "2天前",
                 text: "刷分是有记录的..."
               }],
-              showReplies: false
+              showReplies: false,
+              showReplyBox: false,
+              replyText: ""
             },
             {
               id: 2,
@@ -4317,7 +4405,9 @@ ${i3}
               date: "2天前",
               text: "陆本没办法造假啊...",
               replies: [],
-              showReplies: false
+              showReplies: false,
+              showReplyBox: false,
+              replyText: ""
             }
           ]
         },
@@ -4333,6 +4423,37 @@ ${i3}
         const comment = this.post.comments.find((c2) => c2.id === commentId);
         if (comment) {
           comment.showReplies = !comment.showReplies;
+        }
+      },
+      toggleReplyBox(commentId) {
+        const comment = this.post.comments.find((c2) => c2.id === commentId);
+        if (comment) {
+          comment.showReplyBox = !comment.showReplyBox;
+        }
+      },
+      sendReply(commentId) {
+        const comment = this.post.comments.find((c2) => c2.id === commentId);
+        if (comment && comment.replyText.trim() !== "") {
+          const newReply = {
+            id: comment.replies.length + 1,
+            userID: "12345",
+            author: "当前用户",
+            avatar: "/static/faxian/img1.png",
+            // 替换为当前用户头像
+            date: "刚刚",
+            text: comment.replyText
+          };
+          comment.replies.push(newReply);
+          comment.replyText = "";
+          uni.showToast({
+            title: "回复成功",
+            icon: "success"
+          });
+        } else {
+          uni.showToast({
+            title: "回复不能为空",
+            icon: "none"
+          });
         }
       },
       like() {
@@ -4359,7 +4480,9 @@ ${i3}
           date: "刚刚",
           text: this.newComment,
           replies: [],
-          showReplies: false
+          showReplies: false,
+          showReplyBox: false,
+          replyText: ""
         };
         this.post.comments.push(newComment);
         this.newComment = "";
@@ -4556,7 +4679,27 @@ ${i3}
                       }),
                       128
                       /* KEYED_FRAGMENT */
-                    ))
+                    )),
+                    vue.createElementVNode("text", {
+                      class: "reply-button",
+                      onClick: ($event) => $options.toggleReplyBox(comment.id)
+                    }, "回复", 8, ["onClick"]),
+                    comment.showReplyBox ? (vue.openBlock(), vue.createElementBlock("view", {
+                      key: 0,
+                      class: "reply-box"
+                    }, [
+                      vue.withDirectives(vue.createElementVNode("input", {
+                        "onUpdate:modelValue": ($event) => comment.replyText = $event,
+                        class: "reply-input",
+                        placeholder: "回复..."
+                      }, null, 8, ["onUpdate:modelValue"]), [
+                        [vue.vModelText, comment.replyText]
+                      ]),
+                      vue.createElementVNode("view", {
+                        class: "send-reply",
+                        onClick: ($event) => $options.sendReply(comment.id)
+                      }, "发送", 8, ["onClick"])
+                    ])) : vue.createCommentVNode("v-if", true)
                   ])) : vue.createCommentVNode("v-if", true)
                 ])
               ]);

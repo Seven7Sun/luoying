@@ -102,6 +102,7 @@
 		flex-direction: column;
 		padding: 16px;
 		background-color: #fff;
+		width: 700rpx;
 	}
 
 	.search-bar {

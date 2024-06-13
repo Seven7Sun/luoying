@@ -46,9 +46,11 @@
 						<text class="comment-text">{{ comment.text }}</text>
 						<view class="comment-actions">
 							<text class="like-button">{{ comment.likes }}</text>
+							
 							<text class="reply-button" @click="showReplies(comment.id)">展开 {{ comment.replies.length }}
 								条回复</text>
 						</view>
+						
 						<view class="replies" v-if="comment.showReplies">
 							<view class="reply" v-for="reply in comment.replies" :key="reply.id">
 								<image :src="reply.avatar" class="reply-avatar"></image>
@@ -59,6 +61,11 @@
 									</view>
 									<text class="reply-text">{{ reply.text }}</text>
 								</view>
+							</view>
+							<text class="reply-button" @click="toggleReplyBox(comment.id)">回复</text>
+							<view class="reply-box" v-if="comment.showReplyBox">
+								<input v-model="comment.replyText" class="reply-input" placeholder="回复..." />
+								<view class="send-reply" @click="sendReply(comment.id)">发送</view>
 							</view>
 						</view>
 					</view>
@@ -85,9 +92,9 @@
 				</view>
 			</view>
 		</view>
-
 	</view>
 </template>
+
 
 <script>
 	export default {
@@ -117,13 +124,15 @@
 							text: '笑死了🐒...',
 
 							replies: [{
-								id: 101,
+								id: 1,
 								author: '用户B',
 								avatar: '/static/faxian/img1.png',
 								date: '2天前',
 								text: '刷分是有记录的...',
 							}],
-							showReplies: false
+							showReplies: false,
+							showReplyBox: false,
+							replyText: ''
 						},
 						{
 							id: 2,
@@ -133,7 +142,9 @@
 							text: '陆本没办法造假啊...',
 
 							replies: [],
-							showReplies: false
+							showReplies: false,
+							showReplyBox: false,
+							replyText: ''
 						}
 					]
 				},
@@ -149,6 +160,36 @@
 				const comment = this.post.comments.find(c => c.id === commentId)
 				if (comment) {
 					comment.showReplies = !comment.showReplies
+				}
+			},
+			toggleReplyBox(commentId) {
+				const comment = this.post.comments.find(c => c.id === commentId)
+				if (comment) {
+					comment.showReplyBox = !comment.showReplyBox
+				}
+			},
+			sendReply(commentId) {
+				const comment = this.post.comments.find(c => c.id === commentId)
+				if (comment && comment.replyText.trim() !== '') {
+					const newReply = {
+						id: comment.replies.length + 1,
+						userID:'12345',
+						author: '当前用户',
+						avatar: '/static/faxian/img1.png', // 替换为当前用户头像
+						date: '刚刚',
+						text: comment.replyText
+					}
+					comment.replies.push(newReply)
+					comment.replyText = '' // 清空回复框
+					uni.showToast({
+						title: '回复成功',
+						icon: 'success'
+					})
+				} else {
+					uni.showToast({
+						title: '回复不能为空',
+						icon: 'none'
+					})
 				}
 			},
 			like() {
@@ -176,7 +217,9 @@
 					date: '刚刚',
 					text: this.newComment,
 					replies: [],
-					showReplies: false
+					showReplies: false,
+					showReplyBox: false,
+					replyText: ''
 				}
 				this.post.comments.push(newComment)
 				this.newComment = '' // 清空输入框
@@ -188,6 +231,7 @@
 		}
 	}
 </script>
+
 
 
 <style scoped>
@@ -340,7 +384,25 @@
 		font-size: 28rpx;
 		color: #888;
 	}
-
+	
+	.reply-box{
+		display: flex;
+		
+	}
+	
+	.reply-input{
+		border: 1rpx solid #e0e0e0;
+		border-radius: 8rpx;
+		margin-right: 16rpx;
+		margin-top: 8rpx;
+	}
+	
+	.send-reply{
+		border: 1rpx solid #e0e0e0;
+		border-radius: 8rpx;
+		margin-right: 16rpx;
+	}
+	
 	.replies {
 		margin-left: 76rpx;
 		margin-top: 8rpx;
@@ -406,7 +468,7 @@
 		border-color: #ffffff;
 	}
 
-	.pinglun{
+	.pinglun {
 		width: 80rpx;
 		height: 70rpx;
 		display: flex;
@@ -415,7 +477,7 @@
 		border: 1px solid #ccc;
 		border-radius: 4px;
 	}
-	
+
 	.icon {
 		width: 48rpx;
 		height: 48rpx;

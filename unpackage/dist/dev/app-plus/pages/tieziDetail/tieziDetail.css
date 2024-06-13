@@ -129,6 +129,20 @@
 		font-size: 0.875rem;
 		color: #888;
 }
+.reply-box[data-v-c02b434d]{
+		display: flex;
+}
+.reply-input[data-v-c02b434d]{
+		border: 0.03125rem solid #e0e0e0;
+		border-radius: 0.25rem;
+		margin-right: 0.5rem;
+		margin-top: 0.25rem;
+}
+.send-reply[data-v-c02b434d]{
+		border: 0.03125rem solid #e0e0e0;
+		border-radius: 0.25rem;
+		margin-right: 0.5rem;
+}
 .replies[data-v-c02b434d] {
 		margin-left: 2.375rem;
 		margin-top: 0.25rem;
@@ -185,7 +199,7 @@
 		background-color: #ffffff;
 		border-color: #ffffff;
 }
-.pinglun[data-v-c02b434d]{
+.pinglun[data-v-c02b434d] {
 		width: 2.5rem;
 		height: 2.1875rem;
 		display: flex;

@@ -7,23 +7,33 @@
 		</view>
 		<view class="content">
 			<view class="txtouter">
+				<textarea class="textarea" v-model="title" placeholder="此处填写标题" style="height: 50rpx;"></textarea>
+			</view>
+			<view class="txtouter">
 				<textarea class="textarea" v-model="content" placeholder="说些什么吧..."></textarea>
 			</view>
 			<view class="uploadImage">
 				<button @tap="chooseImage">选择图片</button>
-				<image v-if="imageSrc" :src="imageSrc" class="uploaded-image"></image>
+
+				<view class="uploaded-images">
+					<image v-for="(image, index) in imageSrcList" :key="index" :src="image" class="uploaded-image">
+					</image>
+				</view>
 			</view>
 			<view class="add-section" v-if="selectedTab==='post'">
 				<text># 添加标签：</text>
-				<view class="tag" v-for="tag in tags" :key="tag.id">
+				<view class="tag tagname" v-for="tag in tags" :key="tag.id">
 					<text>{{ tag.name }}</text>
-					<button @tap="removeTag(tag)">删除</button>
+					<view class="deletett" @tap="removeTag(tag)">
+						×
+					</view>
 				</view>
-				<image src="../../static/fabu/add.png" mode="heightFix" class="add-icon"  @tap="showTagModal"></image>
+				<image src="../../static/fabu/add.png" mode="heightFix" class="add-icon" @tap="showTagModal"></image>
 			</view>
 			<view class="tiezinumber" v-if="selectedTab==='comment'">
 				<text>@：</text>
-				<image src="../../static/fabu/add.png" mode="heightFix" class="add-icon"></image>
+				<input style="border: 1px solid #ccc;border-radius: 20rpx;margin-top:20rpx;" type="text" v-model="id"
+					placeholder="填入帖子id" />
 			</view>
 
 			<view class="markdown-toggle">
@@ -31,7 +41,7 @@
 				<switch :checked="isMarkdown" @change="toggleMarkdown"></switch>
 			</view>
 			<view class="button-section">
-				<button class="save-draft-button" @click="saveDraft">保存草稿</button>
+				<!-- <button class="save-draft-button" @click="saveDraft">保存草稿</button> -->
 				<button class="publish-button" @click="publish">发布</button>
 			</view>
 		</view>
@@ -49,8 +59,8 @@
 					<view class="recommended-tags">
 						<text style="font-weight: bold;">推荐标签</text>
 						<view class="tag" v-for="tag in recommendedTags" :key="tag.id" @tap="addTag(tag)">
-							<text>#{{ tag.name }}</text>
-							<view class="">
+							<text class="tagname">#{{ tag.name }}</text>
+							<view class="addtt">
 								+添加标签
 							</view>
 						</view>
@@ -58,16 +68,22 @@
 					<view class="create-tag">
 						<text style="font-weight: bold;">创建标签</text>
 						<view class="maketags">
-							<input style="border: 1px solid #ccc;border-radius: 4px;margin-top:20rpx;" type="text" v-model="newTag" placeholder="一个新的标签在此诞生..." />
-							<view @tap="createTag" style="white-space: nowrap;height: 50rpx;margin-top:20rpx;border: 1px solid #ccc;border-radius: 4px;background-color: #ccc;margin-left: 15rpx;padding-left: 10rpx;padding-right: 10rpx">创建</view>
+							<input style="border: 1px solid #ccc;border-radius: 4px;margin-top:20rpx;" type="text"
+								v-model="newTag" placeholder="一个新的标签在此诞生..." />
+							<view @tap="createTag"
+								style="white-space: nowrap;height: 50rpx;margin-top:20rpx;border: 1px solid #ccc;border-radius: 4px;background-color: #ccc;margin-left: 15rpx;padding-left: 10rpx;padding-right: 10rpx">
+								创建</view>
 						</view>
-						
+
 					</view>
 					<view class="added-tags">
 						<text>已添加标签</text>
-						<view class="tag" v-for="tag in tags" :key="tag.id">
+						<view class="tag tagname" v-for="tag in tags" :key="tag.id">
 							<text>{{ tag.name }}</text>
-							<button @tap="removeTag(tag)">删除</button>
+
+							<view class="deletett" @tap="removeTag(tag)">
+								×
+							</view>
 						</view>
 					</view>
 				</view>
@@ -80,20 +96,37 @@
 	export default {
 		data() {
 			return {
+				title:'',
 				selectedTab: 'post',
 				content: '',
 				isMarkdown: false,
 				tags: [],
-				imageSrc: '',
+				imageSrcList: [],
 				isTagModalVisible: false,
 				searchQuery: '',
-				recommendedTags: [
-					{ id: 1, name: '维护地球日！', icon: 'path/to/icon1.png' },
-					{ id: 2, name: '1024程序员节！', icon: 'path/to/icon2.png' },
-					{ id: 3, name: '乘风破浪！', icon: 'path/to/icon3.png' },
-					{ id: 4, name: '数学', icon: 'path/to/icon4.png' }
+				recommendedTags: [{
+						id: 1,
+						name: '维护地球日！',
+						icon: 'path/to/icon1.png'
+					},
+					{
+						id: 2,
+						name: '1024程序员节！',
+						icon: 'path/to/icon2.png'
+					},
+					{
+						id: 3,
+						name: '乘风破浪！',
+						icon: 'path/to/icon3.png'
+					},
+					{
+						id: 4,
+						name: '数学',
+						icon: 'path/to/icon4.png'
+					}
 				],
-				newTag: ''
+				newTag: '',
+				id: ''
 			}
 		},
 		methods: {
@@ -107,15 +140,26 @@
 				this.isTagModalVisible = false;
 			},
 			addTag(tag) {
-				this.tags.push(tag);
+				if (!this.tags.some(t => t.id === tag.id)) {
+					this.tags.push(tag);
+				} else {
+					console.log("标签已存在");
+				}
 			},
 			removeTag(tag) {
 				this.tags = this.tags.filter(t => t.id !== tag.id);
 			},
 			createTag() {
 				if (this.newTag.trim()) {
-					this.tags.push({ id: Date.now(), name: this.newTag });
-					this.newTag = '';
+					if (!this.tags.some(t => t.name === this.newTag.trim())) {
+						this.tags.push({
+							id: Date.now(),
+							name: this.newTag.trim()
+						});
+						this.newTag = '';
+					} else {
+						console.log("标签已存在");
+					}
 				}
 			},
 			toggleMarkdown(event) {
@@ -124,34 +168,73 @@
 			saveDraft() {
 				// 保存草稿的逻辑
 			},
-			publish() {
-				// 发布的逻辑
-			},
-			chooseImage() {
-				uni.chooseImage({
-					count: 1,
-					sizeType: ['original', 'compressed'],
-					sourceType: ['album'],
+			async publish() {
+				// 构建发布的 payload
+				const payload = {
+					content: this.content,
+					isMarkdown: this.isMarkdown,
+					tags: this.tags.map(tag => tag.name),
+					imageUrls: await this.uploadAllImages(this.imageSrcList) // 上传图片后获取的 URL 列表
+				};
+
+				// 发送发布请求
+				uni.request({
+					url: 'https://your-api-server.com/publish', // 替换为实际的发布接口
+					method: 'POST',
+					data: payload,
 					success: (res) => {
-						this.imageSrc = res.tempFilePaths[0];
-						this.uploadImage(res.tempFilePaths[0]);
+						console.log("发布成功：", res);
+						uni.showToast({
+							title: '发布成功',
+							icon: 'success'
+						});
 					},
 					fail: (err) => {
-						console.error("选择图片失败：", err);
+						console.error("发布失败：", err);
+						uni.showToast({
+							title: '发布失败',
+							icon: 'none'
+						});
 					}
 				});
 			},
+			async uploadAllImages(filePaths) {
+				const uploadPromises = filePaths.map(filePath => this.uploadImage(filePath));
+				const imageUrls = await Promise.all(uploadPromises);
+				return imageUrls.filter(url => url); // 过滤掉上传失败的图片
+			},
 			uploadImage(filePath) {
-				uni.uploadFile({
-					url: 'https://your-upload-server.com/upload', // 替换为实际的上传服务器地址
-					filePath: filePath,
-					name: 'file',
-					success: (uploadFileRes) => {
-						console.log("上传成功：", uploadFileRes);
-						// 可以在这里处理上传成功后的逻辑
+				return new Promise((resolve, reject) => {
+					uni.uploadFile({
+						url: 'https://your-upload-server.com/upload', // 替换为实际的上传服务器地址
+						filePath: filePath,
+						name: 'file',
+						success: (uploadFileRes) => {
+							if (uploadFileRes.statusCode === 200) {
+								const data = JSON.parse(uploadFileRes.data);
+								resolve(data.url); // 假设服务器返回的 JSON 数据中包含图片 URL
+							} else {
+								resolve(null);
+							}
+						},
+						fail: (err) => {
+							console.error("上传失败：", err);
+							resolve(null);
+						}
+					});
+				});
+			},
+			chooseImage() {
+				uni.chooseImage({
+					count: 9, // 可选最多9张图片
+					sizeType: ['original', 'compressed'],
+					sourceType: ['album', 'camera'],
+					success: (res) => {
+						// 将选择的图片添加到 imageSrcList 列表中
+						this.imageSrcList = this.imageSrcList.concat(res.tempFilePaths);
 					},
 					fail: (err) => {
-						console.error("上传失败：", err);
+						console.error("选择图片失败：", err);
 					}
 				});
 			}
@@ -163,7 +246,7 @@
 	.container {
 		display: flex;
 		flex-direction: column;
-		height: 100%;
+		height: 200%;
 		background-color: #f5f5f5;
 	}
 
@@ -216,6 +299,7 @@
 		display: flex;
 		align-items: center;
 		margin-bottom: 20rpx;
+		flex-wrap: wrap;
 	}
 
 	.add-icon {
@@ -246,9 +330,12 @@
 	.save-draft-button,
 	.publish-button {
 		width: 48%;
-		padding: 10px;
+		padding: 5rpx;
 		border-radius: 4px;
 		text-align: center;
+		height: 100rpx;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.save-draft-button {
@@ -267,12 +354,19 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		flex-direction: column;
+	}
+
+	.uploaded-images {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
 	}
 
 	.uploaded-image {
 		width: 100px;
 		height: 100px;
-		margin-top: 10px;
+		margin: 10px;
 		border: 1px solid #ccc;
 		border-radius: 4px;
 	}
@@ -282,7 +376,7 @@
 		top: 0;
 		left: 0;
 		width: 100%;
-		/* height: 100%; */
+		height: 200%;
 		background: rgba(0, 0, 0, 0.5);
 		display: flex;
 		justify-content: center;
@@ -319,15 +413,28 @@
 	}
 
 	.recommended-tags,
-	.create-tag,
-	.added-tags {
+	.create-tag {
 		margin-bottom: 10px;
 	}
 
+	.added-tags {
+		margin-bottom: 10px;
+		display: flex;
+		flex-wrap: wrap;
+	}
+
 	.tag {
+		margin-left: 10rpx;
 		display: flex;
 		align-items: center;
+		padding-left: 5rpx;
+		padding-right: 5rpx;
+	}
+
+	.tagname {
 		margin-bottom: 5px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
 	}
 
 	.tag-icon {
@@ -335,9 +442,29 @@
 		height: 30px;
 		margin-right: 5px;
 	}
-	
-	.maketags{
+
+	.maketags {
 		display: flex;
 		width: 100%;
+	}
+
+
+	.addtt {
+		border: 1px solid #ccc;
+		border-radius: 20rpx;
+		color: rgb(64, 149, 229);
+		margin-left: 20rpx;
+		padding-left: 10rpx;
+		padding-right: 10rpx;
+		background-color: rgb(239, 239, 239);
+	}
+
+	.deletett {
+		border: 1px solid #ccc;
+		border-radius: 100rpx;
+		color: rgb(0, 0, 0);
+		padding-left: 9rpx;
+		padding-right: 9rpx;
+		background-color: rgb(239, 239, 239);
 	}
 </style>

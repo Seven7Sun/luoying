@@ -44,7 +44,7 @@
 			return {
 				account: '',
 				password: '',
-				whetherLuoJia: true,
+				whetherLuoJia: false,
 			}
 		},
 		onLoad: function(options) {
@@ -104,6 +104,7 @@
 					uni.navigateTo({
 						url: '/pages/webview/webview'
 					});
+					this.whetherLuoJia=true;
 				}
 			},
 			register() {
