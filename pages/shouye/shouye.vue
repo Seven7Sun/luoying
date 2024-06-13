@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
 	<view class="content">
 		<view class="module">
 			<image src="../../static/shouye/schdule.png" mode="widthFix" class="ima"></image>
@@ -70,5 +70,25 @@
 	.title {
 		font-size: 50rpx;
 		font-weight: bold;
+	}
+</style> -->
+<template>
+	<view class="container">
+		<web-view src="https://hust.pages.dev/"></web-view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {};
+		},
+		methods: {}
+	};
+</script>
+
+<style>
+	.container {
+		height: 100%;
 	}
 </style>
