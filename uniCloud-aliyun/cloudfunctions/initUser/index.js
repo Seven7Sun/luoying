@@ -7,7 +7,7 @@ exports.main = async (event, context) => {
   const users = [
     {
       
-      userId: "1",
+      userId: "user1",
       name: "张漫",
 	  password:"123456",
       avatar: "https://mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d.cdn.bspapp.com/photo/头像1.jpg",
@@ -15,7 +15,7 @@ exports.main = async (event, context) => {
     },
     {
       
-      userId: "2",
+      userId: "user2",
       name: "张皓源",
 	  password:"123456",
       avatar: "https://mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d.cdn.bspapp.com/photo/zhy.jpg",
@@ -23,7 +23,7 @@ exports.main = async (event, context) => {
     },
     {
 
-      userId: "3",
+      userId: "user3",
       name: "周沫",
 	  password:"123456",
       avatar: "https://mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d.cdn.bspapp.com/photo/头像3.jpg",
@@ -31,7 +31,7 @@ exports.main = async (event, context) => {
     },
     {
 
-      userId: "4",
+      userId: "user4",
       name: "孙东方",
 	  password:"123456",
       avatar: "https://mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d.cdn.bspapp.com/photo/sdf.jpg",

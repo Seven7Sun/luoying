@@ -6,7 +6,7 @@ exports.main = async (event, context) => {
   const collection = db.collection('messages');
   const messages = [
     {
-      userId: "1",
+      userId: "user1",
       name: "张漫",
       avatar: "https://mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d.cdn.bspapp.com/photo/头像1.jpg",
       content: "你好，这是最后一条消息",
@@ -14,7 +14,7 @@ exports.main = async (event, context) => {
     },
     {
 
-      userId: "2",
+      userId: "user2",
       name: "张皓源",
       avatar: "https://mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d.cdn.bspapp.com/photo/zhy.jpg",
       content: "我们下周见",
@@ -22,14 +22,14 @@ exports.main = async (event, context) => {
     },
     {
 
-      userId: "3",
+      userId: "user3",
       name: "周沫",
       avatar: "https://mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d.cdn.bspapp.com/photo/头像3.jpg",
       content: "请尽快回复",
       timestamp: 1717013400000
     },
 	{
-	  userId: "4",
+	  userId: "user4",
 	  name: "孙东方",
 	  avatar: "https://mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d.cdn.bspapp.com/photo/sdf.jpg",
 	  content: "请尽快回复",

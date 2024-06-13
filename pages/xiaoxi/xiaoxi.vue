@@ -1,7 +1,7 @@
 <template>
   <view class="container">
     <view class="message-list">
-      <view v-for="message in messages" :key="message.userId" class="message-item" @click="openChat(message)">
+      <view v-for="message in filteredMessages" :key="message.userId" class="message-item" @click="openChat(message)">
         <image :src="message.avatar" class="avatar"></image>
         <view class="content">
           <view class="header">
@@ -19,10 +19,18 @@
 export default {
   data() {
     return {
-      messages: []
+      messages: [],
+      userSelf: null
     };
   },
-  onLoad() {
+  computed: {
+    filteredMessages() {
+      if (!this.userSelf) return this.messages;
+      return this.messages.filter(message => message.userId !== this.userSelf.userId);
+    }
+  },
+  async onLoad() {
+    await this.getUserSelf();
     this.getMessages();
     this.startTimer();
   },
@@ -30,6 +38,19 @@ export default {
     this.stopTimer();
   },
   methods: {
+    async getUserSelf() {
+      const res = await uniCloud.callFunction({
+        name: 'getUserSelf'
+      });
+      if (res.result.code === 0) {
+        this.userSelf = res.result.data;
+      } else {
+        uni.showToast({
+          title: 'Failed to load user info',
+          icon: 'none'
+        });
+      }
+    },
     async getMessages() {
       const res = await uniCloud.callFunction({
         name: 'getMessages'
@@ -44,14 +65,14 @@ export default {
       }
     },
     openChat(message) {
-		console.log('Navigating to chat with parameters:', {
-		    userId: message.userId,
-		    name: message.name,
-		    avatar: message.avatar
-		  });
-       uni.navigateTo({
-      url: `/pages/chat/chat?userId=${message.userId}&name=${message.name}&avatar=${message.avatar}`
-        });
+      console.log('Navigating to chat with parameters:', {
+        userId: message.userId,
+        name: message.name,
+        avatar: message.avatar
+      });
+      uni.navigateTo({
+        url: `/pages/chat/chat?userId=${message.userId}&name=${message.name}&avatar=${message.avatar}`
+      });
     },
     formatTimeDifference(timestamp) {
       const now = Date.now();

@@ -5,11 +5,10 @@
       <view v-for="(msg, index) in chatMessages" :key="msg._id" :class="['message', msg.senderId === currentUserId ? 'self' : 'other']">
         <view v-if="shouldShowTime(index)" class="timestamp">{{ formatTime(msg.timestamp) }}</view>
         <view class="message-content" :class="msg.senderId === currentUserId ? 'self-content' : 'other-content'">
-           <image :src="msg.senderId === currentUserId ? selfAvatar : receiverAvatar" class="avatar"></image>
-		  <view :class="['bubble', msg.senderId === currentUserId ? 'self-bubble' : 'other-bubble']">
+          <image :src="msg.senderId === currentUserId ? selfAvatar : receiverAvatar" class="avatar"></image>
+          <view :class="['bubble', msg.senderId === currentUserId ? 'self-bubble' : 'other-bubble']">
             <text>{{ msg.content }}</text>
           </view>
-         
         </view>
       </view>
     </scroll-view>
@@ -21,7 +20,6 @@
     </view>
   </view>
 </template>
-
 
 <script>
 export default {
@@ -49,13 +47,20 @@ export default {
   },
   methods: {
     async getChatMessages() {
-      const res = await uniCloud.callFunction({
-        name: 'getChatMessages',
-        data: { chatId: this.chatId, userId: this.currentUserId }
-      });
-      if (res.result.code === 0) {
-        this.chatMessages = res.result.data;
-      } else {
+      try {
+        const res = await uniCloud.callFunction({
+          name: 'getChatMessages',
+          data: { userId1: this.currentUserId, userId2: this.receiverId }
+        });
+        if (res.result.code === 0) {
+          this.chatMessages = res.result.data;
+        } else {
+          uni.showToast({
+            title: res.result.msg || '加载消息失败',
+            icon: 'none'
+          });
+        }
+      } catch (error) {
         uni.showToast({
           title: '加载消息失败',
           icon: 'none'
@@ -63,15 +68,22 @@ export default {
       }
     },
     async getUserSelf() {
-      const res = await uniCloud.callFunction({
-        name: 'getUserSelf'
-      });
-      if (res.result.code === 0) {
-        const userInfo = res.result.data;
-        this.currentUserId = userInfo.userId;
-        this.currentUserName = userInfo.name;
-        this.selfAvatar = userInfo.avatar;
-      } else {
+      try {
+        const res = await uniCloud.callFunction({
+          name: 'getUserSelf'
+        });
+        if (res.result.code === 0) {
+          const userInfo = res.result.data;
+          this.currentUserId = userInfo.userId;
+          this.currentUserName = userInfo.name;
+          this.selfAvatar = userInfo.avatar;
+        } else {
+          uni.showToast({
+            title: '加载用户信息失败',
+            icon: 'none'
+          });
+        }
+      } catch (error) {
         uni.showToast({
           title: '加载用户信息失败',
           icon: 'none'
@@ -81,25 +93,57 @@ export default {
     async sendMessage() {
       if (this.newMessage.trim() !== '') {
         const message = {
-          chatId: this.chatId,
+          chatId: 'chat1', // 替换为实际的 chatId
           senderId: this.currentUserId,
           receiverId: this.receiverId,
           content: this.newMessage,
           timestamp: Date.now()
         };
-        const res = await uniCloud.callFunction({
-          name: 'sendMessage',
-          data: message
-        });
-        if (res.result.code === 0) {
-          this.chatMessages.push(message);
-          this.newMessage = '';
-        } else {
+        try {
+          const res = await uniCloud.callFunction({
+            name: 'sendMessage',
+            data: message
+          });
+          if (res.result.code === 0) {
+            this.chatMessages.push(message);
+            this.newMessage = '';
+            this.updateUserMessages(message);
+          } else {
+            uni.showToast({
+              title: '发送消息失败',
+              icon: 'none'
+            });
+          }
+        } catch (error) {
           uni.showToast({
             title: '发送消息失败',
             icon: 'none'
           });
         }
+      }
+    },
+    async updateUserMessages(message) {
+      try {
+        const updateRes = await uniCloud.callFunction({
+          name: 'updateUserMessages',
+          data: {
+            userId: this.currentUserId,
+            receiverId: this.receiverId,
+            content: message.content,
+            timestamp: message.timestamp
+          }
+        });
+        if (updateRes.result.code !== 0) {
+          uni.showToast({
+            title: '更新用户消息失败',
+            icon: 'none'
+          });
+        }
+      } catch (error) {
+        uni.showToast({
+          title: '更新用户消息失败',
+          icon: 'none'
+        });
       }
     },
     shouldShowTime(index) {
@@ -116,7 +160,7 @@ export default {
       uni.navigateBack();
     },
     onMessage(data) {
-      if (data.chatId === this.chatId) {
+      if (data.chatId === 'chat1') { // 替换为实际的 chatId
         this.chatMessages.push(data);
       }
     }
@@ -129,6 +173,7 @@ export default {
   }
 };
 </script>
+
 
 <style>
 .chat-container {
@@ -163,6 +208,7 @@ export default {
 .message-content {
   display: flex;
   align-items: flex-end;
+  width:300px;
 }
 
 .self-content {
