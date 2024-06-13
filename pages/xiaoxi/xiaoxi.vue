@@ -44,9 +44,14 @@ export default {
       }
     },
     openChat(message) {
-      uni.navigateTo({
-        url: `/pages/chat/chat?chatId=${message.userId}`
-      });
+		console.log('Navigating to chat with parameters:', {
+		    userId: message.userId,
+		    name: message.name,
+		    avatar: message.avatar
+		  });
+       uni.navigateTo({
+      url: `/pages/chat/chat?userId=${message.userId}&name=${message.name}&avatar=${message.avatar}`
+        });
     },
     formatTimeDifference(timestamp) {
       const now = Date.now();

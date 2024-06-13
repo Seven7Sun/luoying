@@ -1,44 +1,50 @@
 <template>
   <view class="chat-container">
-
     <!-- 消息显示区域 -->
     <scroll-view class="messages" scroll-y>
       <view v-for="(msg, index) in chatMessages" :key="msg._id" :class="['message', msg.senderId === currentUserId ? 'self' : 'other']">
-        <image :src="msg.senderId === currentUserId ? selfAvatar : otherAvatar" class="avatar"></image>
-        <view :class="['bubble', msg.senderId === currentUserId ? 'self-bubble' : 'other-bubble']">
-          <text>{{ msg.content }}</text>
-        </view>
         <view v-if="shouldShowTime(index)" class="timestamp">{{ formatTime(msg.timestamp) }}</view>
+        <view class="message-content" :class="msg.senderId === currentUserId ? 'self-content' : 'other-content'">
+           <image :src="msg.senderId === currentUserId ? selfAvatar : receiverAvatar" class="avatar"></image>
+		  <view :class="['bubble', msg.senderId === currentUserId ? 'self-bubble' : 'other-bubble']">
+            <text>{{ msg.content }}</text>
+          </view>
+         
+        </view>
       </view>
     </scroll-view>
 
     <!-- 输入框区域 -->
     <view class="input-bar">
-      <input v-model="newMessage" class="input-field" placeholder="请输入消息..."></input>
+      <input v-model="newMessage" class="input-field" placeholder="请输入消息..." @keydown.enter="sendMessage"></input>
       <button @tap="sendMessage" class="send-button">发送</button>
     </view>
   </view>
 </template>
 
+
 <script>
 export default {
   data() {
     return {
-      chatId: null,
       newMessage: '',
       chatMessages: [],
-      currentUserId: uni.getStorageSync('userId') || null,
-      currentUserName: uni.getStorageSync('userName') || '未登录',
-      selfAvatar: uni.getStorageSync('avatar') || '',
-      otherAvatar: 'https://example.com/other-avatar.jpg',
+      currentUserId: null,
+      currentUserName: '未登录',
+      selfAvatar: '',
+      receiverAvatar: '', // 将通过 getOtherInfo 方法获取
       receiverId: null,
-      receiverName: '' // 你可以从 options 中传递接收者信息
+      receiverName: ''
     };
   },
-  onLoad(options) {
-    this.chatId = options.chatId;
-    this.receiverId = options.receiverId;
-    this.receiverName = options.receiverName;
+  async onLoad(options) {
+    console.log('Received parameters:', options);
+
+    this.receiverId = options.userId; // 将传入的用户ID设置为对方用户ID
+    this.receiverName = options.name;
+    this.receiverAvatar = options.avatar; // 接收传入的头像参数
+
+    await this.getUserSelf();
     this.getChatMessages();
   },
   methods: {
@@ -52,6 +58,22 @@ export default {
       } else {
         uni.showToast({
           title: '加载消息失败',
+          icon: 'none'
+        });
+      }
+    },
+    async getUserSelf() {
+      const res = await uniCloud.callFunction({
+        name: 'getUserSelf'
+      });
+      if (res.result.code === 0) {
+        const userInfo = res.result.data;
+        this.currentUserId = userInfo.userId;
+        this.currentUserName = userInfo.name;
+        this.selfAvatar = userInfo.avatar;
+      } else {
+        uni.showToast({
+          title: '加载用户信息失败',
           icon: 'none'
         });
       }
@@ -112,7 +134,7 @@ export default {
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 93vh;
   background-color: #f0f0f5;
 }
 
@@ -123,17 +145,28 @@ export default {
 }
 
 .message {
-  display: flex;
   margin-bottom: 10px;
-  align-items: flex-end;
 }
 
 .self {
-  justify-content: flex-end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* 本机用户消息靠右 */
 }
 
 .other {
-  justify-content: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* 对方用户消息靠左 */
+}
+
+.message-content {
+  display: flex;
+  align-items: flex-end;
+}
+
+.self-content {
+  flex-direction: row-reverse; /* 本机用户消息和头像反向排列 */
 }
 
 .avatar {
@@ -166,7 +199,7 @@ export default {
 .timestamp {
   font-size: 12px;
   color: #999;
-  margin-top: 5px;
+  margin-bottom: 5px; /* 调整时间和消息之间的间距 */
   align-self: center;
 }
 
@@ -187,12 +220,19 @@ export default {
 }
 
 .send-button {
-  background-color: #007AFF;
+  background: linear-gradient(to right, #4CAF50, #81C784); /* 渐变背景 */
   color: #fff;
-  padding: 10px 15px;
+  padding: 10px 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 25px; /* 圆角按钮 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 阴影效果 */
   cursor: pointer;
   font-size: 16px;
+  transition: background 0.3s, transform 0.3s; /* 过渡效果 */
+}
+
+.send-button:active {
+  background: linear-gradient(to right, #388E3C, #66BB6A); /* 点击时的背景变化 */
+  transform: scale(0.95); /* 点击时的缩放效果 */
 }
 </style>
