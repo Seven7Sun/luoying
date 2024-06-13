@@ -46,7 +46,6 @@
         <div class="form-group">
           <label for="avatar">头像:</label>
           <button @tap="chooseImage" class="updatePhoto">+</button>
-        <!--  <image v-if="imageSrc" :src="imageSrc" class="uploaded-image"></image> -->
         </div>
         <div class="actions">
           <button @click="updateUserProfile">保存</button>
@@ -95,35 +94,33 @@
         <p>电子邮件: support@example.com</p>
         <p>电话: 123-456-7890</p>
         <p>地址: 武汉市洪山区珞喻路123号武汉大学</p>
-        
-          <button @click="hideContactUsModal">关闭</button>
-        
+        <button @click="hideContactUsModal">关闭</button>
       </div>
     </div>
-	
-	<!-- 退出登录确认弹出框 -->
-	    <div v-if="showLogoutConfirmation" class="modal-overlay">
-	      <div class="modal">
-	        <h3>确定退出登录？</h3>
-			<br>
-			<br>
-	        <div class="actions">
-	          <button @click="logoutConfirmed">确定</button>
-	          <button @click="cancelLogout">取消</button>
-	        </div>
-	      </div>
-	    </div>
-	<!--关于我们悬浮窗 -->
-	    <div v-if="showMyFavoritesModal" class="modal-overlay">
-	      <div class="modal">
-	        <h3>软件基本作用说明</h3>
-	        <p>欢迎使用我们的软件！我们的软件旨在帮助武大学生更好的交流希望我们的软件能为您带来便利和愉快的体验。</p>
-	       
-	        <div class="actions">
-	          <button @click="hideMyFavoritesModal">关闭</button>
-	        </div>
-	      </div>
-	    </div>
+    
+    <!-- 退出登录确认弹出框 -->
+    <div v-if="showLogoutConfirmation" class="modal-overlay">
+      <div class="modal">
+        <h3>确定退出登录？</h3>
+        <br>
+        <br>
+        <div class="actions">
+          <button @click="logoutConfirmed">确定</button>
+          <button @click="cancelLogout">取消</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 关于我们悬浮窗 -->
+    <div v-if="showMyFavoritesModal" class="modal-overlay">
+      <div class="modal">
+        <h3>软件基本作用说明</h3>
+        <p>欢迎使用我们的软件！我们的软件旨在帮助武大学生更好的交流希望我们的软件能为您带来便利和愉快的体验。</p>
+        <div class="actions">
+          <button @click="hideMyFavoritesModal">关闭</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -135,8 +132,8 @@ export default {
       showEditProfileModalFlag: false,
       showChangePasswordModalFlag: false,
       showContactUsModalFlag: false,
-	  showLogoutConfirmation: false,
-	   showMyFavoritesModal: false, // 控制我的收藏悬浮窗显示与隐藏，
+      showLogoutConfirmation: false,
+      showMyFavoritesModal: false,
       editUser: {
         userId: '',
         name: '',
@@ -166,64 +163,47 @@ export default {
     this.getUserSelf();
   },
   methods: {
-	  // 打开我的收藏悬浮窗
-	      openMyFavoritesModal() {
-	        this.showMyFavoritesModal = true;
-	      },
-	      // 关闭我的收藏悬浮窗
-	      hideMyFavoritesModal() {
-	        this.showMyFavoritesModal = false;
-	      },
-	  logout() {
-	    // 设置 showLogoutConfirmation 为 true，显示退出登录确认弹出框
-	    this.showLogoutConfirmation = true;
-		
-	  },
-	  
-	  async logoutConfirmed() {
-		  uni.navigateTo({
-		    url: '/pages/denglu/denglu' // 登录页路径
-		  });
-	    try {
-	      // 执行退出登录操作，例如清除用户登录状态或重定向到登录页面
-	      // 此处是示例代码，具体操作根据你的应用逻辑进行修改
-	      // 操作完成后，隐藏退出登录确认弹出框
-	      this.showLogoutConfirmation = false;
-	      // 返回退出成功的信息
-	      return { success: true, message: '退出成功' };
-		 
-		  
-
-	    } catch (error) {
-	      console.error('退出登录失败：', error);
-	      // 处理退出登录失败的情况
-	      // 例如显示错误信息，或者重新尝试退出登录
-	      return { success: false, message: '退出登录失败' };
-	    }
-	  },
-	  
-	  cancelLogout() {
-	    // 用户取消退出登录操作，隐藏退出登录确认弹出框
-	    this.showLogoutConfirmation = false;
-	  },
-
+    openMyFavoritesModal() {
+      this.showMyFavoritesModal = true;
+    },
+    hideMyFavoritesModal() {
+      this.showMyFavoritesModal = false;
+    },
+    logout() {
+      this.showLogoutConfirmation = true;
+    },
+    async logoutConfirmed() {
+      uni.navigateTo({
+        url: '/pages/denglu/denglu' // 登录页路径
+      });
+      try {
+        this.showLogoutConfirmation = false;
+        return { success: true, message: '退出成功' };
+      } catch (error) {
+        console.error('退出登录失败：', error);
+        return { success: false, message: '退出登录失败' };
+      }
+    },
+    cancelLogout() {
+      this.showLogoutConfirmation = false;
+    },
     async getUserSelf() {
       try {
         const res = await uniCloud.callFunction({
           name: 'getUserSelf'
         });
 
-        if (res.result.code === 0 && res.result.data.length > 0) {
-          this.userSelf = res.result.data[0];
+        if (res.result.code === 0 && res.result.data) {
+          this.userSelf = res.result.data;
         } else {
           uni.showToast({
-            title: 'Failed to load user information',
+            title: '加载用户信息失败',
             icon: 'none'
           });
         }
       } catch (err) {
         uni.showToast({
-          title: `Error: ${err.message}`,
+          title: `错误: ${err.message}`,
           icon: 'none'
         });
       }
@@ -458,6 +438,7 @@ export default {
 }
 .actions button {
   width: 140px; /* 调整按钮的宽度 */
+
   padding: 5px; /* 可选：增加按钮的内边距 */
   
 }
