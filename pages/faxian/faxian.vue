@@ -72,7 +72,7 @@
 		},
 		mounted() {
 			// 初始化时显示所有帖子
-			this.filteredPosts = this.posts;
+			this.fetchPosts();
 		},
 		methods: {
 			toDetail(id) {
@@ -91,6 +91,30 @@
 						return titleMatch || tagsMatch;
 					});
 				}
+			},
+			fetchPosts() {
+				uni.request({
+					url: 'http://112.124.70.202:5555/api/post', // 替换为你的后端API地址
+					method: 'GET',
+					success: (res) => {
+						if (res.statusCode === 200) {
+							this.posts = res.data.map(item => ({
+								id: item.postId,
+								tags: item.tags ? item.tags.split(',') : [],
+								views: item.likeCount,
+								comments: item.commentCount,
+								title: item.title,
+								image: item.images ? item.images.split(',') : []
+							}));
+							this.filteredPosts = this.posts;
+						} else {
+							console.error('获取帖子数据失败:', res.data);
+						}
+					},
+					fail: (err) => {
+						console.error('请求失败:', err);
+					}
+				});
 			}
 		}
 	}

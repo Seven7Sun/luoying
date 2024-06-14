@@ -93,10 +93,11 @@
 </template>
 
 <script>
+	import axios from 'axios';
 	export default {
 		data() {
 			return {
-				title:'',
+				title: '',
 				selectedTab: 'post',
 				content: '',
 				isMarkdown: false,
@@ -174,20 +175,30 @@
 					content: this.content,
 					isMarkdown: this.isMarkdown,
 					tags: this.tags.map(tag => tag.name),
-					imageUrls: await this.uploadAllImages(this.imageSrcList) // 上传图片后获取的 URL 列表
+					images: await this.uploadAllImages(this.imageSrcList),
+					// 上传图片后获取的 URL 列表
+					title: this.title,
+					userID: getApp().globalData.userID
 				};
 
 				// 发送发布请求
 				uni.request({
-					url: 'https://your-api-server.com/publish', // 替换为实际的发布接口
+					url: 'http://112.124.70.202:5555/api/post/create_post', // 替换为实际的发布接口
 					method: 'POST',
 					data: payload,
 					success: (res) => {
-						console.log("发布成功：", res);
-						uni.showToast({
-							title: '发布成功',
-							icon: 'success'
-						});
+						if (res.statusCode === 200) {
+							console.log("发布成功：", res);
+							uni.showToast({
+								title: '发布成功',
+								icon: 'success'
+							});
+						} else {
+							uni.showToast({
+								title: '发布失败',
+								icon: 'none'
+							});
+						}
 					},
 					fail: (err) => {
 						console.error("发布失败：", err);
@@ -203,17 +214,30 @@
 				const imageUrls = await Promise.all(uploadPromises);
 				return imageUrls.filter(url => url); // 过滤掉上传失败的图片
 			},
+
 			uploadImage(filePath) {
 				return new Promise((resolve, reject) => {
 					uni.uploadFile({
-						url: 'https://your-upload-server.com/upload', // 替换为实际的上传服务器地址
+						url: 'http://112.124.70.202:5555/api/Product/UploadFile', // 替换为实际的上传服务器地址
 						filePath: filePath,
-						name: 'file',
+						name: 'file', // 文件参数名为file
+						fileType: 'image',
+						header: {
+							'Content-Type': 'multipart/form-data' // 设置内容类型为 form-data
+						},
 						success: (uploadFileRes) => {
 							if (uploadFileRes.statusCode === 200) {
 								const data = JSON.parse(uploadFileRes.data);
-								resolve(data.url); // 假设服务器返回的 JSON 数据中包含图片 URL
+								if (data.Code === 2001) {
+									const imageUrl = 'http://112.124.70.202:5555' + data.Data;
+									console.log(imageUrl);
+									resolve(imageUrl); // 使用服务器返回的相对路径拼接完整URL
+								} else {
+									console.error("上传失败：", data.Msg);
+									resolve(null);
+								}
 							} else {
+								console.error("上传失败，状态码：", uploadFileRes.statusCode);
 								resolve(null);
 							}
 						},

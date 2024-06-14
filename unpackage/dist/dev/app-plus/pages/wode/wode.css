@@ -65,6 +65,12 @@
   max-width: 400px;
   text-align: center;
 }
+.modal p[data-v-e6578db8]{
+	margin: 5px;
+}
+.modal uni-button[data-v-e6578db8]{
+	width:200px;
+}
 .form-group[data-v-e6578db8] {
   margin-bottom: 15px;
 }
@@ -83,5 +89,25 @@
 }
 .actions[data-v-e6578db8] {
   display: flex;
+  width: 300px;
   justify-content: space-between;
 }
+.actions uni-button[data-v-e6578db8] {
+  width: 140px; /* 调整按钮的宽度 */
+
+  padding: 5px; /* 可选：增加按钮的内边距 */
+}
+.updatePhoto[data-v-e6578db8]{
+	height:150px;
+	width:220px;
+	display: flex;
+	 justify-content: center; /* 水平居中 */
+	 align-items: center; /* 垂直居中 */
+}
+/* 修改按钮中的 "+" 符号样式 */
+.updatePhoto[data-v-e6578db8]::after {
+  content: "+"; /* 设置伪元素内容为 "+" */
+ 
+  font-size: 120px; /* 设置字体大小 */
+}
+

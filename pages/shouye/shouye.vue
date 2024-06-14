@@ -74,14 +74,19 @@
 </style> -->
 <template>
 	<view class="container">
-		<web-view src="https://hust.pages.dev/"></web-view>
+		<web-view :src="webviewSrc"></web-view>
 	</view>
 </template>
 
 <script>
 	export default {
 		data() {
-			return {};
+			return {
+				webviewSrc: 'https://hust.pages.dev/'
+			};
+		},
+		mounted() {
+			console.log('WebView URL:', this.webviewSrc);
 		},
 		methods: {}
 	};

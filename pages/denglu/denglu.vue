@@ -69,13 +69,18 @@
 					return;
 				}
 
-				const url = `http://localhost:5000/api/user/login?username=${this.account}&password=${this.password}`;
+				const url = `http://112.124.70.202:5555/api/user/login?username=${this.account}&password=${this.password}`;
 
 				uni.request({
 					url: url,
 					method: 'POST',
 					success: (res) => {
 						if (res.statusCode === 200) {
+							console.log(res.data);
+							const userID = res.data;
+							console.log(getApp().globalData.userID);
+							getApp().globalData.userID = userID;
+							console.log(getApp().globalData.userID);
 							uni.showToast({
 								title: '登录成功',
 								icon: 'success'
@@ -104,7 +109,7 @@
 					uni.navigateTo({
 						url: '/pages/webview/webview'
 					});
-					this.whetherLuoJia=true;
+					// this.whetherLuoJia=true;
 				}
 			},
 			register() {
@@ -123,7 +128,7 @@
 					return;
 				}
 
-				const url = `http://localhost:5000/api/user/register?username=${this.account}&password=${this.password}`;
+				const url = `http://112.124.70.202:5555/api/user/register?username=${this.account}&password=${this.password}`;
 
 				uni.request({
 					url: url,

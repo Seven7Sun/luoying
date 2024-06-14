@@ -93,36 +93,27 @@ if (uni.restoreGlobal) {
     ]);
   }
   const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__file", "D:/Uniapp/luoying/pages/index/index.vue"]]);
+  function formatAppLog(type, filename, ...args) {
+    if (uni.__log__) {
+      uni.__log__(type, filename, ...args);
+    } else {
+      console[type].apply(console, [...args, filename]);
+    }
+  }
   const _sfc_main$9 = {
     data() {
-      return {};
+      return {
+        webviewSrc: "https://hust.pages.dev/"
+      };
+    },
+    mounted() {
+      formatAppLog("log", "at pages/shouye/shouye.vue:89", "WebView URL:", this.webviewSrc);
     },
     methods: {}
   };
   function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock("view", { class: "content" }, [
-      vue.createElementVNode("view", { class: "module" }, [
-        vue.createElementVNode("image", {
-          src: "/static/shouye/schdule.png",
-          mode: "widthFix",
-          class: "ima"
-        }),
-        vue.createElementVNode("view", { class: "briefInstruction" }, [
-          vue.createElementVNode("view", { class: "title" }, " 今日课程： "),
-          vue.createElementVNode("view", { class: "Instruct" }, " 9点-11点 操作系统 2点-4点 乒乓球 ")
-        ])
-      ]),
-      vue.createElementVNode("view", { class: "module" }, [
-        vue.createElementVNode("image", {
-          src: "/static/shouye/money.png",
-          mode: "widthFix",
-          class: "ima"
-        }),
-        vue.createElementVNode("view", { class: "briefInstruction" }, [
-          vue.createElementVNode("view", { class: "title" }, " 校园卡余额： blabla钱 "),
-          vue.createElementVNode("view", { class: "Instruct" }, " 消费记录：blabla ")
-        ])
-      ])
+    return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
+      vue.createElementVNode("web-view", { src: $data.webviewSrc }, null, 8, ["src"])
     ]);
   }
   const PagesShouyeShouye = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__file", "D:/Uniapp/luoying/pages/shouye/shouye.vue"]]);
@@ -152,7 +143,7 @@ if (uni.restoreGlobal) {
       };
     },
     mounted() {
-      this.filteredPosts = this.posts;
+      this.fetchPosts();
     },
     methods: {
       toDetail(id) {
@@ -171,6 +162,31 @@ if (uni.restoreGlobal) {
             return titleMatch || tagsMatch;
           });
         }
+      },
+      fetchPosts() {
+        uni.request({
+          url: "http://112.124.70.202:5555/api/post",
+          // 替换为你的后端API地址
+          method: "GET",
+          success: (res) => {
+            if (res.statusCode === 200) {
+              this.posts = res.data.map((item) => ({
+                id: item.postId,
+                tags: item.tags ? item.tags.split(",") : [],
+                views: item.likeCount,
+                comments: item.commentCount,
+                title: item.title,
+                image: item.images ? item.images.split(",") : []
+              }));
+              this.filteredPosts = this.posts;
+            } else {
+              formatAppLog("error", "at pages/faxian/faxian.vue:111", "获取帖子数据失败:", res.data);
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/faxian/faxian.vue:115", "请求失败:", err);
+          }
+        });
       }
     }
   };
@@ -311,19 +327,12 @@ if (uni.restoreGlobal) {
     ]);
   }
   const PagesFaxianFaxian = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-d5906933"], ["__file", "D:/Uniapp/luoying/pages/faxian/faxian.vue"]]);
-  function formatAppLog(type, filename, ...args) {
-    if (uni.__log__) {
-      uni.__log__(type, filename, ...args);
-    } else {
-      console[type].apply(console, [...args, filename]);
-    }
-  }
   const _sfc_main$7 = {
     data() {
       return {
         account: "",
         password: "",
-        whetherLuoJia: true
+        whetherLuoJia: false
       };
     },
     onLoad: function(options) {
@@ -347,12 +356,17 @@ if (uni.restoreGlobal) {
           });
           return;
         }
-        const url = `http://localhost:5000/api/user/login?username=${this.account}&password=${this.password}`;
+        const url = `http://112.124.70.202:5555/api/user/login?username=${this.account}&password=${this.password}`;
         uni.request({
           url,
           method: "POST",
           success: (res) => {
             if (res.statusCode === 200) {
+              formatAppLog("log", "at pages/denglu/denglu.vue:79", res.data);
+              const userID = res.data;
+              formatAppLog("log", "at pages/denglu/denglu.vue:81", getApp().globalData.userID);
+              getApp().globalData.userID = userID;
+              formatAppLog("log", "at pages/denglu/denglu.vue:83", getApp().globalData.userID);
               uni.showToast({
                 title: "登录成功",
                 icon: "success"
@@ -372,7 +386,7 @@ if (uni.restoreGlobal) {
               title: "请求失败，请稍后再试",
               icon: "none"
             });
-            formatAppLog("error", "at pages/denglu/denglu.vue:98", error);
+            formatAppLog("error", "at pages/denglu/denglu.vue:103", error);
           }
         });
       },
@@ -398,7 +412,7 @@ if (uni.restoreGlobal) {
           });
           return;
         }
-        const url = `http://localhost:5000/api/user/register?username=${this.account}&password=${this.password}`;
+        const url = `http://112.124.70.202:5555/api/user/register?username=${this.account}&password=${this.password}`;
         uni.request({
           url,
           method: "POST",
@@ -421,7 +435,7 @@ if (uni.restoreGlobal) {
               title: "请求失败，请稍后再试",
               icon: "none"
             });
-            formatAppLog("error", "at pages/denglu/denglu.vue:150", error);
+            formatAppLog("error", "at pages/denglu/denglu.vue:156", error);
           }
         });
       }
@@ -951,7 +965,7 @@ if (uni.restoreGlobal) {
   function I(e2) {
     return e2 && "string" == typeof e2 ? JSON.parse(e2) : e2;
   }
-  const S = true, b = "app", A = I(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = b, T = I('{\n    "address": [\n        "127.0.0.1",\n        "192.168.255.1",\n        "192.168.133.1",\n        "10.135.19.183"\n    ],\n    "debugPort": 9001,\n    "initialLaunchType": "local",\n    "servePort": 7001,\n    "skipFiles": [\n        "<node_internals>/**",\n        "D:/HBuilderX/plugins/unicloud/**/*.js"\n    ]\n}\n'), C = I('[{"provider":"aliyun","spaceName":"trial-wdarlbo7lkpoy8ebe86","spaceId":"mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d","clientSecret":"4dS89HqPS4Vi8zObyOOS3w==","endpoint":"https://api.next.bspapp.com"}]') || [];
+  const S = true, b = "app", A = I(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = b, T = I('{\n    "address": [\n        "127.0.0.1",\n        "192.168.255.1",\n        "192.168.133.1",\n        "10.135.17.246"\n    ],\n    "debugPort": 9000,\n    "initialLaunchType": "local",\n    "servePort": 7000,\n    "skipFiles": [\n        "<node_internals>/**",\n        "D:/HBuilderX/plugins/unicloud/**/*.js"\n    ]\n}\n'), C = I('[{"provider":"aliyun","spaceName":"trial-wdarlbo7lkpoy8ebe86","spaceId":"mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d","clientSecret":"4dS89HqPS4Vi8zObyOOS3w==","endpoint":"https://api.next.bspapp.com"}]') || [];
   let O = "";
   try {
     O = "__UNI__40F4800";
@@ -3354,10 +3368,19 @@ ${i3}
   const _sfc_main$5 = {
     data() {
       return {
-        messages: []
+        messages: [],
+        userSelf: null
       };
     },
-    onLoad() {
+    computed: {
+      filteredMessages() {
+        if (!this.userSelf)
+          return this.messages;
+        return this.messages.filter((message) => message.userId !== this.userSelf.userId);
+      }
+    },
+    async onLoad() {
+      await this.getUserSelf();
       this.getMessages();
       this.startTimer();
     },
@@ -3365,6 +3388,19 @@ ${i3}
       this.stopTimer();
     },
     methods: {
+      async getUserSelf() {
+        const res = await Ws.callFunction({
+          name: "getUserSelf"
+        });
+        if (res.result.code === 0) {
+          this.userSelf = res.result.data;
+        } else {
+          uni.showToast({
+            title: "Failed to load user info",
+            icon: "none"
+          });
+        }
+      },
       async getMessages() {
         const res = await Ws.callFunction({
           name: "getMessages"
@@ -3379,8 +3415,13 @@ ${i3}
         }
       },
       openChat(message) {
+        formatAppLog("log", "at pages/xiaoxi/xiaoxi.vue:68", "Navigating to chat with parameters:", {
+          userId: message.userId,
+          name: message.name,
+          avatar: message.avatar
+        });
         uni.navigateTo({
-          url: `/pages/chat/chat?chatId=${message.userId}`
+          url: `/pages/chat/chat?userId=${message.userId}&name=${message.name}&avatar=${message.avatar}`
         });
       },
       formatTimeDifference(timestamp) {
@@ -3414,7 +3455,7 @@ ${i3}
         (vue.openBlock(true), vue.createElementBlock(
           vue.Fragment,
           null,
-          vue.renderList($data.messages, (message) => {
+          vue.renderList($options.filteredMessages, (message) => {
             return vue.openBlock(), vue.createElementBlock("view", {
               key: message.userId,
               class: "message-item",
@@ -3464,6 +3505,9 @@ ${i3}
         userSelf: {},
         showEditProfileModalFlag: false,
         showChangePasswordModalFlag: false,
+        showContactUsModalFlag: false,
+        showLogoutConfirmation: false,
+        showMyFavoritesModal: false,
         editUser: {
           userId: "",
           name: "",
@@ -3474,7 +3518,8 @@ ${i3}
         confirmNewPassword: "",
         showCurrentPassword: false,
         showNewPassword: false,
-        showConfirmNewPassword: false
+        showConfirmNewPassword: false,
+        imageSrc: ""
       };
     },
     computed: {
@@ -3492,34 +3537,76 @@ ${i3}
       this.getUserSelf();
     },
     methods: {
+      openMyFavoritesModal() {
+        this.showMyFavoritesModal = true;
+      },
+      hideMyFavoritesModal() {
+        this.showMyFavoritesModal = false;
+      },
+      logout() {
+        this.showLogoutConfirmation = true;
+      },
+      async logoutConfirmed() {
+        uni.navigateTo({
+          url: "/pages/denglu/denglu"
+          // 登录页路径
+        });
+        try {
+          this.showLogoutConfirmation = false;
+          return { success: true, message: "退出成功" };
+        } catch (error) {
+          formatAppLog("error", "at pages/wode/wode.vue:183", "退出登录失败：", error);
+          return { success: false, message: "退出登录失败" };
+        }
+      },
+      cancelLogout() {
+        this.showLogoutConfirmation = false;
+      },
       async getUserSelf() {
         try {
           const res = await Ws.callFunction({
             name: "getUserSelf"
           });
-          if (res.result.code === 0 && res.result.data.length > 0) {
-            this.userSelf = res.result.data[0];
+          if (res.result.code === 0 && res.result.data) {
+            this.userSelf = res.result.data;
           } else {
             uni.showToast({
-              title: "Failed to load user information",
+              title: "加载用户信息失败",
               icon: "none"
             });
           }
         } catch (err) {
           uni.showToast({
-            title: `Error: ${err.message}`,
+            title: `错误: ${err.message}`,
             icon: "none"
           });
         }
       },
+      chooseImage() {
+        uni.chooseImage({
+          count: 1,
+          sizeType: ["original", "compressed"],
+          sourceType: ["album"],
+          success: (res) => {
+            this.imageSrc = res.tempFilePaths[0];
+            this.uploadImage(res.tempFilePaths[0]);
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/wode/wode.vue:221", "选择图片失败：", err);
+          }
+        });
+      },
       showEditProfileModal() {
         this.editUser = { ...this.userSelf };
         this.showEditProfileModalFlag = true;
+        this.imageSrc = this.editUser.avatar;
       },
       hideEditProfileModal() {
         this.showEditProfileModalFlag = false;
+        this.imageSrc = "";
       },
       async updateUserProfile() {
+        this.editUser.avatar = this.imageSrc;
         try {
           const res = await Ws.callFunction({
             name: "updateUserProfile",
@@ -3599,11 +3686,11 @@ ${i3}
           });
         }
       },
-      manageCollections() {
+      showContactUsModal() {
+        this.showContactUsModalFlag = true;
       },
-      languageSettings() {
-      },
-      logout() {
+      hideContactUsModal() {
+        this.showContactUsModalFlag = false;
       }
     }
   };
@@ -3637,7 +3724,7 @@ ${i3}
           class: "menu-item",
           onClick: _cache[0] || (_cache[0] = (...args) => $options.showEditProfileModal && $options.showEditProfileModal(...args))
         }, [
-          vue.createElementVNode("i", { class: "fas fa-key" }),
+          vue.createElementVNode("i", { class: "fas fa-edit" }),
           vue.createTextVNode(" 编辑资料 ")
         ]),
         vue.createElementVNode("div", {
@@ -3649,17 +3736,17 @@ ${i3}
         ]),
         vue.createElementVNode("div", {
           class: "menu-item",
-          onClick: _cache[2] || (_cache[2] = (...args) => $options.manageCollections && $options.manageCollections(...args))
+          onClick: _cache[2] || (_cache[2] = (...args) => $options.openMyFavoritesModal && $options.openMyFavoritesModal(...args))
         }, [
           vue.createElementVNode("i", { class: "fas fa-bookmark" }),
-          vue.createTextVNode(" 我的收藏 ")
+          vue.createTextVNode(" 关于我们 ")
         ]),
         vue.createElementVNode("div", {
           class: "menu-item",
-          onClick: _cache[3] || (_cache[3] = (...args) => $options.languageSettings && $options.languageSettings(...args))
+          onClick: _cache[3] || (_cache[3] = (...args) => $options.showContactUsModal && $options.showContactUsModal(...args))
         }, [
           vue.createElementVNode("i", { class: "fas fa-language" }),
-          vue.createTextVNode(" 显示语言 ")
+          vue.createTextVNode(" 联系我们 ")
         ]),
         vue.createElementVNode("div", {
           class: "menu-item",
@@ -3709,13 +3796,19 @@ ${i3}
               [vue.vModelText, $data.editUser.name]
             ])
           ]),
-          vue.createCommentVNode(' <div class="form-group">\r\n          <label for="avatar">头像URL:</label>\r\n          <input type="text" id="avatar" v-model="editUser.avatar">\r\n        </div> '),
+          vue.createElementVNode("div", { class: "form-group" }, [
+            vue.createElementVNode("label", { for: "avatar" }, "头像:"),
+            vue.createElementVNode("button", {
+              onClick: _cache[7] || (_cache[7] = (...args) => $options.chooseImage && $options.chooseImage(...args)),
+              class: "updatePhoto"
+            }, "+")
+          ]),
           vue.createElementVNode("div", { class: "actions" }, [
             vue.createElementVNode("button", {
-              onClick: _cache[7] || (_cache[7] = (...args) => $options.updateUserProfile && $options.updateUserProfile(...args))
+              onClick: _cache[8] || (_cache[8] = (...args) => $options.updateUserProfile && $options.updateUserProfile(...args))
             }, "保存"),
             vue.createElementVNode("button", {
-              onClick: _cache[8] || (_cache[8] = (...args) => $options.hideEditProfileModal && $options.hideEditProfileModal(...args))
+              onClick: _cache[9] || (_cache[9] = (...args) => $options.hideEditProfileModal && $options.hideEditProfileModal(...args))
             }, "取消")
           ])
         ])
@@ -3733,7 +3826,7 @@ ${i3}
               vue.withDirectives(vue.createElementVNode("input", {
                 type: $options.currentPasswordType,
                 id: "currentPassword",
-                "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => $data.currentPassword = $event)
+                "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => $data.currentPassword = $event)
               }, null, 8, ["type"]), [
                 [vue.vModelDynamic, $data.currentPassword]
               ]),
@@ -3741,7 +3834,7 @@ ${i3}
                 "i",
                 {
                   class: vue.normalizeClass({ "fas fa-eye": !$data.showCurrentPassword, "fas fa-eye-slash": $data.showCurrentPassword }),
-                  onClick: _cache[10] || (_cache[10] = (...args) => $options.toggleCurrentPassword && $options.toggleCurrentPassword(...args))
+                  onClick: _cache[11] || (_cache[11] = (...args) => $options.toggleCurrentPassword && $options.toggleCurrentPassword(...args))
                 },
                 null,
                 2
@@ -3755,7 +3848,7 @@ ${i3}
               vue.withDirectives(vue.createElementVNode("input", {
                 type: $options.newPasswordType,
                 id: "newPassword",
-                "onUpdate:modelValue": _cache[11] || (_cache[11] = ($event) => $data.newPassword = $event)
+                "onUpdate:modelValue": _cache[12] || (_cache[12] = ($event) => $data.newPassword = $event)
               }, null, 8, ["type"]), [
                 [vue.vModelDynamic, $data.newPassword]
               ]),
@@ -3763,7 +3856,7 @@ ${i3}
                 "i",
                 {
                   class: vue.normalizeClass({ "fas fa-eye": !$data.showNewPassword, "fas fa-eye-slash": $data.showNewPassword }),
-                  onClick: _cache[12] || (_cache[12] = (...args) => $options.toggleNewPassword && $options.toggleNewPassword(...args))
+                  onClick: _cache[13] || (_cache[13] = (...args) => $options.toggleNewPassword && $options.toggleNewPassword(...args))
                 },
                 null,
                 2
@@ -3777,7 +3870,7 @@ ${i3}
               vue.withDirectives(vue.createElementVNode("input", {
                 type: $options.confirmNewPasswordType,
                 id: "confirmNewPassword",
-                "onUpdate:modelValue": _cache[13] || (_cache[13] = ($event) => $data.confirmNewPassword = $event)
+                "onUpdate:modelValue": _cache[14] || (_cache[14] = ($event) => $data.confirmNewPassword = $event)
               }, null, 8, ["type"]), [
                 [vue.vModelDynamic, $data.confirmNewPassword]
               ]),
@@ -3785,7 +3878,7 @@ ${i3}
                 "i",
                 {
                   class: vue.normalizeClass({ "fas fa-eye": !$data.showConfirmNewPassword, "fas fa-eye-slash": $data.showConfirmNewPassword }),
-                  onClick: _cache[14] || (_cache[14] = (...args) => $options.toggleConfirmNewPassword && $options.toggleConfirmNewPassword(...args))
+                  onClick: _cache[15] || (_cache[15] = (...args) => $options.toggleConfirmNewPassword && $options.toggleConfirmNewPassword(...args))
                 },
                 null,
                 2
@@ -3795,11 +3888,61 @@ ${i3}
           ]),
           vue.createElementVNode("div", { class: "actions" }, [
             vue.createElementVNode("button", {
-              onClick: _cache[15] || (_cache[15] = (...args) => $options.changePassword && $options.changePassword(...args))
+              onClick: _cache[16] || (_cache[16] = (...args) => $options.changePassword && $options.changePassword(...args))
             }, "保存"),
             vue.createElementVNode("button", {
-              onClick: _cache[16] || (_cache[16] = (...args) => $options.hideChangePasswordModal && $options.hideChangePasswordModal(...args))
+              onClick: _cache[17] || (_cache[17] = (...args) => $options.hideChangePasswordModal && $options.hideChangePasswordModal(...args))
             }, "取消")
+          ])
+        ])
+      ])) : vue.createCommentVNode("v-if", true),
+      vue.createCommentVNode(" 联系我们悬浮页 "),
+      $data.showContactUsModalFlag ? (vue.openBlock(), vue.createElementBlock("div", {
+        key: 2,
+        class: "modal-overlay"
+      }, [
+        vue.createElementVNode("div", { class: "modal" }, [
+          vue.createElementVNode("h3", null, "联系我们"),
+          vue.createElementVNode("p", null, "如果您有任何问题，请联系我们："),
+          vue.createElementVNode("p", null, "电子邮件: support@example.com"),
+          vue.createElementVNode("p", null, "电话: 123-456-7890"),
+          vue.createElementVNode("p", null, "地址: 武汉市洪山区珞喻路123号武汉大学"),
+          vue.createElementVNode("button", {
+            onClick: _cache[18] || (_cache[18] = (...args) => $options.hideContactUsModal && $options.hideContactUsModal(...args))
+          }, "关闭")
+        ])
+      ])) : vue.createCommentVNode("v-if", true),
+      vue.createCommentVNode(" 退出登录确认弹出框 "),
+      $data.showLogoutConfirmation ? (vue.openBlock(), vue.createElementBlock("div", {
+        key: 3,
+        class: "modal-overlay"
+      }, [
+        vue.createElementVNode("div", { class: "modal" }, [
+          vue.createElementVNode("h3", null, "确定退出登录？"),
+          vue.createElementVNode("br"),
+          vue.createElementVNode("br"),
+          vue.createElementVNode("div", { class: "actions" }, [
+            vue.createElementVNode("button", {
+              onClick: _cache[19] || (_cache[19] = (...args) => $options.logoutConfirmed && $options.logoutConfirmed(...args))
+            }, "确定"),
+            vue.createElementVNode("button", {
+              onClick: _cache[20] || (_cache[20] = (...args) => $options.cancelLogout && $options.cancelLogout(...args))
+            }, "取消")
+          ])
+        ])
+      ])) : vue.createCommentVNode("v-if", true),
+      vue.createCommentVNode(" 关于我们悬浮窗 "),
+      $data.showMyFavoritesModal ? (vue.openBlock(), vue.createElementBlock("div", {
+        key: 4,
+        class: "modal-overlay"
+      }, [
+        vue.createElementVNode("div", { class: "modal" }, [
+          vue.createElementVNode("h3", null, "软件基本作用说明"),
+          vue.createElementVNode("p", null, "欢迎使用我们的软件！我们的软件旨在帮助武大学生更好的交流希望我们的软件能为您带来便利和愉快的体验。"),
+          vue.createElementVNode("div", { class: "actions" }, [
+            vue.createElementVNode("button", {
+              onClick: _cache[21] || (_cache[21] = (...args) => $options.hideMyFavoritesModal && $options.hideMyFavoritesModal(...args))
+            }, "关闭")
           ])
         ])
       ])) : vue.createCommentVNode("v-if", true)
@@ -3809,6 +3952,7 @@ ${i3}
   const _sfc_main$3 = {
     data() {
       return {
+        title: "",
         selectedTab: "post",
         content: "",
         isMarkdown: false,
@@ -3856,7 +4000,7 @@ ${i3}
         if (!this.tags.some((t2) => t2.id === tag.id)) {
           this.tags.push(tag);
         } else {
-          formatAppLog("log", "at pages/fabu/fabu.vue:142", "标签已存在");
+          formatAppLog("log", "at pages/fabu/fabu.vue:147", "标签已存在");
         }
       },
       removeTag(tag) {
@@ -3871,7 +4015,7 @@ ${i3}
             });
             this.newTag = "";
           } else {
-            formatAppLog("log", "at pages/fabu/fabu.vue:157", "标签已存在");
+            formatAppLog("log", "at pages/fabu/fabu.vue:162", "标签已存在");
           }
         }
       },
@@ -3885,23 +4029,32 @@ ${i3}
           content: this.content,
           isMarkdown: this.isMarkdown,
           tags: this.tags.map((tag) => tag.name),
-          imageUrls: await this.uploadAllImages(this.imageSrcList)
+          images: await this.uploadAllImages(this.imageSrcList),
           // 上传图片后获取的 URL 列表
+          title: this.title,
+          userID: getApp().globalData.userID
         };
         uni.request({
-          url: "https://your-api-server.com/publish",
+          url: "http://112.124.70.202:5555/api/post/create_post",
           // 替换为实际的发布接口
           method: "POST",
           data: payload,
           success: (res) => {
-            formatAppLog("log", "at pages/fabu/fabu.vue:182", "发布成功：", res);
-            uni.showToast({
-              title: "发布成功",
-              icon: "success"
-            });
+            if (res.statusCode === 200) {
+              formatAppLog("log", "at pages/fabu/fabu.vue:191", "发布成功：", res);
+              uni.showToast({
+                title: "发布成功",
+                icon: "success"
+              });
+            } else {
+              uni.showToast({
+                title: "发布失败",
+                icon: "none"
+              });
+            }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/fabu/fabu.vue:189", "发布失败：", err);
+            formatAppLog("error", "at pages/fabu/fabu.vue:204", "发布失败：", err);
             uni.showToast({
               title: "发布失败",
               icon: "none"
@@ -3917,20 +4070,34 @@ ${i3}
       uploadImage(filePath) {
         return new Promise((resolve, reject) => {
           uni.uploadFile({
-            url: "https://your-upload-server.com/upload",
+            url: "http://112.124.70.202:5555/api/Product/UploadFile",
             // 替换为实际的上传服务器地址
             filePath,
             name: "file",
+            // 文件参数名为file
+            fileType: "image",
+            header: {
+              "Content-Type": "multipart/form-data"
+              // 设置内容类型为 form-data
+            },
             success: (uploadFileRes) => {
               if (uploadFileRes.statusCode === 200) {
                 const data = JSON.parse(uploadFileRes.data);
-                resolve(data.url);
+                if (data.Code === 2001) {
+                  const imageUrl = "http://112.124.70.202:5555" + data.Data;
+                  formatAppLog("log", "at pages/fabu/fabu.vue:233", imageUrl);
+                  resolve(imageUrl);
+                } else {
+                  formatAppLog("error", "at pages/fabu/fabu.vue:236", "上传失败：", data.Msg);
+                  resolve(null);
+                }
               } else {
+                formatAppLog("error", "at pages/fabu/fabu.vue:240", "上传失败，状态码：", uploadFileRes.statusCode);
                 resolve(null);
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/fabu/fabu.vue:217", "上传失败：", err);
+              formatAppLog("error", "at pages/fabu/fabu.vue:245", "上传失败：", err);
               resolve(null);
             }
           });
@@ -3946,7 +4113,7 @@ ${i3}
             this.imageSrcList = this.imageSrcList.concat(res.tempFilePaths);
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/fabu/fabu.vue:233", "选择图片失败：", err);
+            formatAppLog("error", "at pages/fabu/fabu.vue:261", "选择图片失败：", err);
           }
         });
       }
@@ -3982,7 +4149,23 @@ ${i3}
             "textarea",
             {
               class: "textarea",
-              "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $data.content = $event),
+              "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $data.title = $event),
+              placeholder: "此处填写标题",
+              style: { "height": "50rpx" }
+            },
+            null,
+            512
+            /* NEED_PATCH */
+          ), [
+            [vue.vModelText, $data.title]
+          ])
+        ]),
+        vue.createElementVNode("view", { class: "txtouter" }, [
+          vue.withDirectives(vue.createElementVNode(
+            "textarea",
+            {
+              class: "textarea",
+              "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => $data.content = $event),
               placeholder: "说些什么吧..."
             },
             null,
@@ -3994,7 +4177,7 @@ ${i3}
         ]),
         vue.createElementVNode("view", { class: "uploadImage" }, [
           vue.createElementVNode("button", {
-            onClick: _cache[3] || (_cache[3] = (...args) => $options.chooseImage && $options.chooseImage(...args))
+            onClick: _cache[4] || (_cache[4] = (...args) => $options.chooseImage && $options.chooseImage(...args))
           }, "选择图片"),
           vue.createElementVNode("view", { class: "uploaded-images" }, [
             (vue.openBlock(true), vue.createElementBlock(
@@ -4045,7 +4228,7 @@ ${i3}
             src: "/static/fabu/add.png",
             mode: "heightFix",
             class: "add-icon",
-            onClick: _cache[4] || (_cache[4] = (...args) => $options.showTagModal && $options.showTagModal(...args))
+            onClick: _cache[5] || (_cache[5] = (...args) => $options.showTagModal && $options.showTagModal(...args))
           })
         ])) : vue.createCommentVNode("v-if", true),
         $data.selectedTab === "comment" ? (vue.openBlock(), vue.createElementBlock("view", {
@@ -4058,7 +4241,7 @@ ${i3}
             {
               style: { "border": "1px solid #ccc", "border-radius": "20rpx", "margin-top": "20rpx" },
               type: "text",
-              "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $data.id = $event),
+              "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => $data.id = $event),
               placeholder: "填入帖子id"
             },
             null,
@@ -4072,14 +4255,14 @@ ${i3}
           vue.createElementVNode("text", null, "markdown模式"),
           vue.createElementVNode("switch", {
             checked: $data.isMarkdown,
-            onChange: _cache[6] || (_cache[6] = (...args) => $options.toggleMarkdown && $options.toggleMarkdown(...args))
+            onChange: _cache[7] || (_cache[7] = (...args) => $options.toggleMarkdown && $options.toggleMarkdown(...args))
           }, null, 40, ["checked"])
         ]),
         vue.createElementVNode("view", { class: "button-section" }, [
           vue.createCommentVNode(' <button class="save-draft-button" @click="saveDraft">保存草稿</button> '),
           vue.createElementVNode("button", {
             class: "publish-button",
-            onClick: _cache[7] || (_cache[7] = (...args) => $options.publish && $options.publish(...args))
+            onClick: _cache[8] || (_cache[8] = (...args) => $options.publish && $options.publish(...args))
           }, "发布")
         ])
       ]),
@@ -4091,7 +4274,7 @@ ${i3}
           vue.createElementVNode("view", { class: "modal-header" }, [
             vue.createElementVNode("text", { style: { "margin-left": "20rpx" } }, "#添加标签"),
             vue.createElementVNode("button", {
-              onClick: _cache[8] || (_cache[8] = (...args) => $options.hideTagModal && $options.hideTagModal(...args)),
+              onClick: _cache[9] || (_cache[9] = (...args) => $options.hideTagModal && $options.hideTagModal(...args)),
               style: { "margin-right": "10rpx" }
             }, "完成")
           ]),
@@ -4101,7 +4284,7 @@ ${i3}
                 "input",
                 {
                   type: "text",
-                  "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => $data.searchQuery = $event),
+                  "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => $data.searchQuery = $event),
                   placeholder: "搜索话题"
                 },
                 null,
@@ -4144,7 +4327,7 @@ ${i3}
                   {
                     style: { "border": "1px solid #ccc", "border-radius": "4px", "margin-top": "20rpx" },
                     type: "text",
-                    "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => $data.newTag = $event),
+                    "onUpdate:modelValue": _cache[11] || (_cache[11] = ($event) => $data.newTag = $event),
                     placeholder: "一个新的标签在此诞生..."
                   },
                   null,
@@ -4154,7 +4337,7 @@ ${i3}
                   [vue.vModelText, $data.newTag]
                 ]),
                 vue.createElementVNode("view", {
-                  onClick: _cache[11] || (_cache[11] = (...args) => $options.createTag && $options.createTag(...args)),
+                  onClick: _cache[12] || (_cache[12] = (...args) => $options.createTag && $options.createTag(...args)),
                   style: { "white-space": "nowrap", "height": "50rpx", "margin-top": "20rpx", "border": "1px solid #ccc", "border-radius": "4px", "background-color": "#ccc", "margin-left": "15rpx", "padding-left": "10rpx", "padding-right": "10rpx" }
                 }, " 创建")
               ])
@@ -4195,35 +4378,66 @@ ${i3}
   const _sfc_main$2 = {
     data() {
       return {
-        chatId: null,
         newMessage: "",
         chatMessages: [],
-        currentUserId: uni.getStorageSync("userId") || null,
-        currentUserName: uni.getStorageSync("userName") || "未登录",
-        selfAvatar: uni.getStorageSync("avatar") || "",
-        otherAvatar: "https://example.com/other-avatar.jpg",
+        currentUserId: null,
+        currentUserName: "未登录",
+        selfAvatar: "",
+        receiverAvatar: "",
+        // 将通过 getOtherInfo 方法获取
         receiverId: null,
         receiverName: ""
-        // 你可以从 options 中传递接收者信息
       };
     },
-    onLoad(options) {
-      this.chatId = options.chatId;
-      this.receiverId = options.receiverId;
-      this.receiverName = options.receiverName;
+    async onLoad(options) {
+      formatAppLog("log", "at pages/chat/chat.vue:39", "Received parameters:", options);
+      this.receiverId = options.userId;
+      this.receiverName = options.name;
+      this.receiverAvatar = options.avatar;
+      await this.getUserSelf();
       this.getChatMessages();
     },
     methods: {
       async getChatMessages() {
-        const res = await Ws.callFunction({
-          name: "getChatMessages",
-          data: { chatId: this.chatId, userId: this.currentUserId }
-        });
-        if (res.result.code === 0) {
-          this.chatMessages = res.result.data;
-        } else {
+        try {
+          const res = await Ws.callFunction({
+            name: "getChatMessages",
+            data: { userId1: this.currentUserId, userId2: this.receiverId }
+          });
+          if (res.result.code === 0) {
+            this.chatMessages = res.result.data;
+          } else {
+            uni.showToast({
+              title: res.result.msg || "加载消息失败",
+              icon: "none"
+            });
+          }
+        } catch (error) {
           uni.showToast({
             title: "加载消息失败",
+            icon: "none"
+          });
+        }
+      },
+      async getUserSelf() {
+        try {
+          const res = await Ws.callFunction({
+            name: "getUserSelf"
+          });
+          if (res.result.code === 0) {
+            const userInfo = res.result.data;
+            this.currentUserId = userInfo.userId;
+            this.currentUserName = userInfo.name;
+            this.selfAvatar = userInfo.avatar;
+          } else {
+            uni.showToast({
+              title: "加载用户信息失败",
+              icon: "none"
+            });
+          }
+        } catch (error) {
+          uni.showToast({
+            title: "加载用户信息失败",
             icon: "none"
           });
         }
@@ -4231,25 +4445,58 @@ ${i3}
       async sendMessage() {
         if (this.newMessage.trim() !== "") {
           const message = {
-            chatId: this.chatId,
+            chatId: "chat1",
+            // 替换为实际的 chatId
             senderId: this.currentUserId,
             receiverId: this.receiverId,
             content: this.newMessage,
             timestamp: Date.now()
           };
-          const res = await Ws.callFunction({
-            name: "sendMessage",
-            data: message
-          });
-          if (res.result.code === 0) {
-            this.chatMessages.push(message);
-            this.newMessage = "";
-          } else {
+          try {
+            const res = await Ws.callFunction({
+              name: "sendMessage",
+              data: message
+            });
+            if (res.result.code === 0) {
+              this.chatMessages.push(message);
+              this.newMessage = "";
+              this.updateUserMessages(message);
+            } else {
+              uni.showToast({
+                title: "发送消息失败",
+                icon: "none"
+              });
+            }
+          } catch (error) {
             uni.showToast({
               title: "发送消息失败",
               icon: "none"
             });
           }
+        }
+      },
+      async updateUserMessages(message) {
+        try {
+          const updateRes = await Ws.callFunction({
+            name: "updateUserMessages",
+            data: {
+              userId: this.currentUserId,
+              receiverId: this.receiverId,
+              content: message.content,
+              timestamp: message.timestamp
+            }
+          });
+          if (updateRes.result.code !== 0) {
+            uni.showToast({
+              title: "更新用户消息失败",
+              icon: "none"
+            });
+          }
+        } catch (error) {
+          uni.showToast({
+            title: "更新用户消息失败",
+            icon: "none"
+          });
         }
       },
       shouldShowTime(index) {
@@ -4267,7 +4514,7 @@ ${i3}
         uni.navigateBack();
       },
       onMessage(data) {
-        if (data.chatId === this.chatId) {
+        if (data.chatId === "chat1") {
           this.chatMessages.push(data);
         }
       }
@@ -4297,27 +4544,6 @@ ${i3}
                 class: vue.normalizeClass(["message", msg.senderId === $data.currentUserId ? "self" : "other"])
               },
               [
-                vue.createElementVNode("image", {
-                  src: msg.senderId === $data.currentUserId ? $data.selfAvatar : $data.otherAvatar,
-                  class: "avatar"
-                }, null, 8, ["src"]),
-                vue.createElementVNode(
-                  "view",
-                  {
-                    class: vue.normalizeClass(["bubble", msg.senderId === $data.currentUserId ? "self-bubble" : "other-bubble"])
-                  },
-                  [
-                    vue.createElementVNode(
-                      "text",
-                      null,
-                      vue.toDisplayString(msg.content),
-                      1
-                      /* TEXT */
-                    )
-                  ],
-                  2
-                  /* CLASS */
-                ),
                 $options.shouldShowTime(index) ? (vue.openBlock(), vue.createElementBlock(
                   "view",
                   {
@@ -4327,7 +4553,38 @@ ${i3}
                   vue.toDisplayString($options.formatTime(msg.timestamp)),
                   1
                   /* TEXT */
-                )) : vue.createCommentVNode("v-if", true)
+                )) : vue.createCommentVNode("v-if", true),
+                vue.createElementVNode(
+                  "view",
+                  {
+                    class: vue.normalizeClass(["message-content", msg.senderId === $data.currentUserId ? "self-content" : "other-content"])
+                  },
+                  [
+                    vue.createElementVNode("image", {
+                      src: msg.senderId === $data.currentUserId ? $data.selfAvatar : $data.receiverAvatar,
+                      class: "avatar"
+                    }, null, 8, ["src"]),
+                    vue.createElementVNode(
+                      "view",
+                      {
+                        class: vue.normalizeClass(["bubble", msg.senderId === $data.currentUserId ? "self-bubble" : "other-bubble"])
+                      },
+                      [
+                        vue.createElementVNode(
+                          "text",
+                          null,
+                          vue.toDisplayString(msg.content),
+                          1
+                          /* TEXT */
+                        )
+                      ],
+                      2
+                      /* CLASS */
+                    )
+                  ],
+                  2
+                  /* CLASS */
+                )
               ],
               2
               /* CLASS */
@@ -4344,16 +4601,17 @@ ${i3}
           {
             "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $data.newMessage = $event),
             class: "input-field",
-            placeholder: "请输入消息..."
+            placeholder: "请输入消息...",
+            onKeydown: _cache[1] || (_cache[1] = vue.withKeys((...args) => $options.sendMessage && $options.sendMessage(...args), ["enter"]))
           },
           null,
-          512
-          /* NEED_PATCH */
+          544
+          /* NEED_HYDRATION, NEED_PATCH */
         ), [
           [vue.vModelText, $data.newMessage]
         ]),
         vue.createElementVNode("button", {
-          onClick: _cache[1] || (_cache[1] = (...args) => $options.sendMessage && $options.sendMessage(...args)),
+          onClick: _cache[2] || (_cache[2] = (...args) => $options.sendMessage && $options.sendMessage(...args)),
           class: "send-button"
         }, "发送")
       ])
@@ -4795,12 +5053,18 @@ ${i3}
   const _sfc_main = {
     onLaunch: function() {
       formatAppLog("log", "at App.vue:4", "App Launch");
+      this.globalData = {
+        userID: null
+      };
     },
     onShow: function() {
-      formatAppLog("log", "at App.vue:7", "App Show");
+      formatAppLog("log", "at App.vue:11", "App Show");
     },
     onHide: function() {
-      formatAppLog("log", "at App.vue:10", "App Hide");
+      formatAppLog("log", "at App.vue:14", "App Hide");
+    },
+    globalData: {
+      userID: null
     }
   };
   const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "D:/Uniapp/luoying/App.vue"]]);

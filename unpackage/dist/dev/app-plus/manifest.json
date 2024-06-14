@@ -74,7 +74,6 @@
       "style": "dark",
       "background": "#F8F8F8"
     },
-    "arguments": "{\"path\":\"pages/fabu/fabu\"}",
     "uniStatistics": {
       "enable": false
     },
@@ -142,11 +141,7 @@
         }
       ],
       "selectedIndex": 0,
-      "shown": true,
-      "child": [
-        "lauchwebview"
-      ],
-      "selected": 2
+      "shown": true
     }
   },
   "launch_path": "__uniappview.html"
