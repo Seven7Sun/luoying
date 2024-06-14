@@ -89,7 +89,7 @@
 							uni.switchTab({
 								url: '/pages/shouye/shouye'
 							});
-							updateUserself(userID);
+							this.update(userID);
 
 						} else {
 							uni.showToast({
@@ -107,30 +107,33 @@
 					}
 				});
 			},
-			async updateUserSelf(A) {
-
-				const getUserRes = await uniCloud.callFunction({
-					name: 'getUserById',
-					data: {A}
-				});
-				if (getUserRes.result.success) {
-					const user = getUserRes.result
-						.data;
-					const updateRes = await uniCloud.callFunction({
-						name: 'updateUserself',
-						data: {
-							user
-						}
-					});
-					if (updateRes.result.success) {
-						console.log('userself 表更新成功:', updateRes.result.data);
-					} else {
-						console.error('更新 userself 表失败:', updateRes.result.message);
-					}
-				} else {
-					console.error('获取用户失败:', getUserRes.result.message);
-				}
-			},
+			 async update(A) {
+			     console.log("yjy");
+			     try {
+			       const getUserRes = await uniCloud.callFunction({
+			         name: 'getUserById',
+			         data: { A }
+			       });
+			       console.log('getUserById 返回值:', getUserRes);
+			       if (getUserRes.result.success) {
+			         const user = getUserRes.result.data;
+			         const updateRes = await uniCloud.callFunction({
+			           name: 'updateUserself',
+			           data: { user }
+			         });
+			         console.log('updateUserself 返回值:', updateRes);
+			         if (updateRes.result.success) {
+			           console.log('userself 表更新成功:', updateRes.result.data);
+			         } else {
+			           console.error('更新 userself 表失败:', updateRes.result.message);
+			         }
+			       } else {
+			         console.error('获取用户失败:', getUserRes.result.message);
+			       }
+			     } catch (error) {
+			       console.error('调用云函数出现错误:', error.message, error.stack);
+			     }
+			   },
 			
 			toLuoJia() {
 				if (!this.whetherLuoJia) {
