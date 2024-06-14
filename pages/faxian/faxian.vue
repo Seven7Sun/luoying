@@ -74,10 +74,13 @@
 			// 初始化时显示所有帖子
 			this.fetchPosts();
 		},
+		onShow(){
+			this.fetchPosts();
+		},
 		methods: {
 			toDetail(id) {
 				uni.navigateTo({
-					url: `/pages/tieziDetail/tieziDetail?id=${id}`
+					url: `/pages/tieziDetail/tieziDetail?postID=${id}`
 				})
 			},
 			searchPosts() {

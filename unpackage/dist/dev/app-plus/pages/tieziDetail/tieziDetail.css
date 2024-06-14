@@ -129,16 +129,16 @@
 		font-size: 0.875rem;
 		color: #888;
 }
-.reply-box[data-v-c02b434d]{
+.reply-box[data-v-c02b434d] {
 		display: flex;
 }
-.reply-input[data-v-c02b434d]{
+.reply-input[data-v-c02b434d] {
 		border: 0.03125rem solid #e0e0e0;
 		border-radius: 0.25rem;
 		margin-right: 0.5rem;
 		margin-top: 0.25rem;
 }
-.send-reply[data-v-c02b434d]{
+.send-reply[data-v-c02b434d] {
 		border: 0.03125rem solid #e0e0e0;
 		border-radius: 0.25rem;
 		margin-right: 0.5rem;

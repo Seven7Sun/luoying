@@ -75,6 +75,7 @@
 					url: url,
 					method: 'POST',
 					success: (res) => {
+						console.log(res.data);
 						if (res.statusCode === 200) {
 							console.log(res.data);
 							const userID = res.data;

@@ -145,10 +145,13 @@ if (uni.restoreGlobal) {
     mounted() {
       this.fetchPosts();
     },
+    onShow() {
+      this.fetchPosts();
+    },
     methods: {
       toDetail(id) {
         uni.navigateTo({
-          url: `/pages/tieziDetail/tieziDetail?id=${id}`
+          url: `/pages/tieziDetail/tieziDetail?postID=${id}`
         });
       },
       searchPosts() {
@@ -180,11 +183,11 @@ if (uni.restoreGlobal) {
               }));
               this.filteredPosts = this.posts;
             } else {
-              formatAppLog("error", "at pages/faxian/faxian.vue:111", "获取帖子数据失败:", res.data);
+              formatAppLog("error", "at pages/faxian/faxian.vue:114", "获取帖子数据失败:", res.data);
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/faxian/faxian.vue:115", "请求失败:", err);
+            formatAppLog("error", "at pages/faxian/faxian.vue:118", "请求失败:", err);
           }
         });
       }
@@ -361,12 +364,13 @@ if (uni.restoreGlobal) {
           url,
           method: "POST",
           success: (res) => {
+            formatAppLog("log", "at pages/denglu/denglu.vue:78", res.data);
             if (res.statusCode === 200) {
-              formatAppLog("log", "at pages/denglu/denglu.vue:79", res.data);
+              formatAppLog("log", "at pages/denglu/denglu.vue:80", res.data);
               const userID = res.data;
-              formatAppLog("log", "at pages/denglu/denglu.vue:81", getApp().globalData.userID);
+              formatAppLog("log", "at pages/denglu/denglu.vue:82", getApp().globalData.userID);
               getApp().globalData.userID = userID;
-              formatAppLog("log", "at pages/denglu/denglu.vue:83", getApp().globalData.userID);
+              formatAppLog("log", "at pages/denglu/denglu.vue:84", getApp().globalData.userID);
               uni.showToast({
                 title: "登录成功",
                 icon: "success"
@@ -386,7 +390,7 @@ if (uni.restoreGlobal) {
               title: "请求失败，请稍后再试",
               icon: "none"
             });
-            formatAppLog("error", "at pages/denglu/denglu.vue:103", error);
+            formatAppLog("error", "at pages/denglu/denglu.vue:104", error);
           }
         });
       },
@@ -435,7 +439,7 @@ if (uni.restoreGlobal) {
               title: "请求失败，请稍后再试",
               icon: "none"
             });
-            formatAppLog("error", "at pages/denglu/denglu.vue:156", error);
+            formatAppLog("error", "at pages/denglu/denglu.vue:157", error);
           }
         });
       }
@@ -4025,14 +4029,15 @@ ${i3}
       saveDraft() {
       },
       async publish() {
+        formatAppLog("log", "at pages/fabu/fabu.vue:173", getApp().globalData.userID);
         const payload = {
           content: this.content,
-          isMarkdown: this.isMarkdown,
+          // isMarkdown: this.isMarkdown,
           tags: this.tags.map((tag) => tag.name),
-          images: await this.uploadAllImages(this.imageSrcList),
-          // 上传图片后获取的 URL 列表
-          title: this.title,
-          userID: getApp().globalData.userID
+          // images: await this.uploadAllImages(this.imageSrcList), // 上传图片后获取的 URL 列表
+          images: this.imageSrcList,
+          userID: getApp().globalData.userID,
+          title: this.title
         };
         uni.request({
           url: "http://112.124.70.202:5555/api/post/create_post",
@@ -4041,20 +4046,21 @@ ${i3}
           data: payload,
           success: (res) => {
             if (res.statusCode === 200) {
-              formatAppLog("log", "at pages/fabu/fabu.vue:191", "发布成功：", res);
+              formatAppLog("log", "at pages/fabu/fabu.vue:192", "发布成功：", res);
               uni.showToast({
                 title: "发布成功",
                 icon: "success"
               });
             } else {
               uni.showToast({
-                title: "发布失败",
+                title: "发布出错",
                 icon: "none"
               });
+              formatAppLog("log", "at pages/fabu/fabu.vue:203", "发布出错：", res);
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/fabu/fabu.vue:204", "发布失败：", err);
+            formatAppLog("error", "at pages/fabu/fabu.vue:207", "发布失败：", err);
             uni.showToast({
               title: "发布失败",
               icon: "none"
@@ -4074,30 +4080,18 @@ ${i3}
             // 替换为实际的上传服务器地址
             filePath,
             name: "file",
-            // 文件参数名为file
-            fileType: "image",
-            header: {
-              "Content-Type": "multipart/form-data"
-              // 设置内容类型为 form-data
-            },
             success: (uploadFileRes) => {
               if (uploadFileRes.statusCode === 200) {
                 const data = JSON.parse(uploadFileRes.data);
-                if (data.Code === 2001) {
-                  const imageUrl = "http://112.124.70.202:5555" + data.Data;
-                  formatAppLog("log", "at pages/fabu/fabu.vue:233", imageUrl);
-                  resolve(imageUrl);
-                } else {
-                  formatAppLog("error", "at pages/fabu/fabu.vue:236", "上传失败：", data.Msg);
-                  resolve(null);
-                }
+                formatAppLog("log", "at pages/fabu/fabu.vue:229", uploadFileRes);
+                resolve(data.url);
               } else {
-                formatAppLog("error", "at pages/fabu/fabu.vue:240", "上传失败，状态码：", uploadFileRes.statusCode);
+                formatAppLog("log", "at pages/fabu/fabu.vue:232", uploadFileRes);
                 resolve(null);
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/fabu/fabu.vue:245", "上传失败：", err);
+              formatAppLog("error", "at pages/fabu/fabu.vue:237", "上传失败：", err);
               resolve(null);
             }
           });
@@ -4113,7 +4107,7 @@ ${i3}
             this.imageSrcList = this.imageSrcList.concat(res.tempFilePaths);
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/fabu/fabu.vue:261", "选择图片失败：", err);
+            formatAppLog("error", "at pages/fabu/fabu.vue:253", "选择图片失败：", err);
           }
         });
       }
@@ -4673,7 +4667,36 @@ ${i3}
         // 新评论内容
       };
     },
+    onLoad(options) {
+      this.fetchPostData(options.postID);
+    },
     methods: {
+      fetchPostData(postID) {
+        const apiUrl = `http://112.124.70.202:5555/api/post/get_post?PostId=${postID}`;
+        uni.request({
+          url: apiUrl,
+          method: "GET",
+          success: (res) => {
+            if (res.statusCode === 200 && res.data) {
+              const postData = res.data;
+              this.post.id = postData.postId;
+              this.post.userID = postData.userId;
+              this.post.author = "作者名";
+              this.post.avatar = "/static/faxian/img1.png";
+              this.post.title = postData.title;
+              this.post.date = new Date(postData.publishTime).toLocaleString();
+              this.post.location = "位置";
+              this.post.content = postData.content;
+              this.post.images = postData.images.split(",");
+              this.post.likes = postData.likeCount;
+              this.post.stars = postData.favouriteCount;
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/tieziDetail/tieziDetail.vue:181", "API请求失败：", err);
+          }
+        });
+      },
       goBack() {
         uni.navigateBack();
       },
@@ -4715,10 +4738,114 @@ ${i3}
         }
       },
       like() {
+        const apiUrl = `http://112.124.70.202:5555/api/post/like_post?userId=${getApp().globalData.userID}&postId=${this.post.id}`;
+        uni.request({
+          url: apiUrl,
+          method: "POST",
+          success: (res) => {
+            formatAppLog("log", "at pages/tieziDetail/tieziDetail.vue:233", res);
+            if (res.statusCode === 200) {
+              this.post.likes += 1;
+              uni.showToast({
+                title: "点赞成功",
+                icon: "success"
+              });
+            } else {
+              uni.showToast({
+                title: "点赞失败",
+                icon: "none"
+              });
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/tieziDetail/tieziDetail.vue:249", "API请求失败：", err);
+            uni.showToast({
+              title: "点赞失败",
+              icon: "none"
+            });
+          }
+        });
       },
       star() {
+        const apiUrl = `http://112.124.70.202:5555/api/post/fav_post?userId=${getApp().globalData.userID}&postId=${this.post.id}`;
+        uni.request({
+          url: apiUrl,
+          method: "POST",
+          success: (res) => {
+            formatAppLog("log", "at pages/tieziDetail/tieziDetail.vue:265", res);
+            if (res.statusCode === 200) {
+              this.post.stars += 1;
+              uni.showToast({
+                title: "收藏成功",
+                icon: "success"
+              });
+            } else {
+              uni.showToast({
+                title: "收藏失败",
+                icon: "none"
+              });
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/tieziDetail/tieziDetail.vue:281", "API请求失败：", err);
+            uni.showToast({
+              title: "收藏失败",
+              icon: "none"
+            });
+          }
+        });
       },
       comment() {
+        const commentContent = this.newComment.trim();
+        if (commentContent === "") {
+          uni.showToast({
+            title: "评论不能为空",
+            icon: "none"
+          });
+          return;
+        }
+        const apiUrl = `http://112.124.70.202:5555/api/post/comment_post?commentUserId=${getApp().globalData.userID}&postId=${this.post.id}&commentContent=${this.newComment}`;
+        uni.request({
+          url: apiUrl,
+          method: "POST",
+          success: (res) => {
+            formatAppLog("log", "at pages/tieziDetail/tieziDetail.vue:311", res);
+            if (res.statusCode === 200 && res.data === "已评论") {
+              const newComment = {
+                id: this.post.comments.length + 1,
+                // 简单地用数组长度作为id
+                author: "当前用户",
+                // 替换为当前登录用户的信息
+                avatar: "/static/faxian/img1.png",
+                // 替换为当前用户头像
+                date: "刚刚",
+                text: commentContent,
+                replies: [],
+                showReplies: false,
+                showReplyBox: false,
+                replyText: ""
+              };
+              this.post.comments.push(newComment);
+              this.newComment = "";
+              uni.showToast({
+                title: "评论成功",
+                icon: "success"
+              });
+            } else {
+              uni.showToast({
+                title: "评论失败",
+                icon: "none"
+              });
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/tieziDetail/tieziDetail.vue:339", "API请求失败：", err);
+            uni.showToast({
+              title: "评论失败",
+              icon: "none"
+            });
+          }
+        });
       },
       sendComment() {
         if (this.newComment.trim() === "") {

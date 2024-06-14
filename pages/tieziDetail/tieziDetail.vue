@@ -46,11 +46,11 @@
 						<text class="comment-text">{{ comment.text }}</text>
 						<view class="comment-actions">
 							<text class="like-button">{{ comment.likes }}</text>
-							
+
 							<text class="reply-button" @click="showReplies(comment.id)">展开 {{ comment.replies.length }}
 								条回复</text>
 						</view>
-						
+
 						<view class="replies" v-if="comment.showReplies">
 							<view class="reply" v-for="reply in comment.replies" :key="reply.id">
 								<image :src="reply.avatar" class="reply-avatar"></image>
@@ -151,7 +151,37 @@
 				newComment: '' // 新评论内容
 			}
 		},
+		onLoad(options) {
+			this.fetchPostData(options.postID);
+		},
 		methods: {
+			fetchPostData(postID) {
+				const apiUrl = `http://112.124.70.202:5555/api/post/get_post?PostId=${postID}`;
+				uni.request({
+					url: apiUrl,
+					method: 'GET',
+					success: (res) => {
+						if (res.statusCode === 200 && res.data) {
+							const postData = res.data;
+							this.post.id = postData.postId;
+							this.post.userID = postData.userId;
+							this.post.author = '作者名'; // 根据userId获取作者名
+							this.post.avatar = '/static/faxian/img1.png'; // 根据userId获取头像
+							this.post.title = postData.title;
+							this.post.date = new Date(postData.publishTime).toLocaleString();
+							this.post.location = '位置'; // 根据userId获取位置
+							this.post.content = postData.content;
+							this.post.images = postData.images.split(',');
+							this.post.likes = postData.likeCount;
+							this.post.stars = postData.favouriteCount;
+							// this.post.comments = postData.commentList || [];
+						}
+					},
+					fail: (err) => {
+						console.error('API请求失败：', err);
+					}
+				});
+			},
 			goBack() {
 				// 返回上一页
 				uni.navigateBack()
@@ -173,7 +203,7 @@
 				if (comment && comment.replyText.trim() !== '') {
 					const newReply = {
 						id: comment.replies.length + 1,
-						userID:'12345',
+						userID: '12345',
 						author: '当前用户',
 						avatar: '/static/faxian/img1.png', // 替换为当前用户头像
 						date: '刚刚',
@@ -193,13 +223,127 @@
 				}
 			},
 			like() {
-				// 点赞逻辑
+				// 点赞功能实现
+				const apiUrl =
+					`http://112.124.70.202:5555/api/post/like_post?userId=${getApp().globalData.userID}&postId=${this.post.id}`;
+				uni.request({
+					url: apiUrl,
+					method: 'POST',
+					success: (res) => {
+						console.log(res);
+						if (res.statusCode === 200) {
+							
+							this.post.likes += 1;
+							uni.showToast({
+								title: '点赞成功',
+								icon: 'success'
+							});
+						} else {
+							uni.showToast({
+								title: '点赞失败',
+								icon: 'none'
+							});
+						}
+					},
+					fail: (err) => {
+						console.error('API请求失败：', err);
+						uni.showToast({
+							title: '点赞失败',
+							icon: 'none'
+						});
+					}
+				});
+				
 			},
 			star() {
-				// 收藏逻辑
+				const apiUrl =
+					`http://112.124.70.202:5555/api/post/fav_post?userId=${getApp().globalData.userID}&postId=${this.post.id}`;
+				uni.request({
+					url: apiUrl,
+					method: 'POST',
+					success: (res) => {
+						console.log(res);
+						if (res.statusCode === 200) {
+							
+							this.post.stars += 1;
+							uni.showToast({
+								title: '收藏成功',
+								icon: 'success'
+							});
+						} else {
+							uni.showToast({
+								title: '收藏失败',
+								icon: 'none'
+							});
+						}
+					},
+					fail: (err) => {
+						console.error('API请求失败：', err);
+						uni.showToast({
+							title: '收藏失败',
+							icon: 'none'
+						});
+					}
+				});
+				
 			},
 			comment() {
-				// 评论逻辑
+				// 获取评论内容
+				const commentContent = this.newComment.trim();
+
+				// 检查评论内容是否为空
+				if (commentContent === '') {
+					uni.showToast({
+						title: '评论不能为空',
+						icon: 'none'
+					});
+					return;
+				}
+
+				// 发送评论请求
+				const apiUrl =
+					`http://112.124.70.202:5555/api/post/comment_post?commentUserId=${getApp().globalData.userID}&postId=${this.post.id}&commentContent=${this.newComment}`;
+
+				uni.request({
+					url: apiUrl,
+					method: 'POST',
+					success: (res) => {
+						console.log(res);
+						if (res.statusCode === 200 && res.data === "已评论") {
+							// 添加新评论到评论列表
+							const newComment = {
+								id: this.post.comments.length + 1, // 简单地用数组长度作为id
+								author: '当前用户', // 替换为当前登录用户的信息
+								avatar: '/static/faxian/img1.png', // 替换为当前用户头像
+								date: '刚刚',
+								text: commentContent,
+								replies: [],
+								showReplies: false,
+								showReplyBox: false,
+								replyText: ''
+							};
+							this.post.comments.push(newComment);
+							this.newComment = ''; // 清空输入框
+							uni.showToast({
+								title: '评论成功',
+								icon: 'success'
+							});
+						} else {
+							uni.showToast({
+								title: '评论失败',
+								icon: 'none'
+							});
+						}
+					},
+					fail: (err) => {
+						console.error('API请求失败：', err);
+						uni.showToast({
+							title: '评论失败',
+							icon: 'none'
+						});
+					}
+				});
+
 			},
 			sendComment() {
 				// 发送评论逻辑
@@ -384,25 +528,25 @@
 		font-size: 28rpx;
 		color: #888;
 	}
-	
-	.reply-box{
+
+	.reply-box {
 		display: flex;
-		
+
 	}
-	
-	.reply-input{
+
+	.reply-input {
 		border: 1rpx solid #e0e0e0;
 		border-radius: 8rpx;
 		margin-right: 16rpx;
 		margin-top: 8rpx;
 	}
-	
-	.send-reply{
+
+	.send-reply {
 		border: 1rpx solid #e0e0e0;
 		border-radius: 8rpx;
 		margin-right: 16rpx;
 	}
-	
+
 	.replies {
 		margin-left: 76rpx;
 		margin-top: 8rpx;
