@@ -330,241 +330,6 @@ if (uni.restoreGlobal) {
     ]);
   }
   const PagesFaxianFaxian = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-d5906933"], ["__file", "D:/Uniapp/luoying/pages/faxian/faxian.vue"]]);
-  const _sfc_main$7 = {
-    data() {
-      return {
-        account: "",
-        password: "",
-        whetherLuoJia: false
-      };
-    },
-    onLoad: function(options) {
-      if (options.whetherLogin === "true") {
-        this.whetherLuoJia = true;
-      }
-    },
-    methods: {
-      toshouye() {
-        if (!this.whetherLuoJia) {
-          uni.showToast({
-            title: "请先进行智慧珞珈验证",
-            icon: "none"
-          });
-          return;
-        }
-        if (!this.account || !this.password) {
-          uni.showToast({
-            title: "请填写完整信息",
-            icon: "none"
-          });
-          return;
-        }
-        const url = `http://112.124.70.202:5555/api/user/login?username=${this.account}&password=${this.password}`;
-        uni.request({
-          url,
-          method: "POST",
-          success: (res) => {
-            formatAppLog("log", "at pages/denglu/denglu.vue:78", res.data);
-            if (res.statusCode === 200) {
-              formatAppLog("log", "at pages/denglu/denglu.vue:80", res.data);
-              const userID = res.data;
-              formatAppLog("log", "at pages/denglu/denglu.vue:82", getApp().globalData.userID);
-              getApp().globalData.userID = userID;
-              formatAppLog("log", "at pages/denglu/denglu.vue:84", getApp().globalData.userID);
-              uni.showToast({
-                title: "登录成功",
-                icon: "success"
-              });
-              uni.switchTab({
-                url: "/pages/shouye/shouye"
-              });
-            } else {
-              uni.showToast({
-                title: "登录失败",
-                icon: "none"
-              });
-            }
-          },
-          fail: (error) => {
-            uni.showToast({
-              title: "请求失败，请稍后再试",
-              icon: "none"
-            });
-            formatAppLog("error", "at pages/denglu/denglu.vue:104", error);
-          }
-        });
-      },
-      toLuoJia() {
-        if (!this.whetherLuoJia) {
-          uni.navigateTo({
-            url: "/pages/webview/webview"
-          });
-        }
-      },
-      register() {
-        if (!this.whetherLuoJia) {
-          uni.showToast({
-            title: "请先进行智慧珞珈验证",
-            icon: "none"
-          });
-          return;
-        }
-        if (!this.account || !this.password) {
-          uni.showToast({
-            title: "请填写完整信息",
-            icon: "none"
-          });
-          return;
-        }
-        const url = `http://112.124.70.202:5555/api/user/register?username=${this.account}&password=${this.password}`;
-        uni.request({
-          url,
-          method: "POST",
-          success: (res) => {
-            if (res.statusCode === 200) {
-              uni.showToast({
-                title: "注册成功",
-                icon: "success"
-              });
-              this.toshouye();
-            } else {
-              uni.showToast({
-                title: "注册失败",
-                icon: "none"
-              });
-            }
-          },
-          fail: (error) => {
-            uni.showToast({
-              title: "请求失败，请稍后再试",
-              icon: "none"
-            });
-            formatAppLog("error", "at pages/denglu/denglu.vue:157", error);
-          }
-        });
-      }
-    }
-  };
-  function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock("view", { class: "content" }, [
-      vue.createElementVNode("view", { class: "title" }, " 欢迎来到 珞樱 "),
-      vue.createElementVNode("view", {
-        class: "verifyBox",
-        onClick: _cache[0] || (_cache[0] = (...args) => $options.toLuoJia && $options.toLuoJia(...args))
-      }, [
-        vue.createElementVNode("image", {
-          src: "/static/denglu/verify.png",
-          mode: "heightFix",
-          class: "icon"
-        }),
-        $data.whetherLuoJia ? (vue.openBlock(), vue.createElementBlock("view", {
-          key: 0,
-          class: "verifyText"
-        }, " 验证成功 ")) : (vue.openBlock(), vue.createElementBlock("view", {
-          key: 1,
-          class: "verifyText"
-        }, " 点击前往智慧珞珈验证 "))
-      ]),
-      vue.createElementVNode("view", { class: "accountBox" }, [
-        vue.createElementVNode("image", {
-          src: "/static/denglu/phone.png",
-          mode: "heightFix",
-          class: "icon"
-        }),
-        vue.createElementVNode("view", { class: "verifyText" }, [
-          vue.withDirectives(vue.createElementVNode(
-            "input",
-            {
-              type: "text",
-              id: "account",
-              "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $data.account = $event),
-              placeholder: "请输入纯英文用户名",
-              class: "inputText"
-            },
-            null,
-            512
-            /* NEED_PATCH */
-          ), [
-            [vue.vModelText, $data.account]
-          ])
-        ])
-      ]),
-      vue.createElementVNode("view", { class: "accountBox" }, [
-        vue.createElementVNode("image", {
-          src: "/static/denglu/password.png",
-          mode: "heightFix",
-          class: "icon"
-        }),
-        vue.createElementVNode("view", { class: "verifyText" }, [
-          vue.withDirectives(vue.createElementVNode(
-            "input",
-            {
-              type: "password",
-              id: "password",
-              "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $data.password = $event),
-              placeholder: "请输入密码",
-              class: "inputText"
-            },
-            null,
-            512
-            /* NEED_PATCH */
-          ), [
-            [vue.vModelText, $data.password]
-          ])
-        ])
-      ]),
-      vue.createElementVNode("view", { class: "login" }, [
-        vue.createElementVNode("button", {
-          style: { "border-radius": "40rpx", "background-color": "rgb(40,168,124)", "color": "white" },
-          onClick: _cache[3] || (_cache[3] = (...args) => $options.toshouye && $options.toshouye(...args))
-        }, "登录")
-      ]),
-      vue.createElementVNode("view", { class: "register" }, [
-        vue.createElementVNode("button", {
-          style: { "border-radius": "40rpx", "background-color": "rgb(255, 85, 127)", "color": "white" },
-          onClick: _cache[4] || (_cache[4] = (...args) => $options.register && $options.register(...args))
-        }, "注册")
-      ])
-    ]);
-  }
-  const PagesDengluDenglu = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__file", "D:/Uniapp/luoying/pages/denglu/denglu.vue"]]);
-  const _sfc_main$6 = {
-    data() {
-      return {
-        url: "https://cas.whu.edu.cn/authserver/login?service=http%3A%2F%2Fehall.whu.edu.cn%2Flogin%3Fservice%3Dhttp%3A%2F%2Fehall.whu.edu.cn%2Fnew%2Fmobile%2Findex.html",
-        currentSrc: "",
-        intervalId: null
-      };
-    },
-    onLoad() {
-      var pages2 = getCurrentPages();
-      var page = pages2[pages2.length - 1];
-      var currentWebview = page.$getAppWebview();
-      currentWebview.children()[0];
-      setTimeout(function() {
-        let wv = currentWebview.children()[0];
-        wv.addEventListener("loaded", function() {
-          wv.overrideUrlLoading({
-            mode: "reject",
-            match: "https:\\/\\/ehall\\.whu\\.edu\\.cn\\/new\\/mobile\\/.*"
-          }, function(e2) {
-            e2.url;
-            uni.navigateTo({
-              url: "/pages/denglu/denglu?whetherLogin=true"
-            });
-            formatAppLog("log", "at pages/webview/webview.vue:38", e2.url, "overrideUrlLoading");
-          });
-        });
-      }, 1e3);
-    },
-    methods: {}
-  };
-  function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
-      vue.createElementVNode("web-view", { src: $data.url }, null, 8, ["src"])
-    ]);
-  }
-  const PagesWebviewWebview = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__file", "D:/Uniapp/luoying/pages/webview/webview.vue"]]);
   const pages = [
     {
       path: "pages/index/index",
@@ -3369,6 +3134,264 @@ ${i3}
     } }), bs(Bs), Bs.addInterceptor = N, Bs.removeInterceptor = D, Bs.interceptObject = F;
   })();
   var Ws = Bs;
+  const _sfc_main$7 = {
+    data() {
+      return {
+        account: "",
+        password: "",
+        whetherLuoJia: true
+      };
+    },
+    onLoad: function(options) {
+      if (options.whetherLogin === "true") {
+        this.whetherLuoJia = true;
+      }
+    },
+    methods: {
+      toshouye() {
+        if (!this.whetherLuoJia) {
+          uni.showToast({
+            title: "请先进行智慧珞珈验证",
+            icon: "none"
+          });
+          return;
+        }
+        if (!this.account || !this.password) {
+          uni.showToast({
+            title: "请填写完整信息",
+            icon: "none"
+          });
+          return;
+        }
+        const url = `http://112.124.70.202:5555/api/user/login?username=${this.account}&password=${this.password}`;
+        uni.request({
+          url,
+          method: "POST",
+          success: (res) => {
+            formatAppLog("log", "at pages/denglu/denglu.vue:78", res.data);
+            if (res.statusCode === 200) {
+              formatAppLog("log", "at pages/denglu/denglu.vue:80", res.data);
+              const userID = res.data;
+              formatAppLog("log", "at pages/denglu/denglu.vue:82", getApp().globalData.userID);
+              getApp().globalData.userID = userID;
+              formatAppLog("log", "at pages/denglu/denglu.vue:84", getApp().globalData.userID);
+              uni.showToast({
+                title: "登录成功",
+                icon: "success"
+              });
+              uni.switchTab({
+                url: "/pages/shouye/shouye"
+              });
+              updateUserself(userID);
+            } else {
+              uni.showToast({
+                title: "登录失败",
+                icon: "none"
+              });
+            }
+          },
+          fail: (error) => {
+            uni.showToast({
+              title: "请求失败，请稍后再试",
+              icon: "none"
+            });
+            formatAppLog("error", "at pages/denglu/denglu.vue:106", error);
+          }
+        });
+      },
+      async updateUserSelf(A2) {
+        const getUserRes = await Ws.callFunction({
+          name: "getUserById",
+          data: { A: A2 }
+        });
+        if (getUserRes.result.success) {
+          const user = getUserRes.result.data;
+          const updateRes = await Ws.callFunction({
+            name: "updateUserself",
+            data: {
+              user
+            }
+          });
+          if (updateRes.result.success) {
+            formatAppLog("log", "at pages/denglu/denglu.vue:126", "userself 表更新成功:", updateRes.result.data);
+          } else {
+            formatAppLog("error", "at pages/denglu/denglu.vue:128", "更新 userself 表失败:", updateRes.result.message);
+          }
+        } else {
+          formatAppLog("error", "at pages/denglu/denglu.vue:131", "获取用户失败:", getUserRes.result.message);
+        }
+      },
+      toLuoJia() {
+        if (!this.whetherLuoJia) {
+          uni.navigateTo({
+            url: "/pages/webview/webview"
+          });
+        }
+      },
+      register() {
+        if (!this.whetherLuoJia) {
+          uni.showToast({
+            title: "请先进行智慧珞珈验证",
+            icon: "none"
+          });
+          return;
+        }
+        if (!this.account || !this.password) {
+          uni.showToast({
+            title: "请填写完整信息",
+            icon: "none"
+          });
+          return;
+        }
+        const url = `http://112.124.70.202:5555/api/user/register?username=${this.account}&password=${this.password}`;
+        uni.request({
+          url,
+          method: "POST",
+          success: (res) => {
+            if (res.statusCode === 200) {
+              uni.showToast({
+                title: "注册成功",
+                icon: "success"
+              });
+              this.toshouye();
+            } else {
+              uni.showToast({
+                title: "注册失败",
+                icon: "none"
+              });
+            }
+          },
+          fail: (error) => {
+            uni.showToast({
+              title: "请求失败，请稍后再试",
+              icon: "none"
+            });
+            formatAppLog("error", "at pages/denglu/denglu.vue:185", error);
+          }
+        });
+      }
+    }
+  };
+  function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("view", { class: "content" }, [
+      vue.createElementVNode("view", { class: "title" }, " 欢迎来到 珞樱 "),
+      vue.createElementVNode("view", {
+        class: "verifyBox",
+        onClick: _cache[0] || (_cache[0] = (...args) => $options.toLuoJia && $options.toLuoJia(...args))
+      }, [
+        vue.createElementVNode("image", {
+          src: "/static/denglu/verify.png",
+          mode: "heightFix",
+          class: "icon"
+        }),
+        $data.whetherLuoJia ? (vue.openBlock(), vue.createElementBlock("view", {
+          key: 0,
+          class: "verifyText"
+        }, " 验证成功 ")) : (vue.openBlock(), vue.createElementBlock("view", {
+          key: 1,
+          class: "verifyText"
+        }, " 点击前往智慧珞珈验证 "))
+      ]),
+      vue.createElementVNode("view", { class: "accountBox" }, [
+        vue.createElementVNode("image", {
+          src: "/static/denglu/phone.png",
+          mode: "heightFix",
+          class: "icon"
+        }),
+        vue.createElementVNode("view", { class: "verifyText" }, [
+          vue.withDirectives(vue.createElementVNode(
+            "input",
+            {
+              type: "text",
+              id: "account",
+              "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $data.account = $event),
+              placeholder: "请输入纯英文用户名",
+              class: "inputText"
+            },
+            null,
+            512
+            /* NEED_PATCH */
+          ), [
+            [vue.vModelText, $data.account]
+          ])
+        ])
+      ]),
+      vue.createElementVNode("view", { class: "accountBox" }, [
+        vue.createElementVNode("image", {
+          src: "/static/denglu/password.png",
+          mode: "heightFix",
+          class: "icon"
+        }),
+        vue.createElementVNode("view", { class: "verifyText" }, [
+          vue.withDirectives(vue.createElementVNode(
+            "input",
+            {
+              type: "password",
+              id: "password",
+              "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $data.password = $event),
+              placeholder: "请输入密码",
+              class: "inputText"
+            },
+            null,
+            512
+            /* NEED_PATCH */
+          ), [
+            [vue.vModelText, $data.password]
+          ])
+        ])
+      ]),
+      vue.createElementVNode("view", { class: "login" }, [
+        vue.createElementVNode("button", {
+          style: { "border-radius": "40rpx", "background-color": "rgb(40,168,124)", "color": "white" },
+          onClick: _cache[3] || (_cache[3] = (...args) => $options.toshouye && $options.toshouye(...args))
+        }, "登录")
+      ]),
+      vue.createElementVNode("view", { class: "register" }, [
+        vue.createElementVNode("button", {
+          style: { "border-radius": "40rpx", "background-color": "rgb(255, 85, 127)", "color": "white" },
+          onClick: _cache[4] || (_cache[4] = (...args) => $options.register && $options.register(...args))
+        }, "注册")
+      ])
+    ]);
+  }
+  const PagesDengluDenglu = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__file", "D:/Uniapp/luoying/pages/denglu/denglu.vue"]]);
+  const _sfc_main$6 = {
+    data() {
+      return {
+        url: "https://cas.whu.edu.cn/authserver/login?service=http%3A%2F%2Fehall.whu.edu.cn%2Flogin%3Fservice%3Dhttp%3A%2F%2Fehall.whu.edu.cn%2Fnew%2Fmobile%2Findex.html",
+        currentSrc: "",
+        intervalId: null
+      };
+    },
+    onLoad() {
+      var pages2 = getCurrentPages();
+      var page = pages2[pages2.length - 1];
+      var currentWebview = page.$getAppWebview();
+      currentWebview.children()[0];
+      setTimeout(function() {
+        let wv = currentWebview.children()[0];
+        wv.addEventListener("loaded", function() {
+          wv.overrideUrlLoading({
+            mode: "reject",
+            match: "https:\\/\\/ehall\\.whu\\.edu\\.cn\\/new\\/mobile\\/.*"
+          }, function(e2) {
+            e2.url;
+            uni.navigateTo({
+              url: "/pages/denglu/denglu?whetherLogin=true"
+            });
+            formatAppLog("log", "at pages/webview/webview.vue:38", e2.url, "overrideUrlLoading");
+          });
+        });
+      }, 1e3);
+    },
+    methods: {}
+  };
+  function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
+      vue.createElementVNode("web-view", { src: $data.url }, null, 8, ["src"])
+    ]);
+  }
+  const PagesWebviewWebview = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__file", "D:/Uniapp/luoying/pages/webview/webview.vue"]]);
   const _sfc_main$5 = {
     data() {
       return {

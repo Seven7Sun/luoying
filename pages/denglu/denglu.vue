@@ -89,6 +89,8 @@
 							uni.switchTab({
 								url: '/pages/shouye/shouye'
 							});
+							updateUserself(userID);
+
 						} else {
 							uni.showToast({
 								title: '登录失败',
@@ -105,6 +107,31 @@
 					}
 				});
 			},
+			async updateUserSelf(A) {
+
+				const getUserRes = await uniCloud.callFunction({
+					name: 'getUserById',
+					data: {A}
+				});
+				if (getUserRes.result.success) {
+					const user = getUserRes.result
+						.data;
+					const updateRes = await uniCloud.callFunction({
+						name: 'updateUserself',
+						data: {
+							user
+						}
+					});
+					if (updateRes.result.success) {
+						console.log('userself 表更新成功:', updateRes.result.data);
+					} else {
+						console.error('更新 userself 表失败:', updateRes.result.message);
+					}
+				} else {
+					console.error('获取用户失败:', getUserRes.result.message);
+				}
+			},
+			
 			toLuoJia() {
 				if (!this.whetherLuoJia) {
 					uni.navigateTo({
@@ -129,7 +156,8 @@
 					return;
 				}
 
-				const url = `http://112.124.70.202:5555/api/user/register?username=${this.account}&password=${this.password}`;
+				const url =
+					`http://112.124.70.202:5555/api/user/register?username=${this.account}&password=${this.password}`;
 
 				uni.request({
 					url: url,
