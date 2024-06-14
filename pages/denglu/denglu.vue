@@ -44,7 +44,7 @@
 			return {
 				account: '',
 				password: '',
-				whetherLuoJia: false,
+				whetherLuoJia: true,
 			}
 		},
 		onLoad: function(options) {
