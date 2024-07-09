@@ -169,7 +169,6 @@ if (uni.restoreGlobal) {
       fetchPosts() {
         uni.request({
           url: "http://112.124.70.202:5555/api/post",
-          // 替换为你的后端API地址
           method: "GET",
           success: (res) => {
             if (res.statusCode === 200) {
@@ -734,7 +733,7 @@ if (uni.restoreGlobal) {
   function I(e2) {
     return e2 && "string" == typeof e2 ? JSON.parse(e2) : e2;
   }
-  const S = true, b = "app", A = I(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = b, T = I('{\n    "address": [\n        "127.0.0.1",\n        "192.168.255.1",\n        "192.168.133.1",\n        "10.135.17.246"\n    ],\n    "debugPort": 9000,\n    "initialLaunchType": "local",\n    "servePort": 7000,\n    "skipFiles": [\n        "<node_internals>/**",\n        "D:/HBuilderX/plugins/unicloud/**/*.js"\n    ]\n}\n'), C = I('[{"provider":"aliyun","spaceName":"trial-wdarlbo7lkpoy8ebe86","spaceId":"mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d","clientSecret":"4dS89HqPS4Vi8zObyOOS3w==","endpoint":"https://api.next.bspapp.com"}]') || [];
+  const S = true, b = "app", A = I(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = b, T = I('{\n    "address": [\n        "127.0.0.1",\n        "192.168.255.1",\n        "192.168.133.1",\n        "10.255.14.196",\n        "172.24.224.1"\n    ],\n    "debugPort": 9000,\n    "initialLaunchType": "local",\n    "servePort": 7000,\n    "skipFiles": [\n        "<node_internals>/**",\n        "D:/HBuilderX/plugins/unicloud/**/*.js"\n    ]\n}\n'), C = I('[{"provider":"aliyun","spaceName":"trial-wdarlbo7lkpoy8ebe86","spaceId":"mp-b57cf61e-6398-4ae7-93c0-4db8e765ec2d","clientSecret":"4dS89HqPS4Vi8zObyOOS3w==","endpoint":"https://api.next.bspapp.com"}]') || [];
   let O = "";
   try {
     O = "__UNI__40F4800";
@@ -3139,11 +3138,11 @@ ${i3}
       return {
         account: "",
         password: "",
-        whetherLuoJia: true
+        whetherLuoJia: false
       };
     },
-    onLoad: function(options) {
-      if (options.whetherLogin === "true") {
+    onLoad: function(options2) {
+      if (options2.whetherLogin === "true") {
         this.whetherLuoJia = true;
       }
     },
@@ -3182,7 +3181,7 @@ ${i3}
               uni.switchTab({
                 url: "/pages/shouye/shouye"
               });
-              updateUserself(userID);
+              this.update(userID);
             } else {
               uni.showToast({
                 title: "登录失败",
@@ -3199,26 +3198,36 @@ ${i3}
           }
         });
       },
-      async updateUserSelf(A2) {
-        const getUserRes = await Ws.callFunction({
-          name: "getUserById",
-          data: { A: A2 }
-        });
-        if (getUserRes.result.success) {
-          const user = getUserRes.result.data;
-          const updateRes = await Ws.callFunction({
-            name: "updateUserself",
+      async update(A2) {
+        formatAppLog("log", "at pages/denglu/denglu.vue:111", "yjy");
+        formatAppLog("log", "at pages/denglu/denglu.vue:112", A2);
+        try {
+          const getUserRes = await Ws.callFunction({
+            name: "getUserById",
             data: {
-              user
+              A: A2
             }
           });
-          if (updateRes.result.success) {
-            formatAppLog("log", "at pages/denglu/denglu.vue:126", "userself 表更新成功:", updateRes.result.data);
+          formatAppLog("log", "at pages/denglu/denglu.vue:120", "getUserById 返回值:", getUserRes);
+          if (getUserRes.result.success) {
+            const user = getUserRes.result.data;
+            const updateRes = await Ws.callFunction({
+              name: "updateUserself",
+              data: {
+                user
+              }
+            });
+            formatAppLog("log", "at pages/denglu/denglu.vue:129", "updateUserself 返回值:", updateRes);
+            if (updateRes.result.success) {
+              formatAppLog("log", "at pages/denglu/denglu.vue:131", "userself 表更新成功:", updateRes.result.data);
+            } else {
+              formatAppLog("error", "at pages/denglu/denglu.vue:133", "更新 userself 表失败:", updateRes.result.message);
+            }
           } else {
-            formatAppLog("error", "at pages/denglu/denglu.vue:128", "更新 userself 表失败:", updateRes.result.message);
+            formatAppLog("error", "at pages/denglu/denglu.vue:136", "获取用户失败:", getUserRes.result.message);
           }
-        } else {
-          formatAppLog("error", "at pages/denglu/denglu.vue:131", "获取用户失败:", getUserRes.result.message);
+        } catch (error) {
+          formatAppLog("error", "at pages/denglu/denglu.vue:139", "调用云函数出现错误:", error.message, error.stack);
         }
       },
       toLuoJia() {
@@ -3266,7 +3275,7 @@ ${i3}
               title: "请求失败，请稍后再试",
               icon: "none"
             });
-            formatAppLog("error", "at pages/denglu/denglu.vue:185", error);
+            formatAppLog("error", "at pages/denglu/denglu.vue:193", error);
           }
         });
       }
@@ -3414,6 +3423,9 @@ ${i3}
     beforeDestroy() {
       this.stopTimer();
     },
+    onShow() {
+      this.getUserSelf();
+    },
     methods: {
       async getUserSelf() {
         const res = await Ws.callFunction({
@@ -3442,7 +3454,7 @@ ${i3}
         }
       },
       openChat(message) {
-        formatAppLog("log", "at pages/xiaoxi/xiaoxi.vue:68", "Navigating to chat with parameters:", {
+        formatAppLog("log", "at pages/xiaoxi/xiaoxi.vue:71", "Navigating to chat with parameters:", {
           userId: message.userId,
           name: message.name,
           avatar: message.avatar
@@ -3563,6 +3575,9 @@ ${i3}
     mounted() {
       this.getUserSelf();
     },
+    onShow() {
+      this.getUserSelf();
+    },
     methods: {
       openMyFavoritesModal() {
         this.showMyFavoritesModal = true;
@@ -3582,7 +3597,7 @@ ${i3}
           this.showLogoutConfirmation = false;
           return { success: true, message: "退出成功" };
         } catch (error) {
-          formatAppLog("error", "at pages/wode/wode.vue:183", "退出登录失败：", error);
+          formatAppLog("error", "at pages/wode/wode.vue:186", "退出登录失败：", error);
           return { success: false, message: "退出登录失败" };
         }
       },
@@ -3619,7 +3634,7 @@ ${i3}
             this.uploadImage(res.tempFilePaths[0]);
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/wode/wode.vue:221", "选择图片失败：", err);
+            formatAppLog("error", "at pages/wode/wode.vue:224", "选择图片失败：", err);
           }
         });
       },
@@ -4406,11 +4421,11 @@ ${i3}
         receiverName: ""
       };
     },
-    async onLoad(options) {
-      formatAppLog("log", "at pages/chat/chat.vue:39", "Received parameters:", options);
-      this.receiverId = options.userId;
-      this.receiverName = options.name;
-      this.receiverAvatar = options.avatar;
+    async onLoad(options2) {
+      formatAppLog("log", "at pages/chat/chat.vue:39", "Received parameters:", options2);
+      this.receiverId = options2.userId;
+      this.receiverName = options2.name;
+      this.receiverAvatar = options2.avatar;
       await this.getUserSelf();
       this.getChatMessages();
     },
@@ -4638,6 +4653,7 @@ ${i3}
   const _sfc_main$1 = {
     data() {
       return {
+        temp: 1,
         post: {
           id: "12345",
           userID: "123",
@@ -4686,15 +4702,45 @@ ${i3}
             }
           ]
         },
-        newComment: ""
+        newComment: "",
         // 新评论内容
+        newReply: ""
       };
     },
-    onLoad(options) {
-      this.fetchPostData(options.postID);
+    onLoad(options2) {
+      this.fetchPostData(options2.postID);
+    },
+    onShow(options2) {
+      this.fetchPostData(options2.postID);
     },
     methods: {
-      fetchPostData(postID) {
+      async getInfo(A2) {
+        const getUserRes = await Ws.callFunction({
+          name: "getUserById",
+          data: {
+            A: A2
+          }
+        });
+        this.post.author = getUserRes.result.data.name;
+        this.post.avatar = getUserRes.result.data.avatar;
+      },
+      async getCommentAuthorInfo() {
+        for (const comment of this.post.comments) {
+          formatAppLog("log", "at pages/tieziDetail/tieziDetail.vue:180", comment);
+          const A2 = comment.commentUserID;
+          formatAppLog("log", "at pages/tieziDetail/tieziDetail.vue:182", A2);
+          const getUserRes = await Ws.callFunction({
+            name: "getUserById",
+            data: {
+              A: A2
+            }
+          });
+          formatAppLog("log", "at pages/tieziDetail/tieziDetail.vue:189", getUserRes);
+          comment.author = getUserRes.result.data.name;
+          comment.avatar = getUserRes.result.data.avatar;
+        }
+      },
+      async fetchPostData(postID) {
         const apiUrl = `http://112.124.70.202:5555/api/post/get_post?PostId=${postID}`;
         uni.request({
           url: apiUrl,
@@ -4704,19 +4750,57 @@ ${i3}
               const postData = res.data;
               this.post.id = postData.postId;
               this.post.userID = postData.userId;
-              this.post.author = "作者名";
-              this.post.avatar = "/static/faxian/img1.png";
+              this.temp = postData.userId;
               this.post.title = postData.title;
               this.post.date = new Date(postData.publishTime).toLocaleString();
-              this.post.location = "位置";
+              this.post.location = "武汉";
               this.post.content = postData.content;
               this.post.images = postData.images.split(",");
               this.post.likes = postData.likeCount;
               this.post.stars = postData.favouriteCount;
+              const result = this.getInfo(this.post.userID);
+              this.post.author = result.name;
+              this.post.avatar = result.avatar;
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/tieziDetail/tieziDetail.vue:181", "API请求失败：", err);
+            formatAppLog("error", "at pages/tieziDetail/tieziDetail.vue:227", "API请求失败：", err);
+          }
+        });
+        uni.request({
+          url: `http://112.124.70.202:5555/api/post/get_comment?commentld=1&postId=${postID}`,
+          method: "GET",
+          success: (res) => {
+            if (res.statusCode === 200 && res.data) {
+              const postData = res.data;
+              this.post.comments = postData.map((comment) => ({
+                commentUserID: comment.commentUserId,
+                id: comment.commentId,
+                author: `user${comment.commentUserId}`,
+                // 这里假设作者名称是 "用户" 加上 commentUserId
+                avatar: "/static/faxian/img1.png",
+                // 这里使用了一个默认的头像路径
+                date: new Date(comment.commentTime).toLocaleDateString(),
+                // 格式化日期
+                text: comment.commentContent,
+                replies: comment.replyList ? comment.replyList.map((reply) => ({
+                  id: reply.commentId,
+                  author: `用户${reply.commentUserId}`,
+                  avatar: "/static/faxian/img1.png",
+                  // 这里也使用了一个默认的头像路径
+                  date: new Date(reply.commentTime).toLocaleDateString(),
+                  // 格式化日期
+                  text: reply.commentContent
+                })) : [],
+                showReplies: false,
+                showReplyBox: false,
+                replyText: ""
+              }));
+              this.getCommentAuthorInfo();
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/tieziDetail/tieziDetail.vue:269", "API请求失败：", err);
           }
         });
       },
@@ -4737,6 +4821,32 @@ ${i3}
       },
       sendReply(commentId) {
         const comment = this.post.comments.find((c2) => c2.id === commentId);
+        const apiUrl = `http://112.124.70.202:5555/api/post/reply_comment?commentId=${commentId}&replyUserId=${getApp().globalData.userID}&postId=${this.post.id}&replyContent=${this.newReply}`;
+        uni.request({
+          url: apiUrl,
+          method: "POST",
+          success: (res) => {
+            formatAppLog("log", "at pages/tieziDetail/tieziDetail.vue:320", res);
+            if (res.statusCode === 200) {
+              uni.showToast({
+                title: "回复成功",
+                icon: "success"
+              });
+            } else {
+              uni.showToast({
+                title: "回复失败",
+                icon: "none"
+              });
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/tieziDetail/tieziDetail.vue:335", "API请求失败：", err);
+            uni.showToast({
+              title: "回复失败",
+              icon: "none"
+            });
+          }
+        });
         if (comment && comment.replyText.trim() !== "") {
           const newReply = {
             id: comment.replies.length + 1,
@@ -4766,7 +4876,7 @@ ${i3}
           url: apiUrl,
           method: "POST",
           success: (res) => {
-            formatAppLog("log", "at pages/tieziDetail/tieziDetail.vue:233", res);
+            formatAppLog("log", "at pages/tieziDetail/tieziDetail.vue:373", res);
             if (res.statusCode === 200) {
               this.post.likes += 1;
               uni.showToast({
@@ -4781,7 +4891,7 @@ ${i3}
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/tieziDetail/tieziDetail.vue:249", "API请求失败：", err);
+            formatAppLog("error", "at pages/tieziDetail/tieziDetail.vue:389", "API请求失败：", err);
             uni.showToast({
               title: "点赞失败",
               icon: "none"
@@ -4795,7 +4905,7 @@ ${i3}
           url: apiUrl,
           method: "POST",
           success: (res) => {
-            formatAppLog("log", "at pages/tieziDetail/tieziDetail.vue:265", res);
+            formatAppLog("log", "at pages/tieziDetail/tieziDetail.vue:405", res);
             if (res.statusCode === 200) {
               this.post.stars += 1;
               uni.showToast({
@@ -4810,7 +4920,7 @@ ${i3}
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/tieziDetail/tieziDetail.vue:281", "API请求失败：", err);
+            formatAppLog("error", "at pages/tieziDetail/tieziDetail.vue:421", "API请求失败：", err);
             uni.showToast({
               title: "收藏失败",
               icon: "none"
@@ -4832,7 +4942,7 @@ ${i3}
           url: apiUrl,
           method: "POST",
           success: (res) => {
-            formatAppLog("log", "at pages/tieziDetail/tieziDetail.vue:311", res);
+            formatAppLog("log", "at pages/tieziDetail/tieziDetail.vue:451", res);
             if (res.statusCode === 200 && res.data === "已评论") {
               const newComment = {
                 id: this.post.comments.length + 1,
@@ -4862,13 +4972,14 @@ ${i3}
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/tieziDetail/tieziDetail.vue:339", "API请求失败：", err);
+            formatAppLog("error", "at pages/tieziDetail/tieziDetail.vue:479", "API请求失败：", err);
             uni.showToast({
               title: "评论失败",
               icon: "none"
             });
           }
         });
+        this.fetchPostData(options.postID);
       },
       sendComment() {
         if (this.newComment.trim() === "") {
@@ -5096,12 +5207,18 @@ ${i3}
                       key: 0,
                       class: "reply-box"
                     }, [
-                      vue.withDirectives(vue.createElementVNode("input", {
-                        "onUpdate:modelValue": ($event) => comment.replyText = $event,
-                        class: "reply-input",
-                        placeholder: "回复..."
-                      }, null, 8, ["onUpdate:modelValue"]), [
-                        [vue.vModelText, comment.replyText]
+                      vue.withDirectives(vue.createElementVNode(
+                        "input",
+                        {
+                          "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $data.newReply = $event),
+                          class: "reply-input",
+                          placeholder: "回复..."
+                        },
+                        null,
+                        512
+                        /* NEED_PATCH */
+                      ), [
+                        [vue.vModelText, $data.newReply]
                       ]),
                       vue.createElementVNode("view", {
                         class: "send-reply",
@@ -5122,7 +5239,7 @@ ${i3}
         vue.withDirectives(vue.createElementVNode(
           "input",
           {
-            "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $data.newComment = $event),
+            "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $data.newComment = $event),
             class: "comment-input",
             placeholder: "说点什么..."
           },
@@ -5135,11 +5252,11 @@ ${i3}
         vue.createElementVNode("view", { class: "bottom-buttons" }, [
           vue.createElementVNode("view", {
             class: "pinglun",
-            onClick: _cache[2] || (_cache[2] = (...args) => $options.sendComment && $options.sendComment(...args))
+            onClick: _cache[3] || (_cache[3] = (...args) => $options.comment && $options.comment(...args))
           }, "发送"),
           vue.createElementVNode("view", {
             class: "bottom-button",
-            onClick: _cache[3] || (_cache[3] = (...args) => $options.like && $options.like(...args))
+            onClick: _cache[4] || (_cache[4] = (...args) => $options.like && $options.like(...args))
           }, [
             vue.createElementVNode("image", {
               src: "/static/detial/like.png",
@@ -5155,7 +5272,7 @@ ${i3}
           ]),
           vue.createElementVNode("view", {
             class: "bottom-button",
-            onClick: _cache[4] || (_cache[4] = (...args) => $options.star && $options.star(...args))
+            onClick: _cache[5] || (_cache[5] = (...args) => $options.star && $options.star(...args))
           }, [
             vue.createElementVNode("image", {
               src: "/static/detial/star.png",
@@ -5171,7 +5288,7 @@ ${i3}
           ]),
           vue.createElementVNode("view", {
             class: "bottom-button",
-            onClick: _cache[5] || (_cache[5] = (...args) => $options.comment && $options.comment(...args))
+            onClick: _cache[6] || (_cache[6] = (...args) => $options.comment && $options.comment(...args))
           }, [
             vue.createElementVNode("image", {
               src: "/static/detial/comment.png",

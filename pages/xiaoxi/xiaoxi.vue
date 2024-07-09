@@ -37,6 +37,9 @@ export default {
   beforeDestroy() {
     this.stopTimer();
   },
+  onShow(){
+  	  this.getUserSelf();
+  },
   methods: {
     async getUserSelf() {
       const res = await uniCloud.callFunction({

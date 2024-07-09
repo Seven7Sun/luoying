@@ -64,7 +64,7 @@
 							</view>
 							<text class="reply-button" @click="toggleReplyBox(comment.id)">回复</text>
 							<view class="reply-box" v-if="comment.showReplyBox">
-								<input v-model="comment.replyText" class="reply-input" placeholder="回复..." />
+								<input v-model="newReply" class="reply-input" placeholder="回复..." />
 								<view class="send-reply" @click="sendReply(comment.id)">发送</view>
 							</view>
 						</view>
@@ -77,7 +77,7 @@
 		<view class="bottom-bar">
 			<input v-model="newComment" class="comment-input" placeholder="说点什么..." />
 			<view class="bottom-buttons">
-				<view class="pinglun" @tap="sendComment">发送</view>
+				<view class="pinglun" @tap="comment">发送</view>
 				<view class="bottom-button" @tap="like">
 					<image src="/static/detial/like.png" class="icon"></image>
 					<text>{{ post.likes }}</text>
@@ -100,6 +100,7 @@
 	export default {
 		data() {
 			return {
+				temp: 1,
 				post: {
 					id: '12345',
 					userID: '123',
@@ -148,39 +149,149 @@
 						}
 					]
 				},
-				newComment: '' // 新评论内容
+				newComment: '', // 新评论内容
+				newReply: ''
 			}
 		},
 		onLoad(options) {
 			this.fetchPostData(options.postID);
 		},
+		onShow(options) {
+			this.fetchPostData(options.postID);
+		},
 		methods: {
-			fetchPostData(postID) {
+			async getInfo(A) {
+				const getUserRes = await uniCloud.callFunction({
+					name: 'getUserById',
+					data: {
+						A
+					},
+
+				});
+				// console.log(getUserRes.result.data);
+				// console.log(getUserRes.result.data);
+				this.post.author = getUserRes.result.data.name; // 根据userId获取作者名
+				this.post.avatar = getUserRes.result.data.avatar; // 根据userId获取头像
+				// console.log(this.post.author);
+				// console.log(this.post.avatar);
+			},
+			async getCommentAuthorInfo() {
+				for (const comment of this.post.comments) {
+					console.log(comment);
+					const A = comment.commentUserID;
+					console.log(A);
+					const getUserRes = await uniCloud.callFunction({
+						name: 'getUserById',
+						data: {
+							A 
+						}
+					});
+					console.log(getUserRes);
+					comment.author = getUserRes.result.data.name;
+					comment.avatar = getUserRes.result.data.avatar;
+				}
+
+			},
+			async fetchPostData(postID) {
+				const tem = 1;
 				const apiUrl = `http://112.124.70.202:5555/api/post/get_post?PostId=${postID}`;
 				uni.request({
 					url: apiUrl,
 					method: 'GET',
 					success: (res) => {
+						// console.log(res);
 						if (res.statusCode === 200 && res.data) {
 							const postData = res.data;
 							this.post.id = postData.postId;
 							this.post.userID = postData.userId;
-							this.post.author = '作者名'; // 根据userId获取作者名
-							this.post.avatar = '/static/faxian/img1.png'; // 根据userId获取头像
+							this.temp = postData.userId;
+							// this.post.author = '作者名'; // 根据userId获取作者名
+							// this.post.avatar = '/static/faxian/img1.png'; // 根据userId获取头像
 							this.post.title = postData.title;
 							this.post.date = new Date(postData.publishTime).toLocaleString();
-							this.post.location = '位置'; // 根据userId获取位置
+							this.post.location = '武汉'; // 根据userId获取位置
 							this.post.content = postData.content;
 							this.post.images = postData.images.split(',');
 							this.post.likes = postData.likeCount;
 							this.post.stars = postData.favouriteCount;
 							// this.post.comments = postData.commentList || [];
+							const result = this.getInfo(this.post.userID);
+
+							this.post.author = result.name; // 根据userId获取作者名
+							this.post.avatar = result.avatar; // 根据userId获取头像
 						}
+
+
+					},
+					fail: (err) => {
+						console.error('API请求失败：', err);
+					}
+
+				});
+				uni.request({
+					url: `http://112.124.70.202:5555/api/post/get_comment?commentld=1&postId=${postID}`,
+					method: 'GET',
+					success: (res) => {
+						// console.log(res);
+						if (res.statusCode === 200 && res.data) {
+							const postData = res.data;
+							// this.post.comments=[];
+							// for(const comment of postData){
+							// 	const commentUserInfo=this.getCommentAuthorInfo(comment.commentUserId);
+							// 	console.log(commentUserInfo);
+							// }
+							// 假设返回的数据是一个数组，映射到 post.comments 中
+							this.post.comments = postData.map(comment => ({
+								commentUserID: comment.commentUserId,
+								id: comment.commentId,
+								author: `user${comment.commentUserId}`, // 这里假设作者名称是 "用户" 加上 commentUserId
+								avatar: '/static/faxian/img1.png', // 这里使用了一个默认的头像路径
+								date: new Date(comment.commentTime)
+							.toLocaleDateString(), // 格式化日期
+								text: comment.commentContent,
+								replies: comment.replyList ? comment.replyList.map(reply => ({
+									id: reply.commentId,
+									author: `用户${reply.commentUserId}`,
+									avatar: '/static/faxian/img1.png', // 这里也使用了一个默认的头像路径
+									date: new Date(reply.commentTime)
+										.toLocaleDateString(), // 格式化日期
+									text: reply.commentContent,
+								})) : [],
+								showReplies: false,
+								showReplyBox: false,
+								replyText: ''
+							}));
+							this.getCommentAuthorInfo();
+						}
+
 					},
 					fail: (err) => {
 						console.error('API请求失败：', err);
 					}
 				});
+				// console.log(this.temp);
+				// uni.request({
+				// 	url: `http://112.124.70.202:5555/api/user/get_info?userId=${this.temp}`,
+				// 	method: 'GET',
+				// 	success: (res) => {
+				// 		console.log(res);
+				// 		if (res.statusCode === 200 && res.data) {
+				// 			console.log(res);
+				// 			const postData = res.data;
+				// 			this.post.author = postData.username; // 根据userId获取作者名
+				// 			this.post.avatar = postData.url; // 根据userId获取头像
+				// 			console.log(this.post.author);
+				// 			console.log(this.post.avatar);
+				// 			// this.post.comments = postData.commentList || [];
+				// 		}
+
+
+				// 	},
+				// 	fail: (err) => {
+				// 		console.error('API请求失败：', err);
+				// 	}
+
+				// });
 			},
 			goBack() {
 				// 返回上一页
@@ -200,6 +311,34 @@
 			},
 			sendReply(commentId) {
 				const comment = this.post.comments.find(c => c.id === commentId)
+				const apiUrl =
+					`http://112.124.70.202:5555/api/post/reply_comment?commentId=${commentId}&replyUserId=${getApp().globalData.userID}&postId=${this.post.id}&replyContent=${this.newReply}`;;
+				uni.request({
+					url: apiUrl,
+					method: 'POST',
+					success: (res) => {
+						console.log(res);
+						if (res.statusCode === 200) {
+
+							uni.showToast({
+								title: '回复成功',
+								icon: 'success'
+							});
+						} else {
+							uni.showToast({
+								title: '回复失败',
+								icon: 'none'
+							});
+						}
+					},
+					fail: (err) => {
+						console.error('API请求失败：', err);
+						uni.showToast({
+							title: '回复失败',
+							icon: 'none'
+						});
+					}
+				});
 				if (comment && comment.replyText.trim() !== '') {
 					const newReply = {
 						id: comment.replies.length + 1,
@@ -221,6 +360,7 @@
 						icon: 'none'
 					})
 				}
+
 			},
 			like() {
 				// 点赞功能实现
@@ -232,7 +372,7 @@
 					success: (res) => {
 						console.log(res);
 						if (res.statusCode === 200) {
-							
+
 							this.post.likes += 1;
 							uni.showToast({
 								title: '点赞成功',
@@ -253,7 +393,7 @@
 						});
 					}
 				});
-				
+
 			},
 			star() {
 				const apiUrl =
@@ -264,7 +404,7 @@
 					success: (res) => {
 						console.log(res);
 						if (res.statusCode === 200) {
-							
+
 							this.post.stars += 1;
 							uni.showToast({
 								title: '收藏成功',
@@ -285,7 +425,7 @@
 						});
 					}
 				});
-				
+
 			},
 			comment() {
 				// 获取评论内容
@@ -303,7 +443,7 @@
 				// 发送评论请求
 				const apiUrl =
 					`http://112.124.70.202:5555/api/post/comment_post?commentUserId=${getApp().globalData.userID}&postId=${this.post.id}&commentContent=${this.newComment}`;
-
+				// console.log(apiUrl);
 				uni.request({
 					url: apiUrl,
 					method: 'POST',
@@ -343,7 +483,7 @@
 						});
 					}
 				});
-
+				this.fetchPostData(options.postID);
 			},
 			sendComment() {
 				// 发送评论逻辑

@@ -97,7 +97,7 @@
 			},
 			fetchPosts() {
 				uni.request({
-					url: 'http://112.124.70.202:5555/api/post', // 替换为你的后端API地址
+					url: 'http://112.124.70.202:5555/api/post', 
 					method: 'GET',
 					success: (res) => {
 						if (res.statusCode === 200) {

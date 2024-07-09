@@ -162,6 +162,9 @@ export default {
   mounted() {
     this.getUserSelf();
   },
+  onShow(){
+	  this.getUserSelf();
+  },
   methods: {
     openMyFavoritesModal() {
       this.showMyFavoritesModal = true;
